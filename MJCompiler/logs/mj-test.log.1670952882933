@@ -1,0 +1,21 @@
+INFO  18:33:46,162 - Compiling source file: D:\projects\microjava_compiler\MJCompiler\test\program.mj
+INFO  18:33:46,165 - #1 program
+INFO  18:33:46,165 - #19 MJProgram
+INFO  18:33:46,165 - #19 int
+INFO  18:33:46,166 - #19 x
+INFO  18:33:46,166 - #41 ,
+INFO  18:33:46,166 - #19 y
+INFO  18:33:46,166 - #39 ;
+INFO  18:33:46,166 - #47 {
+INFO  18:33:46,166 - #14 void
+INFO  18:33:46,166 - #19 main
+INFO  18:33:46,166 - #43 (
+INFO  18:33:46,166 - #44 )
+INFO  18:33:46,166 - #47 {
+INFO  18:33:46,166 - #19 bool
+INFO  18:33:46,166 - #22 false
+INFO  18:33:46,166 - #36 =
+INFO  18:33:46,166 - #19 true
+INFO  18:33:46,166 - #39 ;
+INFO  18:33:46,166 - #48 }
+INFO  18:33:46,167 - #48 }
