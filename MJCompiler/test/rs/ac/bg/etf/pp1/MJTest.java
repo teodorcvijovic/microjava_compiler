@@ -32,7 +32,7 @@ public class MJTest {
 			
 			Yylex lexer = new Yylex(br);
 			Symbol currToken = null;
-			while ((currToken = lexer.next_token()).sym != sym.EOF) {
+			while ((currToken = lexer.next_token()).sym != sym_old.EOF) {
 				if (currToken != null && currToken.value != null)
 					log.info(currToken.toString() + " " + currToken.value.toString());
 			}

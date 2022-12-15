@@ -1,0 +1,215 @@
+
+
+package rs.ac.bg.etf.pp1;
+
+import java_cup.runtime.*;
+import org.apache.log4j.*;
+import rs.ac.bg.etf.pp1.ast.*;
+
+parser code {:
+
+	Logger log = Logger.getLogger(getClass());
+   
+   
+    // slede redefinisani metodi za prijavu gresaka radi izmene teksta poruke
+     
+    public void report_fatal_error(String message, Object info) throws java.lang.Exception {
+      done_parsing();
+      report_error(message, info);
+    }
+  
+    public void syntax_error(Symbol cur_token) {
+        report_error("\nSintaksna greska", cur_token);
+    }
+  
+    public void unrecovered_syntax_error(Symbol cur_token) throws java.lang.Exception {
+        report_fatal_error("Fatalna greska, parsiranje se ne moze nastaviti", cur_token);
+    }
+
+    public void report_error(String message, Object info) {
+    	StringBuilder msg = new StringBuilder(message); 
+    	if (info instanceof Symbol)
+            msg.append (" na liniji ").append(((Symbol)info).left);
+        log.error(msg.toString());
+    }
+
+
+:}
+
+
+scan with {:
+	Symbol s = this.getScanner().next_token();
+	if (s != null && s.value != null) 
+		log.info(s.toString() + " " + s.value.toString());
+	return s;
+:}
+
+/******************* terminals ***********************/
+
+terminal PROGRAM, BREAK, CLASS, ENUM, ELSE, CONST, IF, DO, WHILE, NEW, PRINT, READ, RETURN, VOID, EXTENDS, CONTINUE, THIS, FOREACH;
+
+terminal String IDENT;
+terminal Integer NUM_CONST;
+terminal Character CHAR_CONST;
+terminal Boolean BOOL_CONST;
+
+terminal PLUS, MINUS, MUL, DIV, PERCENT, DEQ, NE, GT, GE, LT, LE, AND, OR, EQ, INC, DEC;
+terminal SEMICOLON, COLON, COMMA, DOT, LPAREN, RPAREN, LSQUARE, RSQUARE, LBRACE, RBRACE;
+
+/******************* nonterminals **********************/
+
+/* Program */
+nonterminal Program, GlobalDeclList, GlobalMethodDeclList;
+
+/* ConstDecl */
+nonterminal ConstDecl, Constant, OtherConstDeclarations;
+
+/* VarDecl */
+nonterminal VarDecl, NewVarDecl, OptionalVarDeclList, OptionalSquare;
+
+/* ClassDecl */
+nonterminal ClassDecl, ClassBody, OptionalDerivation, VarDeclList, ConstructorMethodLists, ClassMethodConstructorLists, MethodDeclList;
+nonterminal MethodDecl, ConstructorDeclList;
+
+/* ConstructorDecl */
+nonterminal ConstructorDecl, FormParsOptional, StatementList;
+
+/* MethodDecl */
+nonterminal MethodDecl;
+
+/* FormPars */
+nonterminal FormPars, OneFormPar, TypeIdentList;
+
+/* Type */
+nonterminal Type;
+
+/* Statement */
+
+
+/****************** precedence ************************/
+
+precedence left ELSE;
+
+/************************ grammar **********************/
+
+
+/***** Program ******/
+
+Program ::= (Program) PROGRAM IDENT GlobalDeclList LBRACE GlobalMethodDeclList RBRACE;
+
+GlobalDeclList ::= (GlobalDeclListConst) 	GlobalDeclList ConstDecl 
+				 | (GlobalDeclListVar) 		GlobalDeclList VarDecl   
+				 | (GlobalDeclListClass) 	GlobalDeclList ClassDecl 
+				 | (EmptyGlobalDeclList) 	/* empty */
+				 ;
+				  
+GlobalMethodDeclList ::= (GlobalMethodDeclList_Void) 	GlobalMethodDeclList VOID IDENT LPAREN MethodDecl 
+					   | (GlobalMethodDeclList_Ident) 	GlobalMethodDeclList IDENT IDENT LPAREN MethodDecl
+				   	   | (EmptyGlobalMethodDeclList) 	/* empty */
+				   	   ;
+				   	   
+/***** ConstDecl *******/		   
+				   
+ConstDecl ::= CONST Type IDENT EQ Constant OtherConstDeclarations SEMICOLON ;
+
+Constant ::= 	(NumConstant) 	NUM_CONST
+		   	|   (CharConstant) 	CHAR_CONST
+			|   (BoolConstant) 	BOOL_CONST
+			;
+			   
+OtherConstDeclarations ::= 	(OtherConstDeclarations_) 	OtherConstDeclarations COMMA IDENT EQUALS Constant 
+						|	(NoOtherConstDeclatations) 	/* empty */
+						;
+
+/******** VarDecl **********/
+				   
+VarDecl ::= (VarDecl) Type NewVarDecl OptionalVarDeclList SEMICOLON;
+
+NewVarDecl ::= (NewVarDecl) IDENT OptionalSquare;
+				 
+OptionalVarDeclList ::= (OptionalVarDeclList_) OptionalVarDeclList COMMA NewVarDecl
+					 | 	(EmptyOptionalVarDeclList) /* empty */
+					 ;
+					 
+OptionalSquare ::= (OptionalSquare_) 	LSQUARE RSQUARE
+				|  (NoSquare) 			/* empty */
+				;
+
+/*********** ClassDecl **********/
+
+ClassDecl ::= (ClassDecl) CLASS IDENT OptionalDerivation LBRACE ClassBody RBRACE;
+
+ClassBody ::= VarDeclList ConstructorMethodLists
+
+OptionalDerivation ::= 	(OptionalDerivation_) 	EXTENDS Type 
+					|	(NoDerivation) 			/* empty */
+					;
+
+VarDeclList ::= (ClassVarDeclList) 			ClassVarDeclList VarDecl 
+			| 	(EmptyClassVarDeclList) 	/* empty */
+			;
+				
+ConstructorMethodLists ::= 	(ConstructorMethodLists_) 		LBRACE ClassMethodConstructorLists RBRACE 
+						|	(EmptyConstructorMethodLists) 	/* empty */
+						;
+
+/* resolving method-constructor parsing conflict  */
+ClassMethodConstructorLists ::= (ConstructorsAndMethods_Ident) 	IDENT LPAREN ConstructorDeclList IDENT IDENT LPAREN MethodDeclList 
+							 | 	(ConstructorsAndMethods_Void) 	IDENT LPAREN ConstructorDeclList VOID IDENT LPAREN MethodDeclList 
+							 | 	(Constructors) 					IDENT LPAREN ConstructorDeclList 
+							 | 	(Methods_Ident) 				IDENT IDENT LPAREN MethodDeclList
+							 | 	(Methods_Void) 					VOID IDENT LPAREN MethodDeclList
+							 | 	(EmptyClassMethodConstructorLists) /* empty */
+							 ;
+
+MethodDeclList ::= (MethodDeclList_Ident) 	MethodDeclList IDENT IDENT LPAREN MethodDecl
+				 | (MethodDeclList_Void) 	MethodDeclList VOID IDENT LPAREN MethodDecl
+				 | (OneMethodDecl) 			MethodDecl
+				 ;
+
+ConstructorDeclList ::= (ConstructorDeclList_) 	ConstructorDeclList IDENT LPAREN ConstructorDecl
+					  |	(NoConstructorDeclList) ConstructorDecl
+					  ;
+						
+/****** ConstructorDecl *****/
+
+/* note that IDENT LPAREN is already parsed */
+ConstructorDecl ::= FormParsOptional RPAREN VarDeclList LBRACE StatementList RBRACE;
+
+FormParsOptional ::= 	(FormPars_) 	FormPars
+					| 	(NoFormPars) 	/* empty */
+					;
+					
+StatementList ::= (StatementList_) 		StatementList Statement
+				| (EmptyStatementList) 	/* emptt */
+				;
+
+/****** MethodDecl **********/
+
+/* note that IDENT/VOID IDENT LPAREN is already parsed */
+MethodDecl ::= FormParsOptional RPAREN VarDeclList LBRACE StatementList RBRACE; 
+
+/************ FormPars ********/
+
+FormPars ::= (FormPars) OneFormPar TypeIdentList;
+
+OneFormPar := (OneFormPar) Type IDENT OptionalSquares
+					
+TypeIdentList ::= (TypeIdentList_) 		TypeIdentList COMMA OneFormPar
+				| (EmptyTypeIdentList) 	/* empty */
+				;
+				  
+/******** Type *****/
+
+Type ::= (Type) IDENT;
+
+/******** Statement ********/
+
+
+
+
+
+
+
+
+
