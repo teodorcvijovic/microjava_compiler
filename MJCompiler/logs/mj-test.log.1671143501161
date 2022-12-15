@@ -1,0 +1,40 @@
+INFO  23:31:22,684 - Compiling source file: C:\Users\Teodor\Desktop\MJCompiler\test\program.mj
+INFO  23:31:22,721 - #2 program
+INFO  23:31:22,721 - #20 MJProgram
+INFO  23:31:22,721 - #4 class
+INFO  23:31:22,722 - #20 A
+INFO  23:31:22,722 - #48 {
+INFO  23:31:22,722 - #20 char
+INFO  23:31:22,723 - #40 ;
+ERROR 23:31:22,723 - 
+Sintaksna greska na liniji 4
+INFO  23:31:22,723 - #20 int
+INFO  23:31:22,723 - #20 x
+INFO  23:31:22,723 - #40 ;
+ERROR 23:31:22,723 - Greska pri deklarisanju polja klase u liniji 4
+INFO  23:31:22,725 - #20 char
+INFO  23:31:22,725 - #48 {
+ERROR 23:31:22,725 - 
+Sintaksna greska na liniji 7
+INFO  23:31:22,725 - #49 }
+INFO  23:31:22,725 - #49 }
+INFO  23:31:22,725 - #48 {
+INFO  23:31:22,725 - #20 int
+INFO  23:31:22,728 - #20 main
+INFO  23:31:22,728 - #44 (
+ERROR 23:31:22,728 - Greska pri deklarisanju polja klase u liniji 6
+ERROR 23:31:22,728 - 
+Sintaksna greska na liniji 12
+INFO  23:31:22,728 - #45 )
+INFO  23:31:22,728 - #48 {
+INFO  23:31:22,728 - #20 x
+INFO  23:31:22,728 - #43 .
+INFO  23:31:22,728 - #21 2
+INFO  23:31:22,728 - #37 =
+INFO  23:31:22,729 - #20 y
+INFO  23:31:22,729 - #24 +
+INFO  23:31:22,729 - #21 5
+INFO  23:31:22,729 - #40 ;
+INFO  23:31:22,729 - #49 }
+INFO  23:31:22,729 - #49 }
+ERROR 23:31:22,729 - Fatalna greska, parsiranje se ne moze nastaviti na liniji 15

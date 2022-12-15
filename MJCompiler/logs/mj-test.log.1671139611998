@@ -1,0 +1,200 @@
+INFO  22:26:17,870 - Compiling source file: C:\Users\Teodor\Desktop\MJCompiler\test\program.mj
+INFO  22:26:17,905 - #2 program
+INFO  22:26:17,905 - #20 MJProgram
+INFO  22:26:17,906 - #20 int
+INFO  22:26:17,906 - #20 x
+INFO  22:26:17,906 - #40 ;
+INFO  22:26:17,907 - #20 int
+INFO  22:26:17,907 - #20 y
+INFO  22:26:17,908 - #40 ;
+INFO  22:26:17,908 - #4 class
+INFO  22:26:17,908 - #20 A
+INFO  22:26:17,908 - #48 {
+INFO  22:26:17,908 - #20 int
+INFO  22:26:17,908 - #20 a
+INFO  22:26:17,908 - #46 [
+INFO  22:26:17,909 - #47 ]
+INFO  22:26:17,909 - #40 ;
+INFO  22:26:17,909 - #48 {
+INFO  22:26:17,910 - #49 }
+INFO  22:26:17,910 - #49 }
+INFO  22:26:17,910 - #4 class
+INFO  22:26:17,910 - #20 B
+INFO  22:26:17,911 - #16 extends
+INFO  22:26:17,911 - #20 a
+INFO  22:26:17,911 - #20 a
+ERROR 22:26:17,911 - 
+Sintaksna greska na liniji 11
+INFO  22:26:17,911 - #48 {
+INFO  22:26:17,911 - #49 }
+INFO  22:26:17,911 - #48 {
+INFO  22:26:17,912 - #20 int
+ERROR 22:26:17,912 - Greska pri parsiranju deklaracije prosirenja natklase u liniji: 11
+INFO  22:26:17,912 - #20 main
+INFO  22:26:17,913 - #44 (
+INFO  22:26:17,913 - #45 )
+INFO  22:26:17,913 - #48 {
+INFO  22:26:17,913 - #12 print
+INFO  22:26:17,913 - #44 (
+INFO  22:26:17,914 - #21 1
+INFO  22:26:17,914 - #45 )
+INFO  22:26:17,915 - #40 ;
+INFO  22:26:17,915 - #20 x
+INFO  22:26:17,916 - #43 .
+INFO  22:26:17,916 - #21 2
+ERROR 22:26:17,916 - 
+Sintaksna greska na liniji 17
+INFO  22:26:17,916 - #37 =
+INFO  22:26:17,916 - #20 y
+INFO  22:26:17,916 - #24 +
+INFO  22:26:17,916 - #21 5
+INFO  22:26:17,916 - #40 ;
+INFO  22:26:17,916 - #12 print
+INFO  22:26:17,916 - #44 (
+INFO  22:26:17,916 - #21 2
+ERROR 22:26:17,916 - Greska pri konstrukciji iskaza dodele u liniji 10
+INFO  22:26:17,917 - #45 )
+INFO  22:26:17,917 - #40 ;
+INFO  22:26:17,917 - #49 }
+INFO  22:26:17,917 - #49 }
+INFO  22:26:17,918 - Program_(
+ MJProgram
+  GlobalDeclListClass(
+    GlobalDeclListClass(
+      GlobalDeclListVar(
+        GlobalDeclListVar(
+          EmptyGlobalDeclList(
+          ) [EmptyGlobalDeclList]
+          VarDecl(
+            Type(
+             int
+            ) [Type]
+            NewVarDecl_(
+             x
+              NoSquare(
+              ) [NoSquare]
+            ) [NewVarDecl_]
+            EmptyOptionalVarDeclList(
+            ) [EmptyOptionalVarDeclList]
+          ) [VarDecl]
+        ) [GlobalDeclListVar]
+        VarDecl(
+          Type(
+           int
+          ) [Type]
+          NewVarDecl_(
+           y
+            NoSquare(
+            ) [NoSquare]
+          ) [NewVarDecl_]
+          EmptyOptionalVarDeclList(
+          ) [EmptyOptionalVarDeclList]
+        ) [VarDecl]
+      ) [GlobalDeclListVar]
+      ClassDecl(
+       A
+        NoDerivation(
+        ) [NoDerivation]
+        ClassBodyDerived1(
+          Class_VarDeclList_(
+            Class_EmptyVarDeclList(
+            ) [Class_EmptyVarDeclList]
+            Class_VarDecl_(
+              Type(
+               int
+              ) [Type]
+              Class_NewVarDecl(
+               a
+                OptionalSquare_(
+                ) [OptionalSquare_]
+              ) [Class_NewVarDecl]
+              Class_EmptyOptionalVarDeclList(
+              ) [Class_EmptyOptionalVarDeclList]
+            ) [Class_VarDecl_]
+          ) [Class_VarDeclList_]
+          ConstructorMethodLists_(
+            EmptyClassMethodConstructorLists(
+            ) [EmptyClassMethodConstructorLists]
+          ) [ConstructorMethodLists_]
+        ) [ClassBodyDerived1]
+      ) [ClassDecl]
+    ) [GlobalDeclListClass]
+    ClassDecl(
+     B
+      ClassDerivation(
+      ) [ClassDerivation]
+      ClassBodyDerived1(
+        Class_EmptyVarDeclList(
+        ) [Class_EmptyVarDeclList]
+        EmptyConstructorMethodLists(
+        ) [EmptyConstructorMethodLists]
+      ) [ClassBodyDerived1]
+    ) [ClassDecl]
+  ) [GlobalDeclListClass]
+  GlobalMethodDeclList_Ident(
+    EmptyGlobalMethodDeclList(
+    ) [EmptyGlobalMethodDeclList]
+   int
+   main
+    MethodDeclDerived1(
+      NoFormPars(
+      ) [NoFormPars]
+      EmptyClassVarDeclList(
+      ) [EmptyClassVarDeclList]
+      StatementList_(
+        StatementList_(
+          StatementList_(
+            EmptyStatementList(
+            ) [EmptyStatementList]
+            Matched_(
+              M_Print(
+                Expr(
+                  NoMinus(
+                  ) [NoMinus]
+                  Term(
+                    F_NumConst(
+                     1
+                    ) [F_NumConst]
+                    EmptyMulopFactorList(
+                    ) [EmptyMulopFactorList]
+                  ) [Term]
+                  EmptyAddopTermList(
+                  ) [EmptyAddopTermList]
+                ) [Expr]
+                NoPrintNumConst(
+                ) [NoPrintNumConst]
+              ) [M_Print]
+            ) [Matched_]
+          ) [StatementList_]
+          Matched_(
+            M_Designator(
+              ERROR_DesignatorStatement(
+              ) [ERROR_DesignatorStatement]
+            ) [M_Designator]
+          ) [Matched_]
+        ) [StatementList_]
+        Matched_(
+          M_Print(
+            Expr(
+              NoMinus(
+              ) [NoMinus]
+              Term(
+                F_NumConst(
+                 2
+                ) [F_NumConst]
+                EmptyMulopFactorList(
+                ) [EmptyMulopFactorList]
+              ) [Term]
+              EmptyAddopTermList(
+              ) [EmptyAddopTermList]
+            ) [Expr]
+            NoPrintNumConst(
+            ) [NoPrintNumConst]
+          ) [M_Print]
+        ) [Matched_]
+      ) [StatementList_]
+    ) [MethodDeclDerived1]
+  ) [GlobalMethodDeclList_Ident]
+) [Program_]
+INFO  22:26:17,918 - ===================================
+INFO  22:26:17,919 -  Deklarisanih promenljivih ima = 2

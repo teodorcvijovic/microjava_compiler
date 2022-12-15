@@ -1,0 +1,190 @@
+INFO  21:40:05,307 - Compiling source file: C:\Users\Teodor\Desktop\MJCompiler\test\program.mj
+INFO  21:40:05,341 - #2 program
+INFO  21:40:05,341 - #20 MJProgram
+INFO  21:40:05,341 - #20 int
+INFO  21:40:05,341 - #20 x
+INFO  21:40:05,342 - #40 ;
+INFO  21:40:05,343 - #20 int
+INFO  21:40:05,343 - #20 y
+INFO  21:40:05,343 - #42 ,
+INFO  21:40:05,343 - #20 t
+INFO  21:40:05,343 - #20 t
+ERROR 21:40:05,343 - 
+Sintaksna greska na liniji 2
+INFO  21:40:05,343 - #42 ,
+INFO  21:40:05,344 - #20 x
+INFO  21:40:05,344 - #40 ;
+INFO  21:40:05,344 - #48 {
+ERROR 21:40:05,344 - Greska pri deklaraciji globalne promenljive u liniji: 2
+INFO  21:40:05,344 - #20 int
+INFO  21:40:05,345 - #20 main
+INFO  21:40:05,345 - #44 (
+INFO  21:40:05,345 - #45 )
+INFO  21:40:05,346 - #48 {
+INFO  21:40:05,346 - #12 print
+INFO  21:40:05,346 - #44 (
+INFO  21:40:05,346 - #21 1
+INFO  21:40:05,347 - #45 )
+INFO  21:40:05,348 - #40 ;
+INFO  21:40:05,348 - #20 x
+INFO  21:40:05,348 - #37 =
+INFO  21:40:05,349 - #20 y
+INFO  21:40:05,349 - #24 +
+INFO  21:40:05,350 - #21 5
+INFO  21:40:05,350 - #40 ;
+INFO  21:40:05,350 - #12 print
+INFO  21:40:05,350 - #44 (
+INFO  21:40:05,350 - #21 2
+INFO  21:40:05,350 - #45 )
+INFO  21:40:05,350 - #40 ;
+INFO  21:40:05,351 - #49 }
+INFO  21:40:05,351 - #49 }
+INFO  21:40:05,351 - Program_(
+ MJProgram
+  GlobalDeclListVar(
+    GlobalDeclListVar(
+      EmptyGlobalDeclList(
+      ) [EmptyGlobalDeclList]
+      VarDecl(
+        Type(
+         int
+        ) [Type]
+        NewVarDecl_(
+         x
+          NoSquare(
+          ) [NoSquare]
+        ) [NewVarDecl_]
+        EmptyOptionalVarDeclList(
+        ) [EmptyOptionalVarDeclList]
+      ) [VarDecl]
+    ) [GlobalDeclListVar]
+    VarDecl(
+      Type(
+       int
+      ) [Type]
+      NewVarDecl_(
+       y
+        NoSquare(
+        ) [NoSquare]
+      ) [NewVarDecl_]
+      OptionalVarDeclList_(
+        OptionalVarDeclList_(
+          EmptyOptionalVarDeclList(
+          ) [EmptyOptionalVarDeclList]
+          ERROR_NewVarDecl(
+          ) [ERROR_NewVarDecl]
+        ) [OptionalVarDeclList_]
+        NewVarDecl_(
+         x
+          NoSquare(
+          ) [NoSquare]
+        ) [NewVarDecl_]
+      ) [OptionalVarDeclList_]
+    ) [VarDecl]
+  ) [GlobalDeclListVar]
+  GlobalMethodDeclList_Ident(
+    EmptyGlobalMethodDeclList(
+    ) [EmptyGlobalMethodDeclList]
+   int
+   main
+    MethodDeclDerived1(
+      NoFormPars(
+      ) [NoFormPars]
+      EmptyClassVarDeclList(
+      ) [EmptyClassVarDeclList]
+      StatementList_(
+        StatementList_(
+          StatementList_(
+            EmptyStatementList(
+            ) [EmptyStatementList]
+            Matched_(
+              M_Print(
+                Expr(
+                  NoMinus(
+                  ) [NoMinus]
+                  Term(
+                    F_NumConst(
+                     1
+                    ) [F_NumConst]
+                    EmptyMulopFactorList(
+                    ) [EmptyMulopFactorList]
+                  ) [Term]
+                  EmptyAddopTermList(
+                  ) [EmptyAddopTermList]
+                ) [Expr]
+                NoPrintNumConst(
+                ) [NoPrintNumConst]
+              ) [M_Print]
+            ) [Matched_]
+          ) [StatementList_]
+          Matched_(
+            M_Designator(
+              DesignatorWithOptions(
+                Designator(
+                 x
+                  EmptyIdentExprList(
+                  ) [EmptyIdentExprList]
+                ) [Designator]
+                Option_Assign(
+                  Assignop(
+                  ) [Assignop]
+                  Expr(
+                    NoMinus(
+                    ) [NoMinus]
+                    Term(
+                      F_DesignatorActPars(
+                        Designator(
+                         y
+                          EmptyIdentExprList(
+                          ) [EmptyIdentExprList]
+                        ) [Designator]
+                        NoActParsParen(
+                        ) [NoActParsParen]
+                      ) [F_DesignatorActPars]
+                      EmptyMulopFactorList(
+                      ) [EmptyMulopFactorList]
+                    ) [Term]
+                    AddopTermList_(
+                      EmptyAddopTermList(
+                      ) [EmptyAddopTermList]
+                      A_Plus(
+                      ) [A_Plus]
+                      Term(
+                        F_NumConst(
+                         5
+                        ) [F_NumConst]
+                        EmptyMulopFactorList(
+                        ) [EmptyMulopFactorList]
+                      ) [Term]
+                    ) [AddopTermList_]
+                  ) [Expr]
+                ) [Option_Assign]
+              ) [DesignatorWithOptions]
+            ) [M_Designator]
+          ) [Matched_]
+        ) [StatementList_]
+        Matched_(
+          M_Print(
+            Expr(
+              NoMinus(
+              ) [NoMinus]
+              Term(
+                F_NumConst(
+                 2
+                ) [F_NumConst]
+                EmptyMulopFactorList(
+                ) [EmptyMulopFactorList]
+              ) [Term]
+              EmptyAddopTermList(
+              ) [EmptyAddopTermList]
+            ) [Expr]
+            NoPrintNumConst(
+            ) [NoPrintNumConst]
+          ) [M_Print]
+        ) [Matched_]
+      ) [StatementList_]
+    ) [MethodDeclDerived1]
+  ) [GlobalMethodDeclList_Ident]
+) [Program_]
+INFO  21:40:05,352 - ===================================
+INFO  21:40:05,353 -  Deklarisanih promenljivih ima = 3

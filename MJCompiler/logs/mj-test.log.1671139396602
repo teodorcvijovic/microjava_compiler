@@ -1,0 +1,46 @@
+INFO  22:22:51,698 - Compiling source file: C:\Users\Teodor\Desktop\MJCompiler\test\program.mj
+INFO  22:22:51,733 - #2 program
+INFO  22:22:51,733 - #20 MJProgram
+INFO  22:22:51,733 - #20 int
+INFO  22:22:51,733 - #20 x
+INFO  22:22:51,734 - #40 ;
+INFO  22:22:51,735 - #20 int
+INFO  22:22:51,735 - #20 y
+INFO  22:22:51,735 - #40 ;
+INFO  22:22:51,735 - #20 Class
+INFO  22:22:51,735 - #20 A
+INFO  22:22:51,735 - #48 {
+ERROR 22:22:51,735 - 
+Sintaksna greska na liniji 4
+INFO  22:22:51,736 - #20 int
+INFO  22:22:51,736 - #20 a
+INFO  22:22:51,736 - #48 {
+INFO  22:22:51,736 - #49 }
+INFO  22:22:51,736 - #49 }
+INFO  22:22:51,736 - #48 {
+INFO  22:22:51,736 - #20 int
+INFO  22:22:51,736 - #20 main
+INFO  22:22:51,736 - #44 (
+INFO  22:22:51,737 - #45 )
+INFO  22:22:51,737 - #48 {
+INFO  22:22:51,737 - #12 print
+INFO  22:22:51,737 - #44 (
+INFO  22:22:51,737 - #21 1
+INFO  22:22:51,737 - #45 )
+INFO  22:22:51,737 - #40 ;
+INFO  22:22:51,737 - #20 x
+INFO  22:22:51,737 - #43 .
+INFO  22:22:51,737 - #21 2
+INFO  22:22:51,737 - #37 =
+INFO  22:22:51,737 - #20 y
+INFO  22:22:51,737 - #24 +
+INFO  22:22:51,737 - #21 5
+INFO  22:22:51,737 - #40 ;
+INFO  22:22:51,737 - #12 print
+INFO  22:22:51,737 - #44 (
+INFO  22:22:51,737 - #21 2
+INFO  22:22:51,738 - #45 )
+INFO  22:22:51,738 - #40 ;
+INFO  22:22:51,738 - #49 }
+INFO  22:22:51,738 - #49 }
+ERROR 22:22:51,738 - Fatalna greska, parsiranje se ne moze nastaviti na liniji 20

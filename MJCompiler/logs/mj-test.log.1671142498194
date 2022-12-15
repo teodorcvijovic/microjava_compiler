@@ -1,0 +1,83 @@
+INFO  23:14:33,127 - Compiling source file: C:\Users\Teodor\Desktop\MJCompiler\test\program.mj
+INFO  23:14:33,169 - #2 program
+INFO  23:14:33,169 - #20 MJProgram
+INFO  23:14:33,169 - #4 class
+INFO  23:14:33,169 - #20 A
+INFO  23:14:33,169 - #48 {
+INFO  23:14:33,170 - #20 int
+INFO  23:14:33,170 - #20 a
+INFO  23:14:33,170 - #46 [
+INFO  23:14:33,170 - #42 ,
+ERROR 23:14:33,170 - 
+Sintaksna greska na liniji 4
+INFO  23:14:33,170 - #20 b
+INFO  23:14:33,171 - #40 ;
+INFO  23:14:33,171 - #20 char
+INFO  23:14:33,171 - #40 ;
+INFO  23:14:33,171 - #49 }
+INFO  23:14:33,171 - #48 {
+INFO  23:14:33,171 - #20 int
+ERROR 23:14:33,171 - Greska pri deklarisanju polja klase u liniji 4
+INFO  23:14:33,172 - #20 main
+INFO  23:14:33,173 - #44 (
+INFO  23:14:33,173 - #45 )
+INFO  23:14:33,173 - #48 {
+INFO  23:14:33,173 - #20 x
+INFO  23:14:33,174 - #43 .
+INFO  23:14:33,174 - #21 2
+ERROR 23:14:33,174 - 
+Sintaksna greska na liniji 9
+INFO  23:14:33,174 - #37 =
+INFO  23:14:33,174 - #20 y
+INFO  23:14:33,174 - #24 +
+INFO  23:14:33,174 - #21 5
+INFO  23:14:33,174 - #40 ;
+INFO  23:14:33,174 - #49 }
+INFO  23:14:33,174 - #49 }
+ERROR 23:14:33,175 - Greska pri konstrukciji iskaza dodele u liniji 9
+INFO  23:14:33,175 - Program_(
+ MJProgram
+  GlobalDeclListClass(
+    EmptyGlobalDeclList(
+    ) [EmptyGlobalDeclList]
+    ClassDecl(
+     A
+      NoDerivation(
+      ) [NoDerivation]
+      ClassBodyDerived1(
+        Class_VarDeclList_(
+          Class_EmptyVarDeclList(
+          ) [Class_EmptyVarDeclList]
+          ERROR_Class_VarDecl(
+          ) [ERROR_Class_VarDecl]
+        ) [Class_VarDeclList_]
+        EmptyConstructorMethodLists(
+        ) [EmptyConstructorMethodLists]
+      ) [ClassBodyDerived1]
+    ) [ClassDecl]
+  ) [GlobalDeclListClass]
+  GlobalMethodDeclList_Ident(
+    EmptyGlobalMethodDeclList(
+    ) [EmptyGlobalMethodDeclList]
+   int
+   main
+    MethodDeclDerived1(
+      NoFormPars(
+      ) [NoFormPars]
+      EmptyClassVarDeclList(
+      ) [EmptyClassVarDeclList]
+      StatementList_(
+        EmptyStatementList(
+        ) [EmptyStatementList]
+        Matched_(
+          M_Designator(
+            ERROR_DesignatorStatement(
+            ) [ERROR_DesignatorStatement]
+          ) [M_Designator]
+        ) [Matched_]
+      ) [StatementList_]
+    ) [MethodDeclDerived1]
+  ) [GlobalMethodDeclList_Ident]
+) [Program_]
+INFO  23:14:33,175 - ===================================
+INFO  23:14:33,177 -  Deklarisanih promenljivih ima = 0

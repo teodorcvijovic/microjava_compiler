@@ -1,0 +1,107 @@
+INFO  23:31:41,165 - Compiling source file: C:\Users\Teodor\Desktop\MJCompiler\test\program.mj
+INFO  23:31:41,205 - #2 program
+INFO  23:31:41,205 - #20 MJProgram
+INFO  23:31:41,205 - #4 class
+INFO  23:31:41,206 - #20 A
+INFO  23:31:41,206 - #48 {
+INFO  23:31:41,206 - #20 char
+INFO  23:31:41,206 - #40 ;
+ERROR 23:31:41,206 - 
+Sintaksna greska na liniji 4
+INFO  23:31:41,206 - #20 int
+INFO  23:31:41,207 - #20 x
+INFO  23:31:41,207 - #40 ;
+ERROR 23:31:41,207 - Greska pri deklarisanju polja klase u liniji 4
+INFO  23:31:41,209 - #20 char
+INFO  23:31:41,209 - #40 ;
+ERROR 23:31:41,209 - 
+Sintaksna greska na liniji 7
+INFO  23:31:41,209 - #48 {
+INFO  23:31:41,209 - #49 }
+INFO  23:31:41,209 - #49 }
+ERROR 23:31:41,209 - Greska pri deklarisanju polja klase u liniji 6
+INFO  23:31:41,211 - #48 {
+INFO  23:31:41,212 - #20 int
+INFO  23:31:41,212 - #20 main
+INFO  23:31:41,212 - #44 (
+INFO  23:31:41,212 - #45 )
+INFO  23:31:41,213 - #48 {
+INFO  23:31:41,213 - #20 x
+INFO  23:31:41,213 - #43 .
+INFO  23:31:41,214 - #21 2
+ERROR 23:31:41,214 - 
+Sintaksna greska na liniji 14
+INFO  23:31:41,214 - #37 =
+INFO  23:31:41,214 - #20 y
+INFO  23:31:41,214 - #24 +
+INFO  23:31:41,214 - #21 5
+INFO  23:31:41,214 - #40 ;
+INFO  23:31:41,214 - #49 }
+INFO  23:31:41,214 - #49 }
+ERROR 23:31:41,214 - Greska pri konstrukciji iskaza dodele u liniji 14
+INFO  23:31:41,215 - Program_(
+ MJProgram
+  GlobalDeclListClass(
+    EmptyGlobalDeclList(
+    ) [EmptyGlobalDeclList]
+    ClassDecl(
+     A
+      NoDerivation(
+      ) [NoDerivation]
+      ClassBodyDerived1(
+        Class_VarDeclList_(
+          Class_VarDeclList_(
+            Class_VarDeclList_(
+              Class_EmptyVarDeclList(
+              ) [Class_EmptyVarDeclList]
+              ERROR_Class_VarDecl_Semicolon(
+              ) [ERROR_Class_VarDecl_Semicolon]
+            ) [Class_VarDeclList_]
+            Class_VarDecl_(
+              Type(
+               int
+              ) [Type]
+              Class_NewVarDecl(
+               x
+                NoSquare(
+                ) [NoSquare]
+              ) [Class_NewVarDecl]
+              Class_EmptyOptionalVarDeclList(
+              ) [Class_EmptyOptionalVarDeclList]
+            ) [Class_VarDecl_]
+          ) [Class_VarDeclList_]
+          ERROR_Class_VarDecl_Semicolon(
+          ) [ERROR_Class_VarDecl_Semicolon]
+        ) [Class_VarDeclList_]
+        ConstructorMethodLists_(
+          EmptyClassMethodConstructorLists(
+          ) [EmptyClassMethodConstructorLists]
+        ) [ConstructorMethodLists_]
+      ) [ClassBodyDerived1]
+    ) [ClassDecl]
+  ) [GlobalDeclListClass]
+  GlobalMethodDeclList_Ident(
+    EmptyGlobalMethodDeclList(
+    ) [EmptyGlobalMethodDeclList]
+   int
+   main
+    MethodDeclDerived1(
+      NoFormPars(
+      ) [NoFormPars]
+      EmptyClassVarDeclList(
+      ) [EmptyClassVarDeclList]
+      StatementList_(
+        EmptyStatementList(
+        ) [EmptyStatementList]
+        Matched_(
+          M_Designator(
+            ERROR_DesignatorStatement(
+            ) [ERROR_DesignatorStatement]
+          ) [M_Designator]
+        ) [Matched_]
+      ) [StatementList_]
+    ) [MethodDeclDerived1]
+  ) [GlobalMethodDeclList_Ident]
+) [Program_]
+INFO  23:31:41,215 - ===================================
+INFO  23:31:41,217 -  Deklarisanih promenljivih ima = 2

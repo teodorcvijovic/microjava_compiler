@@ -1,0 +1,214 @@
+INFO  22:36:03,657 - Compiling source file: C:\Users\Teodor\Desktop\MJCompiler\test\program.mj
+INFO  22:36:03,695 - #2 program
+INFO  22:36:03,695 - #20 MJProgram
+INFO  22:36:03,696 - #20 int
+INFO  22:36:03,696 - #20 x
+INFO  22:36:03,696 - #40 ;
+INFO  22:36:03,697 - #20 int
+INFO  22:36:03,698 - #20 y
+INFO  22:36:03,698 - #40 ;
+INFO  22:36:03,698 - #4 class
+INFO  22:36:03,698 - #20 A
+INFO  22:36:03,698 - #48 {
+INFO  22:36:03,698 - #20 int
+INFO  22:36:03,699 - #20 a
+INFO  22:36:03,699 - #46 [
+INFO  22:36:03,699 - #47 ]
+INFO  22:36:03,699 - #40 ;
+INFO  22:36:03,700 - #48 {
+INFO  22:36:03,700 - #20 int
+INFO  22:36:03,700 - #20 a
+INFO  22:36:03,700 - #44 (
+INFO  22:36:03,700 - #45 )
+INFO  22:36:03,700 - #48 {
+INFO  22:36:03,703 - #20 x
+INFO  22:36:03,703 - #43 .
+INFO  22:36:03,703 - #21 2
+ERROR 22:36:03,703 - 
+Sintaksna greska na liniji 8
+INFO  22:36:03,703 - #37 =
+INFO  22:36:03,704 - #20 y
+INFO  22:36:03,704 - #24 +
+INFO  22:36:03,704 - #21 5
+INFO  22:36:03,704 - #40 ;
+INFO  22:36:03,704 - #49 }
+INFO  22:36:03,704 - #49 }
+INFO  22:36:03,704 - #49 }
+ERROR 22:36:03,704 - Greska pri konstrukciji iskaza dodele u liniji 11
+INFO  22:36:03,705 - #48 {
+INFO  22:36:03,705 - #20 int
+INFO  22:36:03,706 - #20 main
+INFO  22:36:03,706 - #44 (
+INFO  22:36:03,706 - #45 )
+INFO  22:36:03,706 - #48 {
+INFO  22:36:03,706 - #12 print
+INFO  22:36:03,706 - #44 (
+INFO  22:36:03,706 - #21 1
+INFO  22:36:03,707 - #45 )
+INFO  22:36:03,708 - #40 ;
+INFO  22:36:03,708 - #20 x
+INFO  22:36:03,708 - #43 .
+INFO  22:36:03,708 - #21 2
+ERROR 22:36:03,708 - 
+Sintaksna greska na liniji 18
+INFO  22:36:03,708 - #37 =
+INFO  22:36:03,708 - #20 y
+INFO  22:36:03,708 - #24 +
+INFO  22:36:03,708 - #21 5
+INFO  22:36:03,708 - #40 ;
+INFO  22:36:03,708 - #12 print
+INFO  22:36:03,709 - #44 (
+INFO  22:36:03,709 - #21 2
+ERROR 22:36:03,709 - Greska pri konstrukciji iskaza dodele u liniji 12
+INFO  22:36:03,709 - #45 )
+INFO  22:36:03,709 - #40 ;
+INFO  22:36:03,709 - #49 }
+INFO  22:36:03,709 - #49 }
+INFO  22:36:03,710 - Program_(
+ MJProgram
+  GlobalDeclListClass(
+    GlobalDeclListVar(
+      GlobalDeclListVar(
+        EmptyGlobalDeclList(
+        ) [EmptyGlobalDeclList]
+        VarDecl(
+          Type(
+           int
+          ) [Type]
+          NewVarDecl_(
+           x
+            NoSquare(
+            ) [NoSquare]
+          ) [NewVarDecl_]
+          EmptyOptionalVarDeclList(
+          ) [EmptyOptionalVarDeclList]
+        ) [VarDecl]
+      ) [GlobalDeclListVar]
+      VarDecl(
+        Type(
+         int
+        ) [Type]
+        NewVarDecl_(
+         y
+          NoSquare(
+          ) [NoSquare]
+        ) [NewVarDecl_]
+        EmptyOptionalVarDeclList(
+        ) [EmptyOptionalVarDeclList]
+      ) [VarDecl]
+    ) [GlobalDeclListVar]
+    ClassDecl(
+     A
+      NoDerivation(
+      ) [NoDerivation]
+      ClassBodyDerived1(
+        Class_VarDeclList_(
+          Class_EmptyVarDeclList(
+          ) [Class_EmptyVarDeclList]
+          Class_VarDecl_(
+            Type(
+             int
+            ) [Type]
+            Class_NewVarDecl(
+             a
+              OptionalSquare_(
+              ) [OptionalSquare_]
+            ) [Class_NewVarDecl]
+            Class_EmptyOptionalVarDeclList(
+            ) [Class_EmptyOptionalVarDeclList]
+          ) [Class_VarDecl_]
+        ) [Class_VarDeclList_]
+        ConstructorMethodLists_(
+          Methods_Ident(
+           int
+           a
+            OneMethodDecl(
+              MethodDeclDerived1(
+                NoFormPars(
+                ) [NoFormPars]
+                EmptyClassVarDeclList(
+                ) [EmptyClassVarDeclList]
+                StatementList_(
+                  EmptyStatementList(
+                  ) [EmptyStatementList]
+                  Matched_(
+                    M_Designator(
+                      ERROR_DesignatorStatement(
+                      ) [ERROR_DesignatorStatement]
+                    ) [M_Designator]
+                  ) [Matched_]
+                ) [StatementList_]
+              ) [MethodDeclDerived1]
+            ) [OneMethodDecl]
+          ) [Methods_Ident]
+        ) [ConstructorMethodLists_]
+      ) [ClassBodyDerived1]
+    ) [ClassDecl]
+  ) [GlobalDeclListClass]
+  GlobalMethodDeclList_Ident(
+    EmptyGlobalMethodDeclList(
+    ) [EmptyGlobalMethodDeclList]
+   int
+   main
+    MethodDeclDerived1(
+      NoFormPars(
+      ) [NoFormPars]
+      EmptyClassVarDeclList(
+      ) [EmptyClassVarDeclList]
+      StatementList_(
+        StatementList_(
+          StatementList_(
+            EmptyStatementList(
+            ) [EmptyStatementList]
+            Matched_(
+              M_Print(
+                Expr(
+                  NoMinus(
+                  ) [NoMinus]
+                  Term(
+                    F_NumConst(
+                     1
+                    ) [F_NumConst]
+                    EmptyMulopFactorList(
+                    ) [EmptyMulopFactorList]
+                  ) [Term]
+                  EmptyAddopTermList(
+                  ) [EmptyAddopTermList]
+                ) [Expr]
+                NoPrintNumConst(
+                ) [NoPrintNumConst]
+              ) [M_Print]
+            ) [Matched_]
+          ) [StatementList_]
+          Matched_(
+            M_Designator(
+              ERROR_DesignatorStatement(
+              ) [ERROR_DesignatorStatement]
+            ) [M_Designator]
+          ) [Matched_]
+        ) [StatementList_]
+        Matched_(
+          M_Print(
+            Expr(
+              NoMinus(
+              ) [NoMinus]
+              Term(
+                F_NumConst(
+                 2
+                ) [F_NumConst]
+                EmptyMulopFactorList(
+                ) [EmptyMulopFactorList]
+              ) [Term]
+              EmptyAddopTermList(
+              ) [EmptyAddopTermList]
+            ) [Expr]
+            NoPrintNumConst(
+            ) [NoPrintNumConst]
+          ) [M_Print]
+        ) [Matched_]
+      ) [StatementList_]
+    ) [MethodDeclDerived1]
+  ) [GlobalMethodDeclList_Ident]
+) [Program_]
+INFO  22:36:03,710 - ===================================
+INFO  22:36:03,711 -  Deklarisanih promenljivih ima = 2

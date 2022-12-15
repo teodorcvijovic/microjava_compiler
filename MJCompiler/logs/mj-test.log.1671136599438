@@ -1,0 +1,172 @@
+INFO  20:41:04,571 - Compiling source file: C:\Users\Teodor\Desktop\MJCompiler\test\program.mj
+INFO  20:41:04,606 - #2 program
+INFO  20:41:04,606 - #20 MJProgram
+INFO  20:41:04,606 - #20 int
+INFO  20:41:04,607 - #20 x
+INFO  20:41:04,607 - #40 ;
+INFO  20:41:04,608 - #20 int
+INFO  20:41:04,609 - #20 y
+INFO  20:41:04,609 - #40 ;
+INFO  20:41:04,609 - #48 {
+INFO  20:41:04,609 - #20 int
+INFO  20:41:04,610 - #20 main
+INFO  20:41:04,610 - #44 (
+INFO  20:41:04,610 - #45 )
+INFO  20:41:04,611 - #48 {
+INFO  20:41:04,611 - #12 print
+INFO  20:41:04,612 - #44 (
+INFO  20:41:04,612 - #21 1
+INFO  20:41:04,613 - #45 )
+INFO  20:41:04,615 - #40 ;
+INFO  20:41:04,615 - #20 x
+INFO  20:41:04,615 - #37 =
+INFO  20:41:04,616 - #20 y
+INFO  20:41:04,617 - #24 +
+INFO  20:41:04,618 - #21 5
+INFO  20:41:04,619 - #40 ;
+INFO  20:41:04,619 - #12 print
+INFO  20:41:04,619 - #44 (
+INFO  20:41:04,619 - #21 2
+INFO  20:41:04,619 - #45 )
+INFO  20:41:04,619 - #40 ;
+INFO  20:41:04,620 - #49 }
+INFO  20:41:04,620 - #49 }
+INFO  20:41:04,620 - Program_(
+ MJProgram
+  GlobalDeclListVar(
+    GlobalDeclListVar(
+      EmptyGlobalDeclList(
+      ) [EmptyGlobalDeclList]
+      VarDecl(
+        Type(
+         int
+        ) [Type]
+        NewVarDecl(
+         x
+          NoSquare(
+          ) [NoSquare]
+        ) [NewVarDecl]
+        EmptyOptionalVarDeclList(
+        ) [EmptyOptionalVarDeclList]
+      ) [VarDecl]
+    ) [GlobalDeclListVar]
+    VarDecl(
+      Type(
+       int
+      ) [Type]
+      NewVarDecl(
+       y
+        NoSquare(
+        ) [NoSquare]
+      ) [NewVarDecl]
+      EmptyOptionalVarDeclList(
+      ) [EmptyOptionalVarDeclList]
+    ) [VarDecl]
+  ) [GlobalDeclListVar]
+  GlobalMethodDeclList_Ident(
+    EmptyGlobalMethodDeclList(
+    ) [EmptyGlobalMethodDeclList]
+   int
+   main
+    MethodDeclDerived1(
+      NoFormPars(
+      ) [NoFormPars]
+      EmptyClassVarDeclList(
+      ) [EmptyClassVarDeclList]
+      StatementList_(
+        StatementList_(
+          StatementList_(
+            EmptyStatementList(
+            ) [EmptyStatementList]
+            Matched_(
+              M_Print(
+                Expr(
+                  NoMinus(
+                  ) [NoMinus]
+                  Term(
+                    F_NumConst(
+                     1
+                    ) [F_NumConst]
+                    EmptyMulopFactorList(
+                    ) [EmptyMulopFactorList]
+                  ) [Term]
+                  EmptyAddopTermList(
+                  ) [EmptyAddopTermList]
+                ) [Expr]
+                NoPrintNumConst(
+                ) [NoPrintNumConst]
+              ) [M_Print]
+            ) [Matched_]
+          ) [StatementList_]
+          Matched_(
+            M_Designator(
+              DesignatorWithOptions(
+                Designator(
+                 x
+                  EmptyIdentExprList(
+                  ) [EmptyIdentExprList]
+                ) [Designator]
+                Option_Assign(
+                  Assignop(
+                  ) [Assignop]
+                  Expr(
+                    NoMinus(
+                    ) [NoMinus]
+                    Term(
+                      F_DesignatorActPars(
+                        Designator(
+                         y
+                          EmptyIdentExprList(
+                          ) [EmptyIdentExprList]
+                        ) [Designator]
+                        NoActParsParen(
+                        ) [NoActParsParen]
+                      ) [F_DesignatorActPars]
+                      EmptyMulopFactorList(
+                      ) [EmptyMulopFactorList]
+                    ) [Term]
+                    AddopTermList_(
+                      EmptyAddopTermList(
+                      ) [EmptyAddopTermList]
+                      A_Plus(
+                      ) [A_Plus]
+                      Term(
+                        F_NumConst(
+                         5
+                        ) [F_NumConst]
+                        EmptyMulopFactorList(
+                        ) [EmptyMulopFactorList]
+                      ) [Term]
+                    ) [AddopTermList_]
+                  ) [Expr]
+                ) [Option_Assign]
+              ) [DesignatorWithOptions]
+            ) [M_Designator]
+          ) [Matched_]
+        ) [StatementList_]
+        Matched_(
+          M_Print(
+            Expr(
+              NoMinus(
+              ) [NoMinus]
+              Term(
+                F_NumConst(
+                 2
+                ) [F_NumConst]
+                EmptyMulopFactorList(
+                ) [EmptyMulopFactorList]
+              ) [Term]
+              EmptyAddopTermList(
+              ) [EmptyAddopTermList]
+            ) [Expr]
+            NoPrintNumConst(
+            ) [NoPrintNumConst]
+          ) [M_Print]
+        ) [Matched_]
+      ) [StatementList_]
+    ) [MethodDeclDerived1]
+  ) [GlobalMethodDeclList_Ident]
+) [Program_]
+INFO  20:41:04,621 - ===================================
+INFO  20:41:04,623 -  Print count calls = 0
+INFO  20:41:04,623 -  Deklarisanih promenljivih ima = 0

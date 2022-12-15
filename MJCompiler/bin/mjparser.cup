@@ -54,7 +54,7 @@ terminal Character CHAR_CONST;
 terminal Boolean BOOL_CONST;
 
 terminal PLUS, MINUS, MUL, DIV, PERCENT, DEQ, NE, GT, GE, LT, LE, AND, OR, EQ, INC, DEC;
-terminal SEMICOLON, COLON, COMMA, DOT, LPAREN, RPAREN, LSQUARE, RSQUARE, LBRACE, RBRACE;
+terminal SEMICOLON, COLON, COMMA, DOT, LPAREN, RPAREN, LSQUARE, RSQUARE, LBRACE, RBRACE, LAMBDA;
 
 /******************* nonterminals **********************/
 
@@ -66,13 +66,14 @@ nonterminal ConstDecl, Constant, OtherConstDeclarations;
 
 /* VarDecl */
 nonterminal VarDecl, NewVarDecl, OptionalVarDeclList, OptionalSquare;
+nonterminal Class_VarDecl, Class_NewVarDecl, Class_OptionalVarDeclList;
 
 /* ClassDecl */
-nonterminal ClassDecl, ClassBody, OptionalDerivation, VarDeclList, ConstructorMethodLists, ClassMethodConstructorLists, MethodDeclList;
-nonterminal MethodDecl, ConstructorDeclList;
+nonterminal ClassDecl, ClassBody, Dummy_ClassBody, OptionalDerivation, Class_VarDeclList, ConstructorMethodLists, ClassMethodConstructorLists, MethodDeclList;
+nonterminal ConstructorDeclList;
 
 /* ConstructorDecl */
-nonterminal ConstructorDecl, FormParsOptional, StatementList;
+nonterminal ConstructorDecl, FormParsOptional, StatementList, VarDeclList;
 
 /* MethodDecl */
 nonterminal MethodDecl;
@@ -84,7 +85,49 @@ nonterminal FormPars, OneFormPar, TypeIdentList;
 nonterminal Type;
 
 /* Statement */
+nonterminal Statement, Unmatched, Matched, OptionalExpr, PrintNumConst, DesignatorForeach;
 
+/* DesignatorStatement */
+nonterminal DesignatorStatement, DesignatorOptions, OptionalDesignatorList, OptionalActPars, OptionalDesignator, DesignatorList;
+		 
+/* ActPars */
+nonterminal ActPars, ExprList;
+
+/* Condition */
+nonterminal Condition, ConditionIf, ConditionWhile, Or_CondTermList;
+
+/* CondTerm */
+nonterminal CondTerm, And_CondFactList;
+
+/* CondFact */
+nonterminal CondFact, OptionalRelopExpr;
+
+/* Expr */
+nonterminal Expr, OptionalMinus, AddopTermList;
+
+/* Term */
+nonterminal Term, MulopFactorList;
+
+/* Factor */
+nonterminal Factor, OptionalActParsParen, ExprActPars, ParenWithOptionalActPars;
+
+/* Designator */
+nonterminal Designator, IdentExprList;
+
+/* Label */
+nonterminal Label;
+
+/* Assignop */
+nonterminal Assignop;
+
+/* Relop */
+nonterminal Relop;
+
+/* Addop */
+nonterminal Addop;
+
+/* Mulop */
+nonterminal Mulop;
 
 /****************** precedence ************************/
 
@@ -92,10 +135,9 @@ precedence left ELSE;
 
 /************************ grammar **********************/
 
-
 /***** Program ******/
 
-Program ::= (Program) PROGRAM IDENT GlobalDeclList LBRACE GlobalMethodDeclList RBRACE;
+Program ::= (Program_) PROGRAM IDENT GlobalDeclList LBRACE GlobalMethodDeclList RBRACE;
 
 GlobalDeclList ::= (GlobalDeclListConst) 	GlobalDeclList ConstDecl 
 				 | (GlobalDeclListVar) 		GlobalDeclList VarDecl   
@@ -110,14 +152,14 @@ GlobalMethodDeclList ::= (GlobalMethodDeclList_Void) 	GlobalMethodDeclList VOID 
 				   	   
 /***** ConstDecl *******/		   
 				   
-ConstDecl ::= CONST Type IDENT EQ Constant OtherConstDeclarations SEMICOLON ;
+ConstDecl ::= (ConstDecl_) CONST Type IDENT EQ Constant OtherConstDeclarations SEMICOLON ;
 
 Constant ::= 	(NumConstant) 	NUM_CONST
 		   	|   (CharConstant) 	CHAR_CONST
 			|   (BoolConstant) 	BOOL_CONST
 			;
 			   
-OtherConstDeclarations ::= 	(OtherConstDeclarations_) 	OtherConstDeclarations COMMA IDENT EQUALS Constant 
+OtherConstDeclarations ::= 	(OtherConstDeclarations_) 	OtherConstDeclarations COMMA IDENT EQ Constant 
 						|	(NoOtherConstDeclatations) 	/* empty */
 						;
 
@@ -125,29 +167,49 @@ OtherConstDeclarations ::= 	(OtherConstDeclarations_) 	OtherConstDeclarations CO
 				   
 VarDecl ::= (VarDecl) Type NewVarDecl OptionalVarDeclList SEMICOLON;
 
-NewVarDecl ::= (NewVarDecl) IDENT OptionalSquare;
+NewVarDecl ::= (NewVarDecl_) 		IDENT OptionalSquare
+			|  (ERROR_NewVarDecl) 	error:l {: parser.report_error("Greska pri deklaraciji globalne promenljive u liniji: " + lleft, null); :}
+			;
+
 				 
-OptionalVarDeclList ::= (OptionalVarDeclList_) OptionalVarDeclList COMMA NewVarDecl
-					 | 	(EmptyOptionalVarDeclList) /* empty */
+OptionalVarDeclList ::= (OptionalVarDeclList_) 		OptionalVarDeclList COMMA NewVarDecl
+					 | 	(EmptyOptionalVarDeclList) 	/* empty */
+					 |	(ERROR_OptinalVarDeclList)	error:l {: parser.report_error("Greska pri deklaraciji globalne promenljive u liniji: " + lleft, null); :}
 					 ;
 					 
 OptionalSquare ::= (OptionalSquare_) 	LSQUARE RSQUARE
 				|  (NoSquare) 			/* empty */
 				;
+				
+/* class variable declaration (error handling) */
+/* note that COMMA is not a safe symbol */
+
+Class_VarDecl ::= (Class_VarDecl_) 		Type Class_NewVarDecl Class_OptionalVarDeclList SEMICOLON
+				| (ERROR_Class_VarDecl)	error:l {: parser.report_error("Greska pri deklarisanju polja klase u liniji " + lleft, null); :}
+				;	
+
+Class_NewVarDecl ::= (Class_NewVarDecl) IDENT OptionalSquare;
+
+Class_OptionalVarDeclList ::= 	(Class_OptionalVarDeclList_) 		Class_OptionalVarDeclList COMMA Class_NewVarDecl
+					 		| 	(Class_EmptyOptionalVarDeclList) 	/* empty */
+							;
 
 /*********** ClassDecl **********/
 
 ClassDecl ::= (ClassDecl) CLASS IDENT OptionalDerivation LBRACE ClassBody RBRACE;
 
-ClassBody ::= VarDeclList ConstructorMethodLists
+ClassBody ::= (ClassBody) Class_VarDeclList Dummy_ClassBody ConstructorMethodLists;
+
+Dummy_ClassBody ::= (Dummy_ClassBody_) /* empty */;
+
+Class_VarDeclList ::= 	(Class_VarDeclList_) 		Class_VarDeclList Class_VarDecl
+					| 	(Class_EmptyVarDeclList) 	/* empty */
+					;
 
 OptionalDerivation ::= 	(OptionalDerivation_) 	EXTENDS Type 
 					|	(NoDerivation) 			/* empty */
+					|	(ClassDerivation) 		error:l {: parser.report_error("Greska pri parsiranju deklaracije prosirenja natklase u liniji: " + lleft, null); :}
 					;
-
-VarDeclList ::= (ClassVarDeclList) 			ClassVarDeclList VarDecl 
-			| 	(EmptyClassVarDeclList) 	/* empty */
-			;
 				
 ConstructorMethodLists ::= 	(ConstructorMethodLists_) 		LBRACE ClassMethodConstructorLists RBRACE 
 						|	(EmptyConstructorMethodLists) 	/* empty */
@@ -176,6 +238,10 @@ ConstructorDeclList ::= (ConstructorDeclList_) 	ConstructorDeclList IDENT LPAREN
 /* note that IDENT LPAREN is already parsed */
 ConstructorDecl ::= FormParsOptional RPAREN VarDeclList LBRACE StatementList RBRACE;
 
+VarDeclList ::= (VarDeclList_) 				VarDeclList VarDecl
+			| 	(EmptyClassVarDeclList) 	/* empty */
+			;
+
 FormParsOptional ::= 	(FormPars_) 	FormPars
 					| 	(NoFormPars) 	/* empty */
 					;
@@ -193,7 +259,9 @@ MethodDecl ::= FormParsOptional RPAREN VarDeclList LBRACE StatementList RBRACE;
 
 FormPars ::= (FormPars) OneFormPar TypeIdentList;
 
-OneFormPar := (OneFormPar) Type IDENT OptionalSquares
+OneFormPar ::= 	(OneFormPar_) Type IDENT OptionalSquare
+			|	(ERROR_OneFormPar) error:l {: parser.report_error("Greska pri deklaraciji formalnog parametra funkcije u liniji " + lleft, null); :}
+			;
 					
 TypeIdentList ::= (TypeIdentList_) 		TypeIdentList COMMA OneFormPar
 				| (EmptyTypeIdentList) 	/* empty */
@@ -205,11 +273,177 @@ Type ::= (Type) IDENT;
 
 /******** Statement ********/
 
+Statement ::= (Matched_) Matched
+			| (Unmatched_) Unmatched
+			;
+			  
+Unmatched ::= (U_If) 		IF LPAREN ConditionIf RPAREN Statement
+			| (U_IfElse) 	IF LPAREN ConditionIf RPAREN Matched ELSE Unmatched
+			;
 
+Matched ::= (M_Designator) 	DesignatorStatement
+		|	(M_IfElse) 		IF LPAREN ConditionIf RPAREN Matched ELSE Matched 
+		|	(M_While) 		WHILE LPAREN ConditionWhile RPAREN Statement 
+		|	(M_Break) 		BREAK SEMICOLON 
+		|	(M_Continue) 	CONTINUE SEMICOLON 
+		|	(M_Return) 		RETURN OptionalExpr SEMICOLON 
+		|	(M_Read) 		READ LPAREN Designator RPAREN SEMICOLON 
+		|	(M_Print) 		PRINT LPAREN Expr PrintNumConst RPAREN SEMICOLON 
+		|	(M_Foreach) 	DesignatorForeach IDENT LAMBDA Statement RPAREN SEMICOLON 
+		|	(M_Block) 		LBRACE StatementList RBRACE
+		;	
 
+DesignatorForeach ::= (DesignatorForeach) IDENT IdentExprList DOT FOREACH LPAREN;
+				 
+OptionalExpr ::= (OptionalExpr_) 	Expr 
+			|	 (NoExpr) 			/* empty */
+			;
+				 
+PrintNumConst ::= (PrintNumConst_) 	COMMA NUM_CONST 
+				| (NoPrintNumConst) /* empty */
+				;
 
+/************** DesignatorStatement ***************/
 
+DesignatorStatement ::= (DesignatorWithOptions) 	Designator DesignatorOptions SEMICOLON 
+					|	(DesignatorWithSquare) 		LSQUARE OptionalDesignatorList RSQUARE EQ Designator SEMICOLON 
+					|	(ERROR_DesignatorStatement) error SEMICOLON:l {: parser.report_error("Greska pri konstrukciji iskaza dodele u liniji " + lleft, null); :}
+					;
+						
+DesignatorOptions ::= 	(Option_Assign) 	Assignop Expr
+			|  			(Option_ActPars) 	LPAREN OptionalActPars RPAREN 
+			|  			(Option_Inc) 		INC 
+			|  			(Option_Dec) 		DEC
+			;  
+			
+OptionalDesignatorList ::= OptionalDesignator DesignatorList;
 
+OptionalActPars ::= (OptionalActPars_) 	ActPars
+				 |  (NoOptionalActPars) /* empty */
+				 ;
+				    
+OptionalDesignator ::= (OptionalDesignator_) 	Designator
+					 | (NoOptionalDesignator) 	/* empty */
+					 ;
+					   
+DesignatorList ::= (DesignatorList_) 		DesignatorList COMMA OptionalDesignator 
+				 | (EmptyDesignatorList) 	/* empty */
+				 ;
 
+/******* ActPars ********/
 
+ActPars ::= (ActPars) Expr ExprList;
 
+ExprList ::= (ExprList_) 		ExprList COMMA Expr
+		|	 (EmptyExprList) 	/* empty */
+		;
+
+/******* Condition *********/
+
+Condition ::= (Condition) 			CondTerm Or_CondTermList;
+
+ConditionIf ::= (ConditionIf_) 		CondTerm Or_CondTermList
+			|	(ERROR_ConditionIf) error:l {: parser.report_error("Greska pri parsiranju logickog izraza unutar IF konstrukcije u liniji: " + lleft, null); :}
+			;
+			
+ConditionWhile ::= (ConditionWhile) CondTerm Or_CondTermList;
+
+Or_CondTermList ::= (OrCondTermList) 		Or_CondTermList OR CondTerm 
+				 |  (EmptyOrCondTermList) 	/* empty */
+				 ;
+
+/******** CondTerm *********/
+
+CondTerm ::= (CondTerm) CondFact And_CondFactList;
+
+And_CondFactList ::= (AndCondFactList) 		And_CondFactList AND CondFact 
+				  |	 (EmptyAndCondFactList) /* empty */
+				  ;
+
+/********* CondFact **********/
+
+CondFact ::= (CondFact) Expr OptionalRelopExpr;
+
+OptionalRelopExpr ::= (OptionalRelopExpr_) 	Relop Expr 
+					| (NoOptionalRelopExpr) /* empty */
+					;
+
+/******** Expr *********/
+
+Expr ::= (Expr) OptionalMinus Term AddopTermList;
+
+OptionalMinus ::= 	(OptionalMinus_) 	MINUS
+			 	|	(NoMinus) 			/* empty */
+			 	;
+			 
+AddopTermList ::= (AddopTermList_) 		AddopTermList Addop Term
+				| (EmptyAddopTermList) 	/* empty */
+				;
+ 				  
+/*********** Term *********/
+
+Term ::= (Term) Factor MulopFactorList;
+
+MulopFactorList ::= (MulopFactorList_) 		MulopFactorList Mulop Factor
+				|	(EmptyMulopFactorList) 	/* empty */
+				;
+
+/*********** Factor **********/
+
+Factor ::= 	(F_DesignatorActPars) 	Designator OptionalActParsParen 
+		|   (F_NumConst) 			NUM_CONST 
+		|   (F_CharConst) 			CHAR_CONST 
+		|   (F_BoolConst) 			BOOL_CONST 
+		|   (F_TypeExprActPars) 	NEW Type ExprActPars 
+		|   (F_Expr) 				LPAREN Expr RPAREN
+		;
+
+OptionalActParsParen ::= 	(OptionalActParsParen_) ParenWithOptionalActPars
+				 	| 		(NoActParsParen) 		/* empty */
+				 	;
+
+ExprActPars ::= (ExprOrActParsExpr) 	LSQUARE Expr RSQUARE 
+			|	(ExprOrActParsActPars) 	ParenWithOptionalActPars
+			;
+			
+ParenWithOptionalActPars ::= (ParenWithOptionalActPars) LPAREN OptionalActPars RPAREN;
+
+/************* Designator ************/
+
+Designator ::= (Designator) IDENT IdentExprList;
+
+IdentExprList ::= (IdentExprListIdent) 	IdentExprList DOT IDENT
+				| (IdentExprListExpr) 	IdentExprList LSQUARE Expr RSQUARE
+				| (EmptyIdentExprList) 	/* empty */
+				;
+				  
+/************* Label ************/
+
+Label ::= (Label) IDENT;
+
+/********** Assignop **********/
+
+Assignop ::= (Assignop) EQ;
+
+/************** Relop ***************/
+
+Relop ::= (R_Deq) 	DEQ 
+	|	  (R_Ne) 	NE 
+	|	  (R_Gt) 	GT 
+	|	  (R_Ge) 	GE 
+	|	  (R_Lt) 	LT 
+	|	  (R_Le) 	LE
+	;
+		  
+/*********** Addop **********/
+
+Addop ::= (A_Plus) 	PLUS
+		| (A_Minus) MINUS
+		;
+		  
+/*********** Mulop **********/
+
+Mulop ::= (M_Mul) 		MUL 
+		| (M_Div) 		DIV 
+		| (M_Percent) 	PERCENT
+		;

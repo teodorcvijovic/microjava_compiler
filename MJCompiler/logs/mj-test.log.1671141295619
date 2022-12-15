@@ -1,0 +1,51 @@
+INFO  22:54:43,100 - Compiling source file: C:\Users\Teodor\Desktop\MJCompiler\test\program.mj
+INFO  22:54:43,138 - #2 program
+INFO  22:54:43,138 - #20 MJProgram
+INFO  22:54:43,138 - #48 {
+INFO  22:54:43,139 - #20 int
+INFO  22:54:43,139 - #20 main
+INFO  22:54:43,139 - #44 (
+INFO  22:54:43,139 - #45 )
+INFO  22:54:43,140 - #48 {
+INFO  22:54:43,140 - #20 x
+INFO  22:54:43,140 - #43 .
+INFO  22:54:43,141 - #21 2
+ERROR 22:54:43,141 - 
+Sintaksna greska na liniji 4
+INFO  22:54:43,141 - #37 =
+INFO  22:54:43,141 - #20 y
+INFO  22:54:43,141 - #24 +
+INFO  22:54:43,141 - #21 5
+INFO  22:54:43,141 - #40 ;
+INFO  22:54:43,141 - #49 }
+INFO  22:54:43,141 - #49 }
+ERROR 22:54:43,142 - Greska pri konstrukciji iskaza dodele u liniji 12
+INFO  22:54:43,144 - Program_(
+ MJProgram
+  EmptyGlobalDeclList(
+  ) [EmptyGlobalDeclList]
+  GlobalMethodDeclList_Ident(
+    EmptyGlobalMethodDeclList(
+    ) [EmptyGlobalMethodDeclList]
+   int
+   main
+    MethodDeclDerived1(
+      NoFormPars(
+      ) [NoFormPars]
+      EmptyClassVarDeclList(
+      ) [EmptyClassVarDeclList]
+      StatementList_(
+        EmptyStatementList(
+        ) [EmptyStatementList]
+        Matched_(
+          M_Designator(
+            ERROR_DesignatorStatement(
+            ) [ERROR_DesignatorStatement]
+          ) [M_Designator]
+        ) [Matched_]
+      ) [StatementList_]
+    ) [MethodDeclDerived1]
+  ) [GlobalMethodDeclList_Ident]
+) [Program_]
+INFO  22:54:43,145 - ===================================
+INFO  22:54:43,146 -  Deklarisanih promenljivih ima = 0
