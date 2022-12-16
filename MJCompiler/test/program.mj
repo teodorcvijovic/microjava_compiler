@@ -1,14 +1,13 @@
 program MJProgram
 class A {
 
-	char; 
+
 	int x;
-	char
 
 }
 
 {
 	int main() {
-		x.2 = y + 5;
+		x.a = y + 5;
 	}
 }

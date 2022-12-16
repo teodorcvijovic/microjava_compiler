@@ -9,33 +9,44 @@ import rs.ac.bg.etf.pp1.ast.*;
 parser code {:
 
 	Logger log = Logger.getLogger(getClass());
+	
+	/******* parser error handling ********/
+	
+	boolean errorDetected;
    
    
     // slede redefinisani metodi za prijavu gresaka radi izmene teksta poruke
      
     public void report_fatal_error(String message, Object info) throws java.lang.Exception {
+      errorDetected = true;
       done_parsing();
       report_error(message, info);
     }
   
     public void syntax_error(Symbol cur_token) {
+    	errorDetected = true;
         report_error("\nSintaksna greska", cur_token);
     }
   
     public void unrecovered_syntax_error(Symbol cur_token) throws java.lang.Exception {
+    	errorDetected = true;
         report_fatal_error("Fatalna greska, parsiranje se ne moze nastaviti", cur_token);
     }
 
     public void report_error(String message, Object info) {
+    	errorDetected = true;
     	StringBuilder msg = new StringBuilder(message); 
     	if (info instanceof Symbol)
             msg.append (" na liniji ").append(((Symbol)info).left);
         log.error(msg.toString());
     }
 
-
+	/***************************************/
 :}
 
+init with {:
+	errorDetected = false;
+:}
 
 scan with {:
 	Symbol s = this.getScanner().next_token();
@@ -46,7 +57,7 @@ scan with {:
 
 /******************* terminals ***********************/
 
-terminal PROGRAM, BREAK, CLASS, ENUM, ELSE, CONST, IF, DO, WHILE, NEW, PRINT, READ, RETURN, VOID, EXTENDS, CONTINUE, THIS, FOREACH;
+terminal PROGRAM, BREAK, CLASS, ENUM, ELSE, CONST, IF, DO, WHILE, NEW, PRINT, READ, RETURN, VOID, EXTENDS, CONTINUE, FOREACH;
 
 terminal String IDENT;
 terminal Integer NUM_CONST;
@@ -59,7 +70,8 @@ terminal SEMICOLON, COLON, COMMA, DOT, LPAREN, RPAREN, LSQUARE, RSQUARE, LBRACE,
 /******************* nonterminals **********************/
 
 /* Program */
-nonterminal Program, GlobalDeclList, GlobalMethodDeclList;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgramName, Program;
+nonterminal GlobalDeclList, GlobalMethodDeclList;
 
 /* ConstDecl */
 nonterminal ConstDecl, Constant, OtherConstDeclarations;
@@ -137,7 +149,9 @@ precedence left ELSE;
 
 /***** Program ******/
 
-Program ::= (Program_) PROGRAM IDENT GlobalDeclList LBRACE GlobalMethodDeclList RBRACE;
+Program ::= (Program_) PROGRAM ProgramName GlobalDeclList LBRACE GlobalMethodDeclList RBRACE;
+
+ProgramName ::= (ProgramName) IDENT:programName;
 
 GlobalDeclList ::= (GlobalDeclListConst) 	GlobalDeclList ConstDecl 
 				 | (GlobalDeclListVar) 		GlobalDeclList VarDecl   

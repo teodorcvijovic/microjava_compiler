@@ -19,7 +19,7 @@ public class sym_old {
 	public static final int VOID = 14;
 	public static final int EXTENDS = 15;
 	public static final int CONTINUE = 16;
-	public static final int THIS = 17;
+//	public static final int THIS = 17;
 	public static final int FOREACH = 18;
 	
 	// Tokens

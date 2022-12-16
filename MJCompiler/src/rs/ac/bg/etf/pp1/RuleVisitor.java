@@ -5,13 +5,11 @@ import rs.ac.bg.etf.pp1.ast.*;
 
 public class RuleVisitor extends VisitorAdaptor{
 
-	int varDeclCount = 0;
+	int count = 0;
 	
 	Logger log = Logger.getLogger(getClass());
 
-
-	 
-	 public void visit(ERROR_Class_VarDecl vardecl){
-		 	varDeclCount++;
-		 }
+	public void visit(ERROR_Class_VarDecl vardecl){
+		count++;
+	}
 }

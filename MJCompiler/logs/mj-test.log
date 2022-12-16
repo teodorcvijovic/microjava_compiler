@@ -1,43 +1,33 @@
-INFO  23:52:41,517 - Compiling source file: C:\Users\Teodor\Desktop\MJCompiler\test\program.mj
-INFO  23:52:41,553 - #2 program
-INFO  23:52:41,554 - #20 MJProgram
-INFO  23:52:41,554 - #4 class
-INFO  23:52:41,554 - #20 A
-INFO  23:52:41,554 - #48 {
-INFO  23:52:41,554 - #20 char
-INFO  23:52:41,555 - #40 ;
-ERROR 23:52:41,555 - 
-Sintaksna greska na liniji 4
-INFO  23:52:41,555 - #20 int
-INFO  23:52:41,555 - #20 x
-INFO  23:52:41,555 - #40 ;
-INFO  23:52:41,555 - #20 char
-ERROR 23:52:41,555 - Greska pri deklarisanju polja klase u liniji 8
-INFO  23:52:41,557 - #49 }
-ERROR 23:52:41,558 - 
-Sintaksna greska na liniji 8
-INFO  23:52:41,558 - #48 {
-INFO  23:52:41,558 - #20 int
-INFO  23:52:41,558 - #20 main
-ERROR 23:52:41,558 - Greska pri deklarisanju polja klase u liniji 8
-INFO  23:52:41,560 - #44 (
-INFO  23:52:41,560 - #45 )
-INFO  23:52:41,560 - #48 {
-INFO  23:52:41,561 - #20 x
-INFO  23:52:41,561 - #43 .
-INFO  23:52:41,561 - #21 2
-ERROR 23:52:41,561 - 
-Sintaksna greska na liniji 12
-INFO  23:52:41,562 - #37 =
-INFO  23:52:41,562 - #20 y
-INFO  23:52:41,562 - #24 +
-INFO  23:52:41,562 - #21 5
-INFO  23:52:41,562 - #40 ;
-INFO  23:52:41,562 - #49 }
-INFO  23:52:41,562 - #49 }
-ERROR 23:52:41,562 - Greska pri konstrukciji iskaza dodele u liniji 12
-INFO  23:52:41,563 - Program_(
- MJProgram
+INFO  00:38:51,999 - Compiling source file: D:\projects\microjava_compiler\MJCompiler\test\program.mj
+INFO  00:38:52,041 - #2 program
+INFO  00:38:52,041 - #19 MJProgram
+INFO  00:38:52,041 - #4 class
+INFO  00:38:52,042 - #19 A
+INFO  00:38:52,043 - #47 {
+INFO  00:38:52,043 - #19 int
+INFO  00:38:52,043 - #19 x
+INFO  00:38:52,044 - #39 ;
+INFO  00:38:52,045 - #48 }
+INFO  00:38:52,046 - #47 {
+INFO  00:38:52,047 - #19 int
+INFO  00:38:52,047 - #19 main
+INFO  00:38:52,047 - #43 (
+INFO  00:38:52,047 - #44 )
+INFO  00:38:52,047 - #47 {
+INFO  00:38:52,048 - #19 x
+INFO  00:38:52,048 - #42 .
+INFO  00:38:52,049 - #19 a
+INFO  00:38:52,049 - #36 =
+INFO  00:38:52,049 - #19 y
+INFO  00:38:52,050 - #23 +
+INFO  00:38:52,051 - #20 5
+INFO  00:38:52,054 - #39 ;
+INFO  00:38:52,055 - #48 }
+INFO  00:38:52,055 - #48 }
+INFO  00:38:52,061 - Program_(
+  ProgramName(
+   MJProgram
+  ) [ProgramName]
   GlobalDeclListClass(
     EmptyGlobalDeclList(
     ) [EmptyGlobalDeclList]
@@ -47,28 +37,20 @@ INFO  23:52:41,563 - Program_(
       ) [NoDerivation]
       ClassBody(
         Class_VarDeclList_(
-          Class_VarDeclList_(
-            Class_VarDeclList_(
-              Class_EmptyVarDeclList(
-              ) [Class_EmptyVarDeclList]
-              ERROR_Class_VarDecl(
-              ) [ERROR_Class_VarDecl]
-            ) [Class_VarDeclList_]
-            Class_VarDecl_(
-              Type(
-               int
-              ) [Type]
-              Class_NewVarDecl(
-               x
-                NoSquare(
-                ) [NoSquare]
-              ) [Class_NewVarDecl]
-              Class_EmptyOptionalVarDeclList(
-              ) [Class_EmptyOptionalVarDeclList]
-            ) [Class_VarDecl_]
-          ) [Class_VarDeclList_]
-          ERROR_Class_VarDecl(
-          ) [ERROR_Class_VarDecl]
+          Class_EmptyVarDeclList(
+          ) [Class_EmptyVarDeclList]
+          Class_VarDecl_(
+            Type(
+             int
+            ) [Type]
+            Class_NewVarDecl(
+             x
+              NoSquare(
+              ) [NoSquare]
+            ) [Class_NewVarDecl]
+            Class_EmptyOptionalVarDeclList(
+            ) [Class_EmptyOptionalVarDeclList]
+          ) [Class_VarDecl_]
         ) [Class_VarDeclList_]
         Dummy_ClassBody_(
         ) [Dummy_ClassBody_]
@@ -92,13 +74,57 @@ INFO  23:52:41,563 - Program_(
         ) [EmptyStatementList]
         Matched_(
           M_Designator(
-            ERROR_DesignatorStatement(
-            ) [ERROR_DesignatorStatement]
+            DesignatorWithOptions(
+              Designator(
+               x
+                IdentExprListIdent(
+                  EmptyIdentExprList(
+                  ) [EmptyIdentExprList]
+                 a
+                ) [IdentExprListIdent]
+              ) [Designator]
+              Option_Assign(
+                Assignop(
+                ) [Assignop]
+                Expr(
+                  NoMinus(
+                  ) [NoMinus]
+                  Term(
+                    F_DesignatorActPars(
+                      Designator(
+                       y
+                        EmptyIdentExprList(
+                        ) [EmptyIdentExprList]
+                      ) [Designator]
+                      NoActParsParen(
+                      ) [NoActParsParen]
+                    ) [F_DesignatorActPars]
+                    EmptyMulopFactorList(
+                    ) [EmptyMulopFactorList]
+                  ) [Term]
+                  AddopTermList_(
+                    EmptyAddopTermList(
+                    ) [EmptyAddopTermList]
+                    A_Plus(
+                    ) [A_Plus]
+                    Term(
+                      F_NumConst(
+                       5
+                      ) [F_NumConst]
+                      EmptyMulopFactorList(
+                      ) [EmptyMulopFactorList]
+                    ) [Term]
+                  ) [AddopTermList_]
+                ) [Expr]
+              ) [Option_Assign]
+            ) [DesignatorWithOptions]
           ) [M_Designator]
         ) [Matched_]
       ) [StatementList_]
     ) [MethodDeclDerived1]
   ) [GlobalMethodDeclList_Ident]
 ) [Program_]
-INFO  23:52:41,563 - ===================================
-INFO  23:52:41,564 -  Deklarisanih promenljivih ima = 2
+INFO  00:38:52,061 - ===================================
+ERROR 00:38:52,063 - Greska: Metoda void main() nije definisana.
+INFO  00:38:52,063 - ===================================
+ERROR 00:38:52,063 - Parsiranje NIJE uspesno zavrseno!
