@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 17/11/2022 0:24:58
+// 18/11/2022 2:36:12
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -8,13 +8,13 @@ package rs.ac.bg.etf.pp1.ast;
 public class OtherConstDeclarations_ extends OtherConstDeclarations {
 
     private OtherConstDeclarations OtherConstDeclarations;
-    private String I2;
+    private String identName;
     private Constant Constant;
 
-    public OtherConstDeclarations_ (OtherConstDeclarations OtherConstDeclarations, String I2, Constant Constant) {
+    public OtherConstDeclarations_ (OtherConstDeclarations OtherConstDeclarations, String identName, Constant Constant) {
         this.OtherConstDeclarations=OtherConstDeclarations;
         if(OtherConstDeclarations!=null) OtherConstDeclarations.setParent(this);
-        this.I2=I2;
+        this.identName=identName;
         this.Constant=Constant;
         if(Constant!=null) Constant.setParent(this);
     }
@@ -27,12 +27,12 @@ public class OtherConstDeclarations_ extends OtherConstDeclarations {
         this.OtherConstDeclarations=OtherConstDeclarations;
     }
 
-    public String getI2() {
-        return I2;
+    public String getIdentName() {
+        return identName;
     }
 
-    public void setI2(String I2) {
-        this.I2=I2;
+    public void setIdentName(String identName) {
+        this.identName=identName;
     }
 
     public Constant getConstant() {
@@ -75,7 +75,7 @@ public class OtherConstDeclarations_ extends OtherConstDeclarations {
             buffer.append(tab+"  null");
         buffer.append("\n");
 
-        buffer.append(" "+tab+I2);
+        buffer.append(" "+tab+identName);
         buffer.append("\n");
 
         if(Constant!=null)

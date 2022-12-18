@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 17/11/2022 0:24:58
+// 18/11/2022 2:36:12
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -9,21 +9,21 @@ public class Class_NewVarDecl implements SyntaxNode {
 
     private SyntaxNode parent;
     private int line;
-    private String I1;
+    private String varName;
     private OptionalSquare OptionalSquare;
 
-    public Class_NewVarDecl (String I1, OptionalSquare OptionalSquare) {
-        this.I1=I1;
+    public Class_NewVarDecl (String varName, OptionalSquare OptionalSquare) {
+        this.varName=varName;
         this.OptionalSquare=OptionalSquare;
         if(OptionalSquare!=null) OptionalSquare.setParent(this);
     }
 
-    public String getI1() {
-        return I1;
+    public String getVarName() {
+        return varName;
     }
 
-    public void setI1(String I1) {
-        this.I1=I1;
+    public void setVarName(String varName) {
+        this.varName=varName;
     }
 
     public OptionalSquare getOptionalSquare() {
@@ -73,7 +73,7 @@ public class Class_NewVarDecl implements SyntaxNode {
         buffer.append(tab);
         buffer.append("Class_NewVarDecl(\n");
 
-        buffer.append(" "+tab+I1);
+        buffer.append(" "+tab+varName);
         buffer.append("\n");
 
         if(OptionalSquare!=null)

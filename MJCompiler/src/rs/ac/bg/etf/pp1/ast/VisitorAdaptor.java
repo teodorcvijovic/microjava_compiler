@@ -1,63 +1,64 @@
 // generated with ast extension for cup
 // version 0.8
-// 17/11/2022 0:24:58
+// 18/11/2022 2:36:12
 
 
 package rs.ac.bg.etf.pp1.ast;
 
 public abstract class VisitorAdaptor implements Visitor { 
 
-    public void visit(PrintNumConst PrintNumConst) { }
-    public void visit(Unmatched Unmatched) { }
-    public void visit(ConstructorMethodLists ConstructorMethodLists) { }
-    public void visit(Mulop Mulop) { }
+    public void visit(OptionalDesignatorList OptionalDesignatorList) { }
+    public void visit(Factor Factor) { }
+    public void visit(Statement Statement) { }
+    public void visit(OptionalRelopExpr OptionalRelopExpr) { }
     public void visit(MethodDecl MethodDecl) { }
-    public void visit(OptionalActParsParen OptionalActParsParen) { }
-    public void visit(OneFormPar OneFormPar) { }
-    public void visit(Dummy_ClassBody Dummy_ClassBody) { }
-    public void visit(ConstructorDecl ConstructorDecl) { }
-    public void visit(Constant Constant) { }
-    public void visit(DesignatorOptions DesignatorOptions) { }
-    public void visit(Matched Matched) { }
-    public void visit(Relop Relop) { }
-    public void visit(MulopFactorList MulopFactorList) { }
     public void visit(OtherConstDeclarations OtherConstDeclarations) { }
     public void visit(Or_CondTermList Or_CondTermList) { }
-    public void visit(StatementList StatementList) { }
-    public void visit(Addop Addop) { }
-    public void visit(Class_VarDeclList Class_VarDeclList) { }
-    public void visit(ConditionIf ConditionIf) { }
-    public void visit(Factor Factor) { }
-    public void visit(ExprActPars ExprActPars) { }
-    public void visit(NewVarDecl NewVarDecl) { }
-    public void visit(OptionalExpr OptionalExpr) { }
-    public void visit(TypeIdentList TypeIdentList) { }
-    public void visit(FormParsOptional FormParsOptional) { }
-    public void visit(GlobalMethodDeclList GlobalMethodDeclList) { }
-    public void visit(OptionalDesignator OptionalDesignator) { }
     public void visit(ExprList ExprList) { }
-    public void visit(ConstructorDeclList ConstructorDeclList) { }
-    public void visit(GlobalDeclList GlobalDeclList) { }
+    public void visit(OptionalActParsParen OptionalActParsParen) { }
+    public void visit(Relop Relop) { }
+    public void visit(Global_NewVarDecl Global_NewVarDecl) { }
     public void visit(And_CondFactList And_CondFactList) { }
     public void visit(Class_VarDecl Class_VarDecl) { }
-    public void visit(VarDeclList VarDeclList) { }
+    public void visit(OptionalVarDeclList OptionalVarDeclList) { }
+    public void visit(MulopFactorList MulopFactorList) { }
+    public void visit(Class_OptionalVarDeclList Class_OptionalVarDeclList) { }
+    public void visit(AddopTermList AddopTermList) { }
+    public void visit(Global_OptionalVarDeclList Global_OptionalVarDeclList) { }
+    public void visit(Dummy_ClassBody Dummy_ClassBody) { }
+    public void visit(ExprActPars ExprActPars) { }
+    public void visit(Unmatched Unmatched) { }
+    public void visit(NewVarDecl NewVarDecl) { }
+    public void visit(Program Program) { }
+    public void visit(ConstructorMethodLists ConstructorMethodLists) { }
+    public void visit(OptionalDesignator OptionalDesignator) { }
+    public void visit(PrintNumConst PrintNumConst) { }
     public void visit(OptionalActPars OptionalActPars) { }
     public void visit(OptionalSquare OptionalSquare) { }
-    public void visit(OptionalRelopExpr OptionalRelopExpr) { }
+    public void visit(GlobalDeclList GlobalDeclList) { }
+    public void visit(Constant Constant) { }
     public void visit(DesignatorList DesignatorList) { }
-    public void visit(Class_OptionalVarDeclList Class_OptionalVarDeclList) { }
+    public void visit(Mulop Mulop) { }
     public void visit(DesignatorStatement DesignatorStatement) { }
-    public void visit(OptionalDesignatorList OptionalDesignatorList) { }
-    public void visit(ClassMethodConstructorLists ClassMethodConstructorLists) { }
-    public void visit(Statement Statement) { }
+    public void visit(Addop Addop) { }
+    public void visit(StatementList StatementList) { }
     public void visit(OptionalDerivation OptionalDerivation) { }
-    public void visit(ConstDecl ConstDecl) { }
-    public void visit(MethodDeclList MethodDeclList) { }
-    public void visit(Program Program) { }
-    public void visit(OptionalVarDeclList OptionalVarDeclList) { }
-    public void visit(OptionalMinus OptionalMinus) { }
+    public void visit(ConstructorDeclList ConstructorDeclList) { }
     public void visit(IdentExprList IdentExprList) { }
-    public void visit(AddopTermList AddopTermList) { }
+    public void visit(MethodDeclList MethodDeclList) { }
+    public void visit(ClassMethodConstructorLists ClassMethodConstructorLists) { }
+    public void visit(ConstructorDecl ConstructorDecl) { }
+    public void visit(OneFormPar OneFormPar) { }
+    public void visit(DesignatorOptions DesignatorOptions) { }
+    public void visit(Class_VarDeclList Class_VarDeclList) { }
+    public void visit(OptionalMinus OptionalMinus) { }
+    public void visit(GlobalMethodDeclList GlobalMethodDeclList) { }
+    public void visit(Matched Matched) { }
+    public void visit(VarDeclList VarDeclList) { }
+    public void visit(TypeIdentList TypeIdentList) { }
+    public void visit(OptionalExpr OptionalExpr) { }
+    public void visit(FormParsOptional FormParsOptional) { }
+    public void visit(ConditionIf ConditionIf) { }
     public void visit(M_Percent M_Percent) { visit(); }
     public void visit(M_Div M_Div) { visit(); }
     public void visit(M_Mul M_Mul) { visit(); }
@@ -176,6 +177,7 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(Class_VarDeclList_ Class_VarDeclList_) { visit(); }
     public void visit(Dummy_ClassBody_ Dummy_ClassBody_) { visit(); }
     public void visit(ClassBody ClassBody) { visit(); }
+    public void visit(ClassNameAndDerivation ClassNameAndDerivation) { visit(); }
     public void visit(ClassDecl ClassDecl) { visit(); }
     public void visit(Class_EmptyOptionalVarDeclList Class_EmptyOptionalVarDeclList) { visit(); }
     public void visit(Class_OptionalVarDeclList_ Class_OptionalVarDeclList_) { visit(); }
@@ -184,10 +186,14 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(Class_VarDecl_ Class_VarDecl_) { visit(); }
     public void visit(NoSquare NoSquare) { visit(); }
     public void visit(OptionalSquare_ OptionalSquare_) { visit(); }
-    public void visit(ERROR_OptinalVarDeclList ERROR_OptinalVarDeclList) { visit(); }
+    public void visit(ERROR_OptinalGlobalVarDeclList ERROR_OptinalGlobalVarDeclList) { visit(); }
+    public void visit(Global_EmptyOptionalVarDeclList Global_EmptyOptionalVarDeclList) { visit(); }
+    public void visit(Global_OptionalVarDeclList_ Global_OptionalVarDeclList_) { visit(); }
+    public void visit(ERROR_NewGlobalVarDecl ERROR_NewGlobalVarDecl) { visit(); }
+    public void visit(Global_NewVarDecl_ Global_NewVarDecl_) { visit(); }
+    public void visit(Global_VarDecl Global_VarDecl) { visit(); }
     public void visit(EmptyOptionalVarDeclList EmptyOptionalVarDeclList) { visit(); }
     public void visit(OptionalVarDeclList_ OptionalVarDeclList_) { visit(); }
-    public void visit(ERROR_NewVarDecl ERROR_NewVarDecl) { visit(); }
     public void visit(NewVarDecl_ NewVarDecl_) { visit(); }
     public void visit(VarDecl VarDecl) { visit(); }
     public void visit(NoOtherConstDeclatations NoOtherConstDeclatations) { visit(); }
@@ -195,7 +201,7 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(BoolConstant BoolConstant) { visit(); }
     public void visit(CharConstant CharConstant) { visit(); }
     public void visit(NumConstant NumConstant) { visit(); }
-    public void visit(ConstDecl_ ConstDecl_) { visit(); }
+    public void visit(ConstDecl ConstDecl) { visit(); }
     public void visit(EmptyGlobalMethodDeclList EmptyGlobalMethodDeclList) { visit(); }
     public void visit(GlobalMethodDeclList_Ident GlobalMethodDeclList_Ident) { visit(); }
     public void visit(GlobalMethodDeclList_Void GlobalMethodDeclList_Void) { visit(); }

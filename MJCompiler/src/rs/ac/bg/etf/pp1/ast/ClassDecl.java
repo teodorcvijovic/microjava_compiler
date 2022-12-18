@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 17/11/2022 0:24:58
+// 18/11/2022 2:36:12
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -9,32 +9,22 @@ public class ClassDecl implements SyntaxNode {
 
     private SyntaxNode parent;
     private int line;
-    private String I1;
-    private OptionalDerivation OptionalDerivation;
+    private ClassNameAndDerivation ClassNameAndDerivation;
     private ClassBody ClassBody;
 
-    public ClassDecl (String I1, OptionalDerivation OptionalDerivation, ClassBody ClassBody) {
-        this.I1=I1;
-        this.OptionalDerivation=OptionalDerivation;
-        if(OptionalDerivation!=null) OptionalDerivation.setParent(this);
+    public ClassDecl (ClassNameAndDerivation ClassNameAndDerivation, ClassBody ClassBody) {
+        this.ClassNameAndDerivation=ClassNameAndDerivation;
+        if(ClassNameAndDerivation!=null) ClassNameAndDerivation.setParent(this);
         this.ClassBody=ClassBody;
         if(ClassBody!=null) ClassBody.setParent(this);
     }
 
-    public String getI1() {
-        return I1;
+    public ClassNameAndDerivation getClassNameAndDerivation() {
+        return ClassNameAndDerivation;
     }
 
-    public void setI1(String I1) {
-        this.I1=I1;
-    }
-
-    public OptionalDerivation getOptionalDerivation() {
-        return OptionalDerivation;
-    }
-
-    public void setOptionalDerivation(OptionalDerivation OptionalDerivation) {
-        this.OptionalDerivation=OptionalDerivation;
+    public void setClassNameAndDerivation(ClassNameAndDerivation ClassNameAndDerivation) {
+        this.ClassNameAndDerivation=ClassNameAndDerivation;
     }
 
     public ClassBody getClassBody() {
@@ -66,18 +56,18 @@ public class ClassDecl implements SyntaxNode {
     }
 
     public void childrenAccept(Visitor visitor) {
-        if(OptionalDerivation!=null) OptionalDerivation.accept(visitor);
+        if(ClassNameAndDerivation!=null) ClassNameAndDerivation.accept(visitor);
         if(ClassBody!=null) ClassBody.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
-        if(OptionalDerivation!=null) OptionalDerivation.traverseTopDown(visitor);
+        if(ClassNameAndDerivation!=null) ClassNameAndDerivation.traverseTopDown(visitor);
         if(ClassBody!=null) ClassBody.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
-        if(OptionalDerivation!=null) OptionalDerivation.traverseBottomUp(visitor);
+        if(ClassNameAndDerivation!=null) ClassNameAndDerivation.traverseBottomUp(visitor);
         if(ClassBody!=null) ClassBody.traverseBottomUp(visitor);
         accept(visitor);
     }
@@ -87,11 +77,8 @@ public class ClassDecl implements SyntaxNode {
         buffer.append(tab);
         buffer.append("ClassDecl(\n");
 
-        buffer.append(" "+tab+I1);
-        buffer.append("\n");
-
-        if(OptionalDerivation!=null)
-            buffer.append(OptionalDerivation.toString("  "+tab));
+        if(ClassNameAndDerivation!=null)
+            buffer.append(ClassNameAndDerivation.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");

@@ -76,8 +76,8 @@ nonterminal GlobalMethodDeclList GlobalMethodDeclList;
 
 /* ConstDecl */
 nonterminal ConstDecl ConstDecl;
-nonterminal Constant Constant;
 nonterminal OtherConstDeclarations OtherConstDeclarations;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Constant;
 
 /* VarDecl */
 nonterminal VarDecl VarDecl;
@@ -87,17 +87,21 @@ nonterminal OptionalSquare OptionalSquare;
 nonterminal Class_VarDecl Class_VarDecl;
 nonterminal Class_NewVarDecl Class_NewVarDecl;
 nonterminal Class_OptionalVarDeclList Class_OptionalVarDeclList;
+nonterminal Global_VarDecl Global_VarDecl;
+nonterminal Global_NewVarDecl Global_NewVarDecl;
+nonterminal Global_OptionalVarDeclList Global_OptionalVarDeclList;
 
 /* ClassDecl */
 nonterminal ClassDecl ClassDecl;
 nonterminal ClassBody ClassBody;
 nonterminal Dummy_ClassBody Dummy_ClassBody;
-nonterminal OptionalDerivation OptionalDerivation;
 nonterminal Class_VarDeclList Class_VarDeclList;
 nonterminal ConstructorMethodLists ConstructorMethodLists;
 nonterminal ClassMethodConstructorLists ClassMethodConstructorLists;
 nonterminal MethodDeclList MethodDeclList;
 nonterminal ConstructorDeclList ConstructorDeclList;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ClassNameAndDerivation;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct OptionalDerivation;
 
 /* ConstructorDecl */
 nonterminal ConstructorDecl ConstructorDecl;
@@ -114,7 +118,7 @@ nonterminal OneFormPar OneFormPar;
 nonterminal TypeIdentList TypeIdentList;
 
 /* Type */
-nonterminal Type Type;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Type;
 
 /* Statement */
 nonterminal Statement Statement;
@@ -197,7 +201,7 @@ Program ::= (Program_) PROGRAM ProgramName:P1 GlobalDeclList:G2 LBRACE GlobalMet
 ProgramName ::= (ProgramName) IDENT:programName {: RESULT=new ProgramName(programName); RESULT.setLine(programNameleft); :};
 
 GlobalDeclList ::= (GlobalDeclListConst) 	GlobalDeclList:G1 ConstDecl:C2 {: RESULT=new GlobalDeclListConst(G1, C2); RESULT.setLine(G1left); :} 
-				 | (GlobalDeclListVar) 		GlobalDeclList:G1 VarDecl:V2 {: RESULT=new GlobalDeclListVar(G1, V2); RESULT.setLine(G1left); :}   
+				 | (GlobalDeclListVar) 		GlobalDeclList:G1 Global_VarDecl:G2 {: RESULT=new GlobalDeclListVar(G1, G2); RESULT.setLine(G1left); :}   
 				 | (GlobalDeclListClass) 	GlobalDeclList:G1 ClassDecl:C2 {: RESULT=new GlobalDeclListClass(G1, C2); RESULT.setLine(G1left); :} 
 				 | (EmptyGlobalDeclList) {: RESULT=new EmptyGlobalDeclList(); :} 	/* empty */
 				 ;
@@ -209,14 +213,14 @@ GlobalMethodDeclList ::= (GlobalMethodDeclList_Void) 	GlobalMethodDeclList:G1 VO
 				   	   
 /***** ConstDecl *******/		   
 				   
-ConstDecl ::= (ConstDecl_) CONST Type:T1 IDENT:I2 EQ Constant:C3 OtherConstDeclarations:O4 SEMICOLON {: RESULT=new ConstDecl_(T1, I2, C3, O4); RESULT.setLine(T1left); :} ;
+ConstDecl ::= (ConstDecl) CONST Type:T1 IDENT:firstIdentName EQ Constant:C2 OtherConstDeclarations:O3 SEMICOLON {: RESULT=new ConstDecl(T1, firstIdentName, C2, O3); RESULT.setLine(T1left); :} ;
 
-Constant ::= 	(NumConstant) 	NUM_CONST:N1 {: RESULT=new NumConstant(N1); RESULT.setLine(N1left); :}
-		   	|   (CharConstant) 	CHAR_CONST:C1 {: RESULT=new CharConstant(C1); RESULT.setLine(C1left); :}
-			|   (BoolConstant) 	BOOL_CONST:B1 {: RESULT=new BoolConstant(B1); RESULT.setLine(B1left); :}
+Constant ::= 	(NumConstant) 	NUM_CONST:value {: RESULT=new NumConstant(value); RESULT.setLine(valueleft); :}
+		   	|   (CharConstant) 	CHAR_CONST:value {: RESULT=new CharConstant(value); RESULT.setLine(valueleft); :}
+			|   (BoolConstant) 	BOOL_CONST:value {: RESULT=new BoolConstant(value); RESULT.setLine(valueleft); :}
 			;
 			   
-OtherConstDeclarations ::= 	(OtherConstDeclarations_) 	OtherConstDeclarations:O1 COMMA IDENT:I2 EQ Constant:C3 {: RESULT=new OtherConstDeclarations_(O1, I2, C3); RESULT.setLine(O1left); :} 
+OtherConstDeclarations ::= 	(OtherConstDeclarations_) 	OtherConstDeclarations:O1 COMMA IDENT:identName EQ Constant:C2 {: RESULT=new OtherConstDeclarations_(O1, identName, C2); RESULT.setLine(O1left); :} 
 						|	(NoOtherConstDeclatations) {: RESULT=new NoOtherConstDeclatations(); :} 	/* empty */
 						;
 
@@ -224,14 +228,23 @@ OtherConstDeclarations ::= 	(OtherConstDeclarations_) 	OtherConstDeclarations:O1
 				   
 VarDecl ::= (VarDecl) Type:T1 NewVarDecl:N2 OptionalVarDeclList:O3 SEMICOLON {: RESULT=new VarDecl(T1, N2, O3); RESULT.setLine(T1left); :};
 
-NewVarDecl ::= (NewVarDecl_) 		IDENT:I1 OptionalSquare:O2 {: RESULT=new NewVarDecl_(I1, O2); RESULT.setLine(I1left); :}
-			|  (ERROR_NewVarDecl) 	error:l {: parser.report_error("Greska pri deklaraciji globalne promenljive u liniji: " + lleft, null); :} {: RESULT=new ERROR_NewVarDecl(); :}
-			;
+NewVarDecl ::= (NewVarDecl_) IDENT:varName OptionalSquare:O1 {: RESULT=new NewVarDecl_(varName, O1); RESULT.setLine(varNameleft); :};
 
 				 
 OptionalVarDeclList ::= (OptionalVarDeclList_) 		OptionalVarDeclList:O1 COMMA NewVarDecl:N2 {: RESULT=new OptionalVarDeclList_(O1, N2); RESULT.setLine(O1left); :}
 					 | 	(EmptyOptionalVarDeclList) {: RESULT=new EmptyOptionalVarDeclList(); :} 	/* empty */
-					 |	(ERROR_OptinalVarDeclList)	error:l {: parser.report_error("Greska pri deklaraciji globalne promenljive u liniji: " + lleft, null); :} {: RESULT=new ERROR_OptinalVarDeclList(); :}
+					 ;
+					 
+Global_VarDecl ::= (Global_VarDecl) Type:T1 Global_NewVarDecl:G2 Global_OptionalVarDeclList:G3 SEMICOLON {: RESULT=new Global_VarDecl(T1, G2, G3); RESULT.setLine(T1left); :};
+
+Global_NewVarDecl ::= (Global_NewVarDecl_) 		IDENT:varName OptionalSquare:O1 {: RESULT=new Global_NewVarDecl_(varName, O1); RESULT.setLine(varNameleft); :}
+			|  (ERROR_NewGlobalVarDecl) 	error:l {: parser.report_error("Greska pri deklaraciji globalne promenljive u liniji: " + lleft, null); :} {: RESULT=new ERROR_NewGlobalVarDecl(); :}
+			;
+
+				 
+Global_OptionalVarDeclList ::= (Global_OptionalVarDeclList_) 		Global_OptionalVarDeclList:G1 COMMA Global_NewVarDecl:G2 {: RESULT=new Global_OptionalVarDeclList_(G1, G2); RESULT.setLine(G1left); :}
+					 | 	(Global_EmptyOptionalVarDeclList) {: RESULT=new Global_EmptyOptionalVarDeclList(); :} 	/* empty */
+					 |	(ERROR_OptinalGlobalVarDeclList)	error:l {: parser.report_error("Greska pri deklaraciji globalne promenljive u liniji: " + lleft, null); :} {: RESULT=new ERROR_OptinalGlobalVarDeclList(); :}
 					 ;
 					 
 OptionalSquare ::= (OptionalSquare_) 	LSQUARE RSQUARE {: RESULT=new OptionalSquare_(); :}
@@ -245,7 +258,7 @@ Class_VarDecl ::= (Class_VarDecl_) 		Type:T1 Class_NewVarDecl:C2 Class_OptionalV
 				| (ERROR_Class_VarDecl)	error:l {: parser.report_error("Greska pri deklarisanju polja klase u liniji " + lleft, null); :} {: RESULT=new ERROR_Class_VarDecl(); :}
 				;	
 
-Class_NewVarDecl ::= (Class_NewVarDecl) IDENT:I1 OptionalSquare:O2 {: RESULT=new Class_NewVarDecl(I1, O2); RESULT.setLine(I1left); :};
+Class_NewVarDecl ::= (Class_NewVarDecl) IDENT:varName OptionalSquare:O1 {: RESULT=new Class_NewVarDecl(varName, O1); RESULT.setLine(varNameleft); :};
 
 Class_OptionalVarDeclList ::= 	(Class_OptionalVarDeclList_) 		Class_OptionalVarDeclList:C1 COMMA Class_NewVarDecl:C2 {: RESULT=new Class_OptionalVarDeclList_(C1, C2); RESULT.setLine(C1left); :}
 					 		| 	(Class_EmptyOptionalVarDeclList) {: RESULT=new Class_EmptyOptionalVarDeclList(); :} 	/* empty */
@@ -253,7 +266,9 @@ Class_OptionalVarDeclList ::= 	(Class_OptionalVarDeclList_) 		Class_OptionalVarD
 
 /*********** ClassDecl **********/
 
-ClassDecl ::= (ClassDecl) CLASS IDENT:I1 OptionalDerivation:O2 LBRACE ClassBody:C3 RBRACE {: RESULT=new ClassDecl(I1, O2, C3); RESULT.setLine(I1left); :};
+ClassDecl ::= (ClassDecl) ClassNameAndDerivation:C1 LBRACE ClassBody:C2 RBRACE {: RESULT=new ClassDecl(C1, C2); RESULT.setLine(C1left); :};
+
+ClassNameAndDerivation ::= (ClassNameAndDerivation) CLASS IDENT:className OptionalDerivation:O1 {: RESULT=new ClassNameAndDerivation(className, O1); RESULT.setLine(classNameleft); :};
 
 ClassBody ::= (ClassBody) Class_VarDeclList:C1 Dummy_ClassBody:D2 ConstructorMethodLists:C3 {: RESULT=new ClassBody(C1, D2, C3); RESULT.setLine(C1left); :};
 
@@ -263,7 +278,7 @@ Class_VarDeclList ::= 	(Class_VarDeclList_) 		Class_VarDeclList:C1 Class_VarDecl
 					| 	(Class_EmptyVarDeclList) {: RESULT=new Class_EmptyVarDeclList(); :} 	/* empty */
 					;
 
-OptionalDerivation ::= 	(OptionalDerivation_) 	EXTENDS Type:T1 {: RESULT=new OptionalDerivation_(T1); RESULT.setLine(T1left); :} 
+OptionalDerivation ::= 	(OptionalDerivation_) 	EXTENDS Type:T1 {: RESULT=new OptionalDerivation_(T1); RESULT.setLine(T1left); :}
 					|	(NoDerivation) {: RESULT=new NoDerivation(); :} 			/* empty */
 					|	(ClassDerivation) 		error:l {: parser.report_error("Greska pri parsiranju deklaracije prosirenja natklase u liniji: " + lleft, null); :} {: RESULT=new ClassDerivation(); :}
 					;
@@ -326,7 +341,7 @@ TypeIdentList ::= (TypeIdentList_) 		TypeIdentList:T1 COMMA OneFormPar:O2 {: RES
 				  
 /******** Type *****/
 
-Type ::= (Type) IDENT:I1 {: RESULT=new Type(I1); RESULT.setLine(I1left); :};
+Type ::= (Type) IDENT:typeName {: RESULT=new Type(typeName); RESULT.setLine(typeNameleft); :};
 
 /******** Statement ********/
 
@@ -467,7 +482,7 @@ ParenWithOptionalActPars ::= (ParenWithOptionalActPars) LPAREN OptionalActPars:O
 
 /************* Designator ************/
 
-Designator ::= (Designator) IDENT:I1 IdentExprList:I2 {: RESULT=new Designator(I1, I2); RESULT.setLine(I1left); :};
+Designator ::= (Designator) IDENT:designatorIdentName IdentExprList:I1 {: RESULT=new Designator(designatorIdentName, I1); RESULT.setLine(designatorIdentNameleft); :};
 
 IdentExprList ::= (IdentExprListIdent) 	IdentExprList:I1 DOT IDENT:I2 {: RESULT=new IdentExprListIdent(I1, I2); RESULT.setLine(I1left); :}
 				| (IdentExprListExpr) 	IdentExprList:I1 LSQUARE Expr:E2 RSQUARE {: RESULT=new IdentExprListExpr(I1, E2); RESULT.setLine(I1left); :}

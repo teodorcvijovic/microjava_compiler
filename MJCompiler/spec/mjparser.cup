@@ -74,15 +74,19 @@ nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgramName, Program;
 nonterminal GlobalDeclList, GlobalMethodDeclList;
 
 /* ConstDecl */
-nonterminal ConstDecl, Constant, OtherConstDeclarations;
+nonterminal ConstDecl, OtherConstDeclarations;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Constant;
 
 /* VarDecl */
 nonterminal VarDecl, NewVarDecl, OptionalVarDeclList, OptionalSquare;
 nonterminal Class_VarDecl, Class_NewVarDecl, Class_OptionalVarDeclList;
+nonterminal Global_VarDecl, Global_NewVarDecl, Global_OptionalVarDeclList;
 
 /* ClassDecl */
-nonterminal ClassDecl, ClassBody, Dummy_ClassBody, OptionalDerivation, Class_VarDeclList, ConstructorMethodLists, ClassMethodConstructorLists, MethodDeclList;
+nonterminal ClassDecl, ClassBody, Dummy_ClassBody, Class_VarDeclList, ConstructorMethodLists, ClassMethodConstructorLists, MethodDeclList;
 nonterminal ConstructorDeclList;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ClassNameAndDerivation;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct OptionalDerivation;
 
 /* ConstructorDecl */
 nonterminal ConstructorDecl, FormParsOptional, StatementList, VarDeclList;
@@ -94,7 +98,7 @@ nonterminal MethodDecl;
 nonterminal FormPars, OneFormPar, TypeIdentList;
 
 /* Type */
-nonterminal Type;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Type;
 
 /* Statement */
 nonterminal Statement, Unmatched, Matched, OptionalExpr, PrintNumConst, DesignatorForeach;
@@ -154,7 +158,7 @@ Program ::= (Program_) PROGRAM ProgramName GlobalDeclList LBRACE GlobalMethodDec
 ProgramName ::= (ProgramName) IDENT:programName;
 
 GlobalDeclList ::= (GlobalDeclListConst) 	GlobalDeclList ConstDecl 
-				 | (GlobalDeclListVar) 		GlobalDeclList VarDecl   
+				 | (GlobalDeclListVar) 		GlobalDeclList Global_VarDecl   
 				 | (GlobalDeclListClass) 	GlobalDeclList ClassDecl 
 				 | (EmptyGlobalDeclList) 	/* empty */
 				 ;
@@ -166,14 +170,14 @@ GlobalMethodDeclList ::= (GlobalMethodDeclList_Void) 	GlobalMethodDeclList VOID 
 				   	   
 /***** ConstDecl *******/		   
 				   
-ConstDecl ::= (ConstDecl_) CONST Type IDENT EQ Constant OtherConstDeclarations SEMICOLON ;
+ConstDecl ::= (ConstDecl) CONST Type IDENT:firstIdentName EQ Constant OtherConstDeclarations SEMICOLON ;
 
-Constant ::= 	(NumConstant) 	NUM_CONST
-		   	|   (CharConstant) 	CHAR_CONST
-			|   (BoolConstant) 	BOOL_CONST
+Constant ::= 	(NumConstant) 	NUM_CONST:value
+		   	|   (CharConstant) 	CHAR_CONST:value
+			|   (BoolConstant) 	BOOL_CONST:value
 			;
 			   
-OtherConstDeclarations ::= 	(OtherConstDeclarations_) 	OtherConstDeclarations COMMA IDENT EQ Constant 
+OtherConstDeclarations ::= 	(OtherConstDeclarations_) 	OtherConstDeclarations COMMA IDENT:identName EQ Constant 
 						|	(NoOtherConstDeclatations) 	/* empty */
 						;
 
@@ -181,14 +185,23 @@ OtherConstDeclarations ::= 	(OtherConstDeclarations_) 	OtherConstDeclarations CO
 				   
 VarDecl ::= (VarDecl) Type NewVarDecl OptionalVarDeclList SEMICOLON;
 
-NewVarDecl ::= (NewVarDecl_) 		IDENT OptionalSquare
-			|  (ERROR_NewVarDecl) 	error:l {: parser.report_error("Greska pri deklaraciji globalne promenljive u liniji: " + lleft, null); :}
-			;
+NewVarDecl ::= (NewVarDecl_) IDENT:varName OptionalSquare;
 
 				 
 OptionalVarDeclList ::= (OptionalVarDeclList_) 		OptionalVarDeclList COMMA NewVarDecl
 					 | 	(EmptyOptionalVarDeclList) 	/* empty */
-					 |	(ERROR_OptinalVarDeclList)	error:l {: parser.report_error("Greska pri deklaraciji globalne promenljive u liniji: " + lleft, null); :}
+					 ;
+					 
+Global_VarDecl ::= (Global_VarDecl) Type Global_NewVarDecl Global_OptionalVarDeclList SEMICOLON;
+
+Global_NewVarDecl ::= (Global_NewVarDecl_) 		IDENT:varName OptionalSquare
+			|  (ERROR_NewGlobalVarDecl) 	error:l {: parser.report_error("Greska pri deklaraciji globalne promenljive u liniji: " + lleft, null); :}
+			;
+
+				 
+Global_OptionalVarDeclList ::= (Global_OptionalVarDeclList_) 		Global_OptionalVarDeclList COMMA Global_NewVarDecl
+					 | 	(Global_EmptyOptionalVarDeclList) 	/* empty */
+					 |	(ERROR_OptinalGlobalVarDeclList)	error:l {: parser.report_error("Greska pri deklaraciji globalne promenljive u liniji: " + lleft, null); :}
 					 ;
 					 
 OptionalSquare ::= (OptionalSquare_) 	LSQUARE RSQUARE
@@ -202,7 +215,7 @@ Class_VarDecl ::= (Class_VarDecl_) 		Type Class_NewVarDecl Class_OptionalVarDecl
 				| (ERROR_Class_VarDecl)	error:l {: parser.report_error("Greska pri deklarisanju polja klase u liniji " + lleft, null); :}
 				;	
 
-Class_NewVarDecl ::= (Class_NewVarDecl) IDENT OptionalSquare;
+Class_NewVarDecl ::= (Class_NewVarDecl) IDENT:varName OptionalSquare;
 
 Class_OptionalVarDeclList ::= 	(Class_OptionalVarDeclList_) 		Class_OptionalVarDeclList COMMA Class_NewVarDecl
 					 		| 	(Class_EmptyOptionalVarDeclList) 	/* empty */
@@ -210,7 +223,9 @@ Class_OptionalVarDeclList ::= 	(Class_OptionalVarDeclList_) 		Class_OptionalVarD
 
 /*********** ClassDecl **********/
 
-ClassDecl ::= (ClassDecl) CLASS IDENT OptionalDerivation LBRACE ClassBody RBRACE;
+ClassDecl ::= (ClassDecl) ClassNameAndDerivation LBRACE ClassBody RBRACE;
+
+ClassNameAndDerivation ::= (ClassNameAndDerivation) CLASS IDENT:className OptionalDerivation;
 
 ClassBody ::= (ClassBody) Class_VarDeclList Dummy_ClassBody ConstructorMethodLists;
 
@@ -220,7 +235,7 @@ Class_VarDeclList ::= 	(Class_VarDeclList_) 		Class_VarDeclList Class_VarDecl
 					| 	(Class_EmptyVarDeclList) 	/* empty */
 					;
 
-OptionalDerivation ::= 	(OptionalDerivation_) 	EXTENDS Type 
+OptionalDerivation ::= 	(OptionalDerivation_) 	EXTENDS Type
 					|	(NoDerivation) 			/* empty */
 					|	(ClassDerivation) 		error:l {: parser.report_error("Greska pri parsiranju deklaracije prosirenja natklase u liniji: " + lleft, null); :}
 					;
@@ -283,7 +298,7 @@ TypeIdentList ::= (TypeIdentList_) 		TypeIdentList COMMA OneFormPar
 				  
 /******** Type *****/
 
-Type ::= (Type) IDENT;
+Type ::= (Type) IDENT:typeName;
 
 /******** Statement ********/
 
@@ -424,7 +439,7 @@ ParenWithOptionalActPars ::= (ParenWithOptionalActPars) LPAREN OptionalActPars R
 
 /************* Designator ************/
 
-Designator ::= (Designator) IDENT IdentExprList;
+Designator ::= (Designator) IDENT:designatorIdentName IdentExprList;
 
 IdentExprList ::= (IdentExprListIdent) 	IdentExprList DOT IDENT
 				| (IdentExprListExpr) 	IdentExprList LSQUARE Expr RSQUARE

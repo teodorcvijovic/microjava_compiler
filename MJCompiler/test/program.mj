@@ -1,13 +1,19 @@
 program MJProgram
-class A {
 
+const int a = 5;
+char b[], v;
 
-	int x;
+class B {
+	int a;
+}
 
+class A extends B {
+	char b[];
 }
 
 {
-	int main() {
-		x.a = y + 5;
-	}
+	void main() int ss;
+	{
+	
+	}	
 }

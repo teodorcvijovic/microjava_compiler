@@ -1,13 +1,13 @@
 // generated with ast extension for cup
 // version 0.8
-// 17/11/2022 0:24:58
+// 18/11/2022 2:36:12
 
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class ERROR_OptinalVarDeclList extends OptionalVarDeclList {
+public class Global_EmptyOptionalVarDeclList extends Global_OptionalVarDeclList {
 
-    public ERROR_OptinalVarDeclList () {
+    public Global_EmptyOptionalVarDeclList () {
     }
 
     public void accept(Visitor visitor) {
@@ -28,10 +28,10 @@ public class ERROR_OptinalVarDeclList extends OptionalVarDeclList {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("ERROR_OptinalVarDeclList(\n");
+        buffer.append("Global_EmptyOptionalVarDeclList(\n");
 
         buffer.append(tab);
-        buffer.append(") [ERROR_OptinalVarDeclList]");
+        buffer.append(") [Global_EmptyOptionalVarDeclList]");
         return buffer.toString();
     }
 }
