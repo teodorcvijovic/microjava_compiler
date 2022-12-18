@@ -1,17 +1,16 @@
 // generated with ast extension for cup
 // version 0.8
-// 18/11/2022 2:36:12
+// 18/11/2022 22:7:1
 
 
 package rs.ac.bg.etf.pp1.ast;
 
 public interface Visitor { 
 
-    public void visit(OptionalDesignatorList OptionalDesignatorList);
     public void visit(Factor Factor);
+    public void visit(OptionalDesignatorList OptionalDesignatorList);
     public void visit(Statement Statement);
     public void visit(OptionalRelopExpr OptionalRelopExpr);
-    public void visit(MethodDecl MethodDecl);
     public void visit(OtherConstDeclarations OtherConstDeclarations);
     public void visit(Or_CondTermList Or_CondTermList);
     public void visit(ExprList ExprList);
@@ -29,6 +28,7 @@ public interface Visitor {
     public void visit(ExprActPars ExprActPars);
     public void visit(Unmatched Unmatched);
     public void visit(NewVarDecl NewVarDecl);
+    public void visit(ReturnOptionalExpr ReturnOptionalExpr);
     public void visit(Program Program);
     public void visit(ConstructorMethodLists ConstructorMethodLists);
     public void visit(OptionalDesignator OptionalDesignator);
@@ -47,7 +47,6 @@ public interface Visitor {
     public void visit(IdentExprList IdentExprList);
     public void visit(MethodDeclList MethodDeclList);
     public void visit(ClassMethodConstructorLists ClassMethodConstructorLists);
-    public void visit(ConstructorDecl ConstructorDecl);
     public void visit(OneFormPar OneFormPar);
     public void visit(DesignatorOptions DesignatorOptions);
     public void visit(Class_VarDeclList Class_VarDeclList);
@@ -56,7 +55,6 @@ public interface Visitor {
     public void visit(Matched Matched);
     public void visit(VarDeclList VarDeclList);
     public void visit(TypeIdentList TypeIdentList);
-    public void visit(OptionalExpr OptionalExpr);
     public void visit(FormParsOptional FormParsOptional);
     public void visit(ConditionIf ConditionIf);
     public void visit(M_Percent M_Percent);
@@ -126,8 +124,8 @@ public interface Visitor {
     public void visit(DesignatorWithOptions DesignatorWithOptions);
     public void visit(NoPrintNumConst NoPrintNumConst);
     public void visit(PrintNumConst_ PrintNumConst_);
-    public void visit(NoExpr NoExpr);
-    public void visit(OptionalExpr_ OptionalExpr_);
+    public void visit(NoReturnExpr NoReturnExpr);
+    public void visit(ReturnOptionalExpr_ ReturnOptionalExpr_);
     public void visit(DesignatorForeach DesignatorForeach);
     public void visit(M_Block M_Block);
     public void visit(M_Foreach M_Foreach);
@@ -149,19 +147,22 @@ public interface Visitor {
     public void visit(ERROR_OneFormPar ERROR_OneFormPar);
     public void visit(OneFormPar_ OneFormPar_);
     public void visit(FormPars FormPars);
-    public void visit(MethodDeclDerived1 MethodDeclDerived1);
+    public void visit(MethodDecl MethodDecl);
     public void visit(EmptyStatementList EmptyStatementList);
     public void visit(StatementList_ StatementList_);
     public void visit(NoFormPars NoFormPars);
     public void visit(FormPars_ FormPars_);
     public void visit(EmptyClassVarDeclList EmptyClassVarDeclList);
     public void visit(VarDeclList_ VarDeclList_);
-    public void visit(ConstructorDeclDerived1 ConstructorDeclDerived1);
+    public void visit(ConstructorDecl ConstructorDecl);
+    public void visit(MethodDecl_Ident MethodDecl_Ident);
+    public void visit(MethodDecl_Void MethodDecl_Void);
     public void visit(NoConstructorDeclList NoConstructorDeclList);
     public void visit(ConstructorDeclList_ ConstructorDeclList_);
     public void visit(OneMethodDecl OneMethodDecl);
     public void visit(MethodDeclList_Void MethodDeclList_Void);
     public void visit(MethodDeclList_Ident MethodDeclList_Ident);
+    public void visit(ConstructorDecl_Start ConstructorDecl_Start);
     public void visit(EmptyClassMethodConstructorLists EmptyClassMethodConstructorLists);
     public void visit(Methods_Void Methods_Void);
     public void visit(Methods_Ident Methods_Ident);
@@ -202,6 +203,8 @@ public interface Visitor {
     public void visit(CharConstant CharConstant);
     public void visit(NumConstant NumConstant);
     public void visit(ConstDecl ConstDecl);
+    public void visit(GlobalMethodDecl_Ident GlobalMethodDecl_Ident);
+    public void visit(GlobalMethodDecl_Void GlobalMethodDecl_Void);
     public void visit(EmptyGlobalMethodDeclList EmptyGlobalMethodDeclList);
     public void visit(GlobalMethodDeclList_Ident GlobalMethodDeclList_Ident);
     public void visit(GlobalMethodDeclList_Void GlobalMethodDeclList_Void);

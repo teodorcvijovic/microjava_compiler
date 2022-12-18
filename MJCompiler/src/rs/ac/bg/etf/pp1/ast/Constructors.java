@@ -1,27 +1,28 @@
 // generated with ast extension for cup
 // version 0.8
-// 18/11/2022 2:36:12
+// 18/11/2022 22:7:1
 
 
 package rs.ac.bg.etf.pp1.ast;
 
 public class Constructors extends ClassMethodConstructorLists {
 
-    private String I1;
+    private ConstructorDecl_Start ConstructorDecl_Start;
     private ConstructorDeclList ConstructorDeclList;
 
-    public Constructors (String I1, ConstructorDeclList ConstructorDeclList) {
-        this.I1=I1;
+    public Constructors (ConstructorDecl_Start ConstructorDecl_Start, ConstructorDeclList ConstructorDeclList) {
+        this.ConstructorDecl_Start=ConstructorDecl_Start;
+        if(ConstructorDecl_Start!=null) ConstructorDecl_Start.setParent(this);
         this.ConstructorDeclList=ConstructorDeclList;
         if(ConstructorDeclList!=null) ConstructorDeclList.setParent(this);
     }
 
-    public String getI1() {
-        return I1;
+    public ConstructorDecl_Start getConstructorDecl_Start() {
+        return ConstructorDecl_Start;
     }
 
-    public void setI1(String I1) {
-        this.I1=I1;
+    public void setConstructorDecl_Start(ConstructorDecl_Start ConstructorDecl_Start) {
+        this.ConstructorDecl_Start=ConstructorDecl_Start;
     }
 
     public ConstructorDeclList getConstructorDeclList() {
@@ -37,15 +38,18 @@ public class Constructors extends ClassMethodConstructorLists {
     }
 
     public void childrenAccept(Visitor visitor) {
+        if(ConstructorDecl_Start!=null) ConstructorDecl_Start.accept(visitor);
         if(ConstructorDeclList!=null) ConstructorDeclList.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
+        if(ConstructorDecl_Start!=null) ConstructorDecl_Start.traverseTopDown(visitor);
         if(ConstructorDeclList!=null) ConstructorDeclList.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
+        if(ConstructorDecl_Start!=null) ConstructorDecl_Start.traverseBottomUp(visitor);
         if(ConstructorDeclList!=null) ConstructorDeclList.traverseBottomUp(visitor);
         accept(visitor);
     }
@@ -55,7 +59,10 @@ public class Constructors extends ClassMethodConstructorLists {
         buffer.append(tab);
         buffer.append("Constructors(\n");
 
-        buffer.append(" "+tab+I1);
+        if(ConstructorDecl_Start!=null)
+            buffer.append(ConstructorDecl_Start.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
         buffer.append("\n");
 
         if(ConstructorDeclList!=null)

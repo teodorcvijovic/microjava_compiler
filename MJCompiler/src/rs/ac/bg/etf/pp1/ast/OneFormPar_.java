@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 18/11/2022 2:36:12
+// 18/11/2022 22:7:1
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -8,13 +8,13 @@ package rs.ac.bg.etf.pp1.ast;
 public class OneFormPar_ extends OneFormPar {
 
     private Type Type;
-    private String I2;
+    private String formParName;
     private OptionalSquare OptionalSquare;
 
-    public OneFormPar_ (Type Type, String I2, OptionalSquare OptionalSquare) {
+    public OneFormPar_ (Type Type, String formParName, OptionalSquare OptionalSquare) {
         this.Type=Type;
         if(Type!=null) Type.setParent(this);
-        this.I2=I2;
+        this.formParName=formParName;
         this.OptionalSquare=OptionalSquare;
         if(OptionalSquare!=null) OptionalSquare.setParent(this);
     }
@@ -27,12 +27,12 @@ public class OneFormPar_ extends OneFormPar {
         this.Type=Type;
     }
 
-    public String getI2() {
-        return I2;
+    public String getFormParName() {
+        return formParName;
     }
 
-    public void setI2(String I2) {
-        this.I2=I2;
+    public void setFormParName(String formParName) {
+        this.formParName=formParName;
     }
 
     public OptionalSquare getOptionalSquare() {
@@ -75,7 +75,7 @@ public class OneFormPar_ extends OneFormPar {
             buffer.append(tab+"  null");
         buffer.append("\n");
 
-        buffer.append(" "+tab+I2);
+        buffer.append(" "+tab+formParName);
         buffer.append("\n");
 
         if(OptionalSquare!=null)

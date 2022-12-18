@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 18/11/2022 2:36:12
+// 18/11/2022 22:7:1
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -8,13 +8,14 @@ package rs.ac.bg.etf.pp1.ast;
 public class GlobalMethodDeclList_Void extends GlobalMethodDeclList {
 
     private GlobalMethodDeclList GlobalMethodDeclList;
-    private String I2;
+    private GlobalMethodDecl_Void GlobalMethodDecl_Void;
     private MethodDecl MethodDecl;
 
-    public GlobalMethodDeclList_Void (GlobalMethodDeclList GlobalMethodDeclList, String I2, MethodDecl MethodDecl) {
+    public GlobalMethodDeclList_Void (GlobalMethodDeclList GlobalMethodDeclList, GlobalMethodDecl_Void GlobalMethodDecl_Void, MethodDecl MethodDecl) {
         this.GlobalMethodDeclList=GlobalMethodDeclList;
         if(GlobalMethodDeclList!=null) GlobalMethodDeclList.setParent(this);
-        this.I2=I2;
+        this.GlobalMethodDecl_Void=GlobalMethodDecl_Void;
+        if(GlobalMethodDecl_Void!=null) GlobalMethodDecl_Void.setParent(this);
         this.MethodDecl=MethodDecl;
         if(MethodDecl!=null) MethodDecl.setParent(this);
     }
@@ -27,12 +28,12 @@ public class GlobalMethodDeclList_Void extends GlobalMethodDeclList {
         this.GlobalMethodDeclList=GlobalMethodDeclList;
     }
 
-    public String getI2() {
-        return I2;
+    public GlobalMethodDecl_Void getGlobalMethodDecl_Void() {
+        return GlobalMethodDecl_Void;
     }
 
-    public void setI2(String I2) {
-        this.I2=I2;
+    public void setGlobalMethodDecl_Void(GlobalMethodDecl_Void GlobalMethodDecl_Void) {
+        this.GlobalMethodDecl_Void=GlobalMethodDecl_Void;
     }
 
     public MethodDecl getMethodDecl() {
@@ -49,17 +50,20 @@ public class GlobalMethodDeclList_Void extends GlobalMethodDeclList {
 
     public void childrenAccept(Visitor visitor) {
         if(GlobalMethodDeclList!=null) GlobalMethodDeclList.accept(visitor);
+        if(GlobalMethodDecl_Void!=null) GlobalMethodDecl_Void.accept(visitor);
         if(MethodDecl!=null) MethodDecl.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
         if(GlobalMethodDeclList!=null) GlobalMethodDeclList.traverseTopDown(visitor);
+        if(GlobalMethodDecl_Void!=null) GlobalMethodDecl_Void.traverseTopDown(visitor);
         if(MethodDecl!=null) MethodDecl.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
         if(GlobalMethodDeclList!=null) GlobalMethodDeclList.traverseBottomUp(visitor);
+        if(GlobalMethodDecl_Void!=null) GlobalMethodDecl_Void.traverseBottomUp(visitor);
         if(MethodDecl!=null) MethodDecl.traverseBottomUp(visitor);
         accept(visitor);
     }
@@ -75,7 +79,10 @@ public class GlobalMethodDeclList_Void extends GlobalMethodDeclList {
             buffer.append(tab+"  null");
         buffer.append("\n");
 
-        buffer.append(" "+tab+I2);
+        if(GlobalMethodDecl_Void!=null)
+            buffer.append(GlobalMethodDecl_Void.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
         buffer.append("\n");
 
         if(MethodDecl!=null)

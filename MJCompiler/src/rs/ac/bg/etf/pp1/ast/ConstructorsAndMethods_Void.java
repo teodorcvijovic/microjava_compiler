@@ -1,32 +1,34 @@
 // generated with ast extension for cup
 // version 0.8
-// 18/11/2022 2:36:12
+// 18/11/2022 22:7:1
 
 
 package rs.ac.bg.etf.pp1.ast;
 
 public class ConstructorsAndMethods_Void extends ClassMethodConstructorLists {
 
-    private String I1;
+    private ConstructorDecl_Start ConstructorDecl_Start;
     private ConstructorDeclList ConstructorDeclList;
-    private String I3;
+    private MethodDecl_Void MethodDecl_Void;
     private MethodDeclList MethodDeclList;
 
-    public ConstructorsAndMethods_Void (String I1, ConstructorDeclList ConstructorDeclList, String I3, MethodDeclList MethodDeclList) {
-        this.I1=I1;
+    public ConstructorsAndMethods_Void (ConstructorDecl_Start ConstructorDecl_Start, ConstructorDeclList ConstructorDeclList, MethodDecl_Void MethodDecl_Void, MethodDeclList MethodDeclList) {
+        this.ConstructorDecl_Start=ConstructorDecl_Start;
+        if(ConstructorDecl_Start!=null) ConstructorDecl_Start.setParent(this);
         this.ConstructorDeclList=ConstructorDeclList;
         if(ConstructorDeclList!=null) ConstructorDeclList.setParent(this);
-        this.I3=I3;
+        this.MethodDecl_Void=MethodDecl_Void;
+        if(MethodDecl_Void!=null) MethodDecl_Void.setParent(this);
         this.MethodDeclList=MethodDeclList;
         if(MethodDeclList!=null) MethodDeclList.setParent(this);
     }
 
-    public String getI1() {
-        return I1;
+    public ConstructorDecl_Start getConstructorDecl_Start() {
+        return ConstructorDecl_Start;
     }
 
-    public void setI1(String I1) {
-        this.I1=I1;
+    public void setConstructorDecl_Start(ConstructorDecl_Start ConstructorDecl_Start) {
+        this.ConstructorDecl_Start=ConstructorDecl_Start;
     }
 
     public ConstructorDeclList getConstructorDeclList() {
@@ -37,12 +39,12 @@ public class ConstructorsAndMethods_Void extends ClassMethodConstructorLists {
         this.ConstructorDeclList=ConstructorDeclList;
     }
 
-    public String getI3() {
-        return I3;
+    public MethodDecl_Void getMethodDecl_Void() {
+        return MethodDecl_Void;
     }
 
-    public void setI3(String I3) {
-        this.I3=I3;
+    public void setMethodDecl_Void(MethodDecl_Void MethodDecl_Void) {
+        this.MethodDecl_Void=MethodDecl_Void;
     }
 
     public MethodDeclList getMethodDeclList() {
@@ -58,18 +60,24 @@ public class ConstructorsAndMethods_Void extends ClassMethodConstructorLists {
     }
 
     public void childrenAccept(Visitor visitor) {
+        if(ConstructorDecl_Start!=null) ConstructorDecl_Start.accept(visitor);
         if(ConstructorDeclList!=null) ConstructorDeclList.accept(visitor);
+        if(MethodDecl_Void!=null) MethodDecl_Void.accept(visitor);
         if(MethodDeclList!=null) MethodDeclList.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
+        if(ConstructorDecl_Start!=null) ConstructorDecl_Start.traverseTopDown(visitor);
         if(ConstructorDeclList!=null) ConstructorDeclList.traverseTopDown(visitor);
+        if(MethodDecl_Void!=null) MethodDecl_Void.traverseTopDown(visitor);
         if(MethodDeclList!=null) MethodDeclList.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
+        if(ConstructorDecl_Start!=null) ConstructorDecl_Start.traverseBottomUp(visitor);
         if(ConstructorDeclList!=null) ConstructorDeclList.traverseBottomUp(visitor);
+        if(MethodDecl_Void!=null) MethodDecl_Void.traverseBottomUp(visitor);
         if(MethodDeclList!=null) MethodDeclList.traverseBottomUp(visitor);
         accept(visitor);
     }
@@ -79,7 +87,10 @@ public class ConstructorsAndMethods_Void extends ClassMethodConstructorLists {
         buffer.append(tab);
         buffer.append("ConstructorsAndMethods_Void(\n");
 
-        buffer.append(" "+tab+I1);
+        if(ConstructorDecl_Start!=null)
+            buffer.append(ConstructorDecl_Start.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
         buffer.append("\n");
 
         if(ConstructorDeclList!=null)
@@ -88,7 +99,10 @@ public class ConstructorsAndMethods_Void extends ClassMethodConstructorLists {
             buffer.append(tab+"  null");
         buffer.append("\n");
 
-        buffer.append(" "+tab+I3);
+        if(MethodDecl_Void!=null)
+            buffer.append(MethodDecl_Void.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
         buffer.append("\n");
 
         if(MethodDeclList!=null)

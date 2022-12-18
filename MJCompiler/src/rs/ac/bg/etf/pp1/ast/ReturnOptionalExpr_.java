@@ -1,15 +1,15 @@
 // generated with ast extension for cup
 // version 0.8
-// 18/11/2022 2:36:12
+// 18/11/2022 22:7:1
 
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class OptionalExpr_ extends OptionalExpr {
+public class ReturnOptionalExpr_ extends ReturnOptionalExpr {
 
     private Expr Expr;
 
-    public OptionalExpr_ (Expr Expr) {
+    public ReturnOptionalExpr_ (Expr Expr) {
         this.Expr=Expr;
         if(Expr!=null) Expr.setParent(this);
     }
@@ -43,7 +43,7 @@ public class OptionalExpr_ extends OptionalExpr {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("OptionalExpr_(\n");
+        buffer.append("ReturnOptionalExpr_(\n");
 
         if(Expr!=null)
             buffer.append(Expr.toString("  "+tab));
@@ -52,7 +52,7 @@ public class OptionalExpr_ extends OptionalExpr {
         buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [OptionalExpr_]");
+        buffer.append(") [ReturnOptionalExpr_]");
         return buffer.toString();
     }
 }

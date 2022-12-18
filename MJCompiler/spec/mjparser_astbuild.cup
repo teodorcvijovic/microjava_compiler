@@ -70,7 +70,7 @@ terminal SEMICOLON, COLON, COMMA, DOT, LPAREN, RPAREN, LSQUARE, RSQUARE, LBRACE,
 /******************* nonterminals **********************/
 
 /* Program */
-nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgramName, Program;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgramName, Program, GlobalMethodDecl_Void, GlobalMethodDecl_Ident;
 nonterminal GlobalDeclList GlobalDeclList;
 nonterminal GlobalMethodDeclList GlobalMethodDeclList;
 
@@ -100,7 +100,8 @@ nonterminal ConstructorMethodLists ConstructorMethodLists;
 nonterminal ClassMethodConstructorLists ClassMethodConstructorLists;
 nonterminal MethodDeclList MethodDeclList;
 nonterminal ConstructorDeclList ConstructorDeclList;
-nonterminal rs.etf.pp1.symboltable.concepts.Obj ClassNameAndDerivation;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ClassNameAndDerivation, ConstructorDecl_Start;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj MethodDecl_Void, MethodDecl_Ident;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct OptionalDerivation;
 
 /* ConstructorDecl */
@@ -110,12 +111,12 @@ nonterminal StatementList StatementList;
 nonterminal VarDeclList VarDeclList;
 
 /* MethodDecl */
-nonterminal MethodDecl MethodDecl;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj MethodDecl;
 
 /* FormPars */
 nonterminal FormPars FormPars;
-nonterminal OneFormPar OneFormPar;
 nonterminal TypeIdentList TypeIdentList;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj OneFormPar;
 
 /* Type */
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type;
@@ -124,7 +125,7 @@ nonterminal rs.etf.pp1.symboltable.concepts.Struct Type;
 nonterminal Statement Statement;
 nonterminal Unmatched Unmatched;
 nonterminal Matched Matched;
-nonterminal OptionalExpr OptionalExpr;
+nonterminal ReturnOptionalExpr ReturnOptionalExpr;
 nonterminal PrintNumConst PrintNumConst;
 nonterminal DesignatorForeach DesignatorForeach;
 
@@ -155,19 +156,17 @@ nonterminal CondFact CondFact;
 nonterminal OptionalRelopExpr OptionalRelopExpr;
 
 /* Expr */
-nonterminal Expr Expr;
 nonterminal OptionalMinus OptionalMinus;
-nonterminal AddopTermList AddopTermList;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Expr, AddopTermList;
 
 /* Term */
-nonterminal Term Term;
-nonterminal MulopFactorList MulopFactorList;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Term, MulopFactorList;
 
 /* Factor */
-nonterminal Factor Factor;
 nonterminal OptionalActParsParen OptionalActParsParen;
 nonterminal ExprActPars ExprActPars;
 nonterminal ParenWithOptionalActPars ParenWithOptionalActPars;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Factor;
 
 /* Designator */
 nonterminal Designator Designator;
@@ -206,10 +205,14 @@ GlobalDeclList ::= (GlobalDeclListConst) 	GlobalDeclList:G1 ConstDecl:C2 {: RESU
 				 | (EmptyGlobalDeclList) {: RESULT=new EmptyGlobalDeclList(); :} 	/* empty */
 				 ;
 				  
-GlobalMethodDeclList ::= (GlobalMethodDeclList_Void) 	GlobalMethodDeclList:G1 VOID IDENT:I2 LPAREN MethodDecl:M3 {: RESULT=new GlobalMethodDeclList_Void(G1, I2, M3); RESULT.setLine(G1left); :} 
-					   | (GlobalMethodDeclList_Ident) 	GlobalMethodDeclList:G1 IDENT:I2 IDENT:I3 LPAREN MethodDecl:M4 {: RESULT=new GlobalMethodDeclList_Ident(G1, I2, I3, M4); RESULT.setLine(G1left); :}
+GlobalMethodDeclList ::= (GlobalMethodDeclList_Void) 	GlobalMethodDeclList:G1 GlobalMethodDecl_Void:G2 LPAREN MethodDecl:M3 {: RESULT=new GlobalMethodDeclList_Void(G1, G2, M3); RESULT.setLine(G1left); :} 
+					   | (GlobalMethodDeclList_Ident) 	GlobalMethodDeclList:G1 GlobalMethodDecl_Ident:G2 LPAREN MethodDecl:M3 {: RESULT=new GlobalMethodDeclList_Ident(G1, G2, M3); RESULT.setLine(G1left); :}
 				   	   | (EmptyGlobalMethodDeclList) {: RESULT=new EmptyGlobalMethodDeclList(); :} 	/* empty */
 				   	   ;
+				   	   
+GlobalMethodDecl_Void ::= (GlobalMethodDecl_Void) VOID IDENT:methodName {: RESULT=new GlobalMethodDecl_Void(methodName); RESULT.setLine(methodNameleft); :};	
+
+GlobalMethodDecl_Ident ::= (GlobalMethodDecl_Ident) Type:T1 IDENT:methodName {: RESULT=new GlobalMethodDecl_Ident(T1, methodName); RESULT.setLine(T1left); :};			   	   
 				   	   
 /***** ConstDecl *******/		   
 				   
@@ -288,27 +291,33 @@ ConstructorMethodLists ::= 	(ConstructorMethodLists_) 		LBRACE ClassMethodConstr
 						;
 
 /* resolving method-constructor parsing conflict  */
-ClassMethodConstructorLists ::= (ConstructorsAndMethods_Ident) 	IDENT:I1 LPAREN ConstructorDeclList:C2 IDENT:I3 IDENT:I4 LPAREN MethodDeclList:M5 {: RESULT=new ConstructorsAndMethods_Ident(I1, C2, I3, I4, M5); RESULT.setLine(I1left); :} 
-							 | 	(ConstructorsAndMethods_Void) 	IDENT:I1 LPAREN ConstructorDeclList:C2 VOID IDENT:I3 LPAREN MethodDeclList:M4 {: RESULT=new ConstructorsAndMethods_Void(I1, C2, I3, M4); RESULT.setLine(I1left); :} 
-							 | 	(Constructors) 					IDENT:I1 LPAREN ConstructorDeclList:C2 {: RESULT=new Constructors(I1, C2); RESULT.setLine(I1left); :} 
-							 | 	(Methods_Ident) 				IDENT:I1 IDENT:I2 LPAREN MethodDeclList:M3 {: RESULT=new Methods_Ident(I1, I2, M3); RESULT.setLine(I1left); :}
-							 | 	(Methods_Void) 					VOID IDENT:I1 LPAREN MethodDeclList:M2 {: RESULT=new Methods_Void(I1, M2); RESULT.setLine(I1left); :}
+ClassMethodConstructorLists ::= (ConstructorsAndMethods_Ident) 	ConstructorDecl_Start:C1 ConstructorDeclList:C2 MethodDecl_Ident:M3 LPAREN MethodDeclList:M4 {: RESULT=new ConstructorsAndMethods_Ident(C1, C2, M3, M4); RESULT.setLine(C1left); :} 
+							 | 	(ConstructorsAndMethods_Void) 	ConstructorDecl_Start:C1 ConstructorDeclList:C2 MethodDecl_Void:M3 LPAREN MethodDeclList:M4 {: RESULT=new ConstructorsAndMethods_Void(C1, C2, M3, M4); RESULT.setLine(C1left); :} 
+							 | 	(Constructors) 					ConstructorDecl_Start:C1 ConstructorDeclList:C2 {: RESULT=new Constructors(C1, C2); RESULT.setLine(C1left); :} 
+							 | 	(Methods_Ident) 				MethodDecl_Ident:M1 LPAREN MethodDeclList:M2 {: RESULT=new Methods_Ident(M1, M2); RESULT.setLine(M1left); :}
+							 | 	(Methods_Void) 					MethodDecl_Void:M1 LPAREN MethodDeclList:M2 {: RESULT=new Methods_Void(M1, M2); RESULT.setLine(M1left); :}
 							 | 	(EmptyClassMethodConstructorLists) {: RESULT=new EmptyClassMethodConstructorLists(); :} /* empty */
 							 ;
+							 
+ConstructorDecl_Start ::= (ConstructorDecl_Start) IDENT:constructorName LPAREN {: RESULT=new ConstructorDecl_Start(constructorName); RESULT.setLine(constructorNameleft); :};
 
 MethodDeclList ::= (MethodDeclList_Ident) 	MethodDeclList:M1 IDENT:I2 IDENT:I3 LPAREN MethodDecl:M4 {: RESULT=new MethodDeclList_Ident(M1, I2, I3, M4); RESULT.setLine(M1left); :}
 				 | (MethodDeclList_Void) 	MethodDeclList:M1 VOID IDENT:I2 LPAREN MethodDecl:M3 {: RESULT=new MethodDeclList_Void(M1, I2, M3); RESULT.setLine(M1left); :}
 				 | (OneMethodDecl) 			MethodDecl:M1 {: RESULT=new OneMethodDecl(M1); RESULT.setLine(M1left); :}
 				 ;
 
-ConstructorDeclList ::= (ConstructorDeclList_) 	ConstructorDeclList:C1 IDENT:I2 LPAREN ConstructorDecl:C3 {: RESULT=new ConstructorDeclList_(C1, I2, C3); RESULT.setLine(C1left); :}
+ConstructorDeclList ::= (ConstructorDeclList_) 	ConstructorDeclList:C1 ConstructorDecl_Start:C2 ConstructorDecl:C3 {: RESULT=new ConstructorDeclList_(C1, C2, C3); RESULT.setLine(C1left); :}
 					  |	(NoConstructorDeclList) ConstructorDecl:C1 {: RESULT=new NoConstructorDeclList(C1); RESULT.setLine(C1left); :}
 					  ;
+					  
+MethodDecl_Void ::= (MethodDecl_Void) VOID IDENT:methodName {: RESULT=new MethodDecl_Void(methodName); RESULT.setLine(methodNameleft); :};	
+
+MethodDecl_Ident ::= (MethodDecl_Ident) Type:T1 IDENT:methodName {: RESULT=new MethodDecl_Ident(T1, methodName); RESULT.setLine(T1left); :};	
 						
 /****** ConstructorDecl *****/
 
 /* note that IDENT LPAREN is already parsed */
-ConstructorDecl ::= FormParsOptional:F1 RPAREN VarDeclList:V2 LBRACE StatementList:S3 RBRACE {: RESULT=new ConstructorDeclDerived1(F1, V2, S3); RESULT.setLine(F1left); :};
+ConstructorDecl ::= (ConstructorDecl) FormParsOptional:F1 RPAREN VarDeclList:V2 LBRACE StatementList:S3 RBRACE {: RESULT=new ConstructorDecl(F1, V2, S3); RESULT.setLine(F1left); :};
 
 VarDeclList ::= (VarDeclList_) 				VarDeclList:V1 VarDecl:V2 {: RESULT=new VarDeclList_(V1, V2); RESULT.setLine(V1left); :}
 			| 	(EmptyClassVarDeclList) {: RESULT=new EmptyClassVarDeclList(); :} 	/* empty */
@@ -325,13 +334,13 @@ StatementList ::= (StatementList_) 		StatementList:S1 Statement:S2 {: RESULT=new
 /****** MethodDecl **********/
 
 /* note that IDENT/VOID IDENT LPAREN is already parsed */
-MethodDecl ::= FormParsOptional:F1 RPAREN VarDeclList:V2 LBRACE StatementList:S3 RBRACE {: RESULT=new MethodDeclDerived1(F1, V2, S3); RESULT.setLine(F1left); :}; 
+MethodDecl ::= (MethodDecl) FormParsOptional:F1 RPAREN VarDeclList:V2 LBRACE StatementList:S3 RBRACE {: RESULT=new MethodDecl(F1, V2, S3); RESULT.setLine(F1left); :}; 
 
 /************ FormPars ********/
 
 FormPars ::= (FormPars) OneFormPar:O1 TypeIdentList:T2 {: RESULT=new FormPars(O1, T2); RESULT.setLine(O1left); :};
 
-OneFormPar ::= 	(OneFormPar_) Type:T1 IDENT:I2 OptionalSquare:O3 {: RESULT=new OneFormPar_(T1, I2, O3); RESULT.setLine(T1left); :}
+OneFormPar ::= 	(OneFormPar_) Type:T1 IDENT:formParName OptionalSquare:O2 {: RESULT=new OneFormPar_(T1, formParName, O2); RESULT.setLine(T1left); :}
 			|	(ERROR_OneFormPar) error:l {: parser.report_error("Greska pri deklaraciji formalnog parametra funkcije u liniji " + lleft, null); :} {: RESULT=new ERROR_OneFormPar(); :}
 			;
 					
@@ -358,7 +367,7 @@ Matched ::= (M_Designator) 	DesignatorStatement:D1 {: RESULT=new M_Designator(D1
 		|	(M_While) 		WHILE LPAREN ConditionWhile:C1 RPAREN Statement:S2 {: RESULT=new M_While(C1, S2); RESULT.setLine(C1left); :} 
 		|	(M_Break) 		BREAK SEMICOLON {: RESULT=new M_Break(); :} 
 		|	(M_Continue) 	CONTINUE SEMICOLON {: RESULT=new M_Continue(); :} 
-		|	(M_Return) 		RETURN OptionalExpr:O1 SEMICOLON {: RESULT=new M_Return(O1); RESULT.setLine(O1left); :} 
+		|	(M_Return) 		RETURN ReturnOptionalExpr:R1 SEMICOLON {: RESULT=new M_Return(R1); RESULT.setLine(R1left); :} 
 		|	(M_Read) 		READ LPAREN Designator:D1 RPAREN SEMICOLON {: RESULT=new M_Read(D1); RESULT.setLine(D1left); :} 
 		|	(M_Print) 		PRINT LPAREN Expr:E1 PrintNumConst:P2 RPAREN SEMICOLON {: RESULT=new M_Print(E1, P2); RESULT.setLine(E1left); :} 
 		|	(M_Foreach) 	DesignatorForeach:D1 IDENT:I2 LAMBDA Statement:S3 RPAREN SEMICOLON {: RESULT=new M_Foreach(D1, I2, S3); RESULT.setLine(D1left); :} 
@@ -367,8 +376,8 @@ Matched ::= (M_Designator) 	DesignatorStatement:D1 {: RESULT=new M_Designator(D1
 
 DesignatorForeach ::= (DesignatorForeach) IDENT:I1 IdentExprList:I2 DOT FOREACH LPAREN {: RESULT=new DesignatorForeach(I1, I2); RESULT.setLine(I1left); :};
 				 
-OptionalExpr ::= (OptionalExpr_) 	Expr:E1 {: RESULT=new OptionalExpr_(E1); RESULT.setLine(E1left); :} 
-			|	 (NoExpr) {: RESULT=new NoExpr(); :} 			/* empty */
+ReturnOptionalExpr ::= (ReturnOptionalExpr_) 	Expr:E1 {: RESULT=new ReturnOptionalExpr_(E1); RESULT.setLine(E1left); :} 
+			|	 (NoReturnExpr) {: RESULT=new NoReturnExpr(); :} 			/* empty */
 			;
 				 
 PrintNumConst ::= (PrintNumConst_) 	COMMA NUM_CONST:N1 {: RESULT=new PrintNumConst_(N1); RESULT.setLine(N1left); :} 

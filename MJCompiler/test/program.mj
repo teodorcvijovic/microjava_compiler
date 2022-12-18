@@ -5,15 +5,32 @@ char b[], v;
 
 class B {
 	int a;
+	
+	{
+	
+	B(int arg1) {
+	
+	
+	}
+	
+	char ww(int b) { 
+		return 3; 
+	}
+	
+	
+
+	}
 }
 
-class A extends B {
-	char b[];
+class Tabela {
+{
+	Tabela(int b) {}
+	}
 }
 
 {
-	void main() int ss;
-	{
-	
-	}	
+	void main(int b) Tabela t; {
+		return;
+	}
+
 }

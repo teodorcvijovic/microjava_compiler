@@ -1,27 +1,28 @@
 // generated with ast extension for cup
 // version 0.8
-// 18/11/2022 2:36:12
+// 18/11/2022 22:7:1
 
 
 package rs.ac.bg.etf.pp1.ast;
 
 public class Methods_Void extends ClassMethodConstructorLists {
 
-    private String I1;
+    private MethodDecl_Void MethodDecl_Void;
     private MethodDeclList MethodDeclList;
 
-    public Methods_Void (String I1, MethodDeclList MethodDeclList) {
-        this.I1=I1;
+    public Methods_Void (MethodDecl_Void MethodDecl_Void, MethodDeclList MethodDeclList) {
+        this.MethodDecl_Void=MethodDecl_Void;
+        if(MethodDecl_Void!=null) MethodDecl_Void.setParent(this);
         this.MethodDeclList=MethodDeclList;
         if(MethodDeclList!=null) MethodDeclList.setParent(this);
     }
 
-    public String getI1() {
-        return I1;
+    public MethodDecl_Void getMethodDecl_Void() {
+        return MethodDecl_Void;
     }
 
-    public void setI1(String I1) {
-        this.I1=I1;
+    public void setMethodDecl_Void(MethodDecl_Void MethodDecl_Void) {
+        this.MethodDecl_Void=MethodDecl_Void;
     }
 
     public MethodDeclList getMethodDeclList() {
@@ -37,15 +38,18 @@ public class Methods_Void extends ClassMethodConstructorLists {
     }
 
     public void childrenAccept(Visitor visitor) {
+        if(MethodDecl_Void!=null) MethodDecl_Void.accept(visitor);
         if(MethodDeclList!=null) MethodDeclList.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
+        if(MethodDecl_Void!=null) MethodDecl_Void.traverseTopDown(visitor);
         if(MethodDeclList!=null) MethodDeclList.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
+        if(MethodDecl_Void!=null) MethodDecl_Void.traverseBottomUp(visitor);
         if(MethodDeclList!=null) MethodDeclList.traverseBottomUp(visitor);
         accept(visitor);
     }
@@ -55,7 +59,10 @@ public class Methods_Void extends ClassMethodConstructorLists {
         buffer.append(tab);
         buffer.append("Methods_Void(\n");
 
-        buffer.append(" "+tab+I1);
+        if(MethodDecl_Void!=null)
+            buffer.append(MethodDecl_Void.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
         buffer.append("\n");
 
         if(MethodDeclList!=null)

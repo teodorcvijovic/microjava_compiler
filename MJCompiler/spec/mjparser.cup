@@ -70,7 +70,7 @@ terminal SEMICOLON, COLON, COMMA, DOT, LPAREN, RPAREN, LSQUARE, RSQUARE, LBRACE,
 /******************* nonterminals **********************/
 
 /* Program */
-nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgramName, Program;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgramName, Program, GlobalMethodDecl_Void, GlobalMethodDecl_Ident;
 nonterminal GlobalDeclList, GlobalMethodDeclList;
 
 /* ConstDecl */
@@ -85,23 +85,25 @@ nonterminal Global_VarDecl, Global_NewVarDecl, Global_OptionalVarDeclList;
 /* ClassDecl */
 nonterminal ClassDecl, ClassBody, Dummy_ClassBody, Class_VarDeclList, ConstructorMethodLists, ClassMethodConstructorLists, MethodDeclList;
 nonterminal ConstructorDeclList;
-nonterminal rs.etf.pp1.symboltable.concepts.Obj ClassNameAndDerivation;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ClassNameAndDerivation, ConstructorDecl_Start;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj MethodDecl_Void, MethodDecl_Ident;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct OptionalDerivation;
 
 /* ConstructorDecl */
 nonterminal ConstructorDecl, FormParsOptional, StatementList, VarDeclList;
 
 /* MethodDecl */
-nonterminal MethodDecl;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj MethodDecl;
 
 /* FormPars */
-nonterminal FormPars, OneFormPar, TypeIdentList;
+nonterminal FormPars, TypeIdentList;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj OneFormPar;
 
 /* Type */
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type;
 
 /* Statement */
-nonterminal Statement, Unmatched, Matched, OptionalExpr, PrintNumConst, DesignatorForeach;
+nonterminal Statement, Unmatched, Matched, ReturnOptionalExpr, PrintNumConst, DesignatorForeach;
 
 /* DesignatorStatement */
 nonterminal DesignatorStatement, DesignatorOptions, OptionalDesignatorList, OptionalActPars, OptionalDesignator, DesignatorList;
@@ -119,13 +121,15 @@ nonterminal CondTerm, And_CondFactList;
 nonterminal CondFact, OptionalRelopExpr;
 
 /* Expr */
-nonterminal Expr, OptionalMinus, AddopTermList;
+nonterminal OptionalMinus;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Expr, AddopTermList;
 
 /* Term */
-nonterminal Term, MulopFactorList;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Term, MulopFactorList;
 
 /* Factor */
-nonterminal Factor, OptionalActParsParen, ExprActPars, ParenWithOptionalActPars;
+nonterminal OptionalActParsParen, ExprActPars, ParenWithOptionalActPars;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Factor;
 
 /* Designator */
 nonterminal Designator, IdentExprList;
@@ -163,10 +167,14 @@ GlobalDeclList ::= (GlobalDeclListConst) 	GlobalDeclList ConstDecl
 				 | (EmptyGlobalDeclList) 	/* empty */
 				 ;
 				  
-GlobalMethodDeclList ::= (GlobalMethodDeclList_Void) 	GlobalMethodDeclList VOID IDENT LPAREN MethodDecl 
-					   | (GlobalMethodDeclList_Ident) 	GlobalMethodDeclList IDENT IDENT LPAREN MethodDecl
+GlobalMethodDeclList ::= (GlobalMethodDeclList_Void) 	GlobalMethodDeclList GlobalMethodDecl_Void LPAREN MethodDecl 
+					   | (GlobalMethodDeclList_Ident) 	GlobalMethodDeclList GlobalMethodDecl_Ident LPAREN MethodDecl
 				   	   | (EmptyGlobalMethodDeclList) 	/* empty */
 				   	   ;
+				   	   
+GlobalMethodDecl_Void ::= (GlobalMethodDecl_Void) VOID IDENT:methodName;	
+
+GlobalMethodDecl_Ident ::= (GlobalMethodDecl_Ident) Type IDENT:methodName;			   	   
 				   	   
 /***** ConstDecl *******/		   
 				   
@@ -245,27 +253,33 @@ ConstructorMethodLists ::= 	(ConstructorMethodLists_) 		LBRACE ClassMethodConstr
 						;
 
 /* resolving method-constructor parsing conflict  */
-ClassMethodConstructorLists ::= (ConstructorsAndMethods_Ident) 	IDENT LPAREN ConstructorDeclList IDENT IDENT LPAREN MethodDeclList 
-							 | 	(ConstructorsAndMethods_Void) 	IDENT LPAREN ConstructorDeclList VOID IDENT LPAREN MethodDeclList 
-							 | 	(Constructors) 					IDENT LPAREN ConstructorDeclList 
-							 | 	(Methods_Ident) 				IDENT IDENT LPAREN MethodDeclList
-							 | 	(Methods_Void) 					VOID IDENT LPAREN MethodDeclList
+ClassMethodConstructorLists ::= (ConstructorsAndMethods_Ident) 	ConstructorDecl_Start ConstructorDeclList MethodDecl_Ident LPAREN MethodDeclList 
+							 | 	(ConstructorsAndMethods_Void) 	ConstructorDecl_Start ConstructorDeclList MethodDecl_Void LPAREN MethodDeclList 
+							 | 	(Constructors) 					ConstructorDecl_Start ConstructorDeclList 
+							 | 	(Methods_Ident) 				MethodDecl_Ident LPAREN MethodDeclList
+							 | 	(Methods_Void) 					MethodDecl_Void LPAREN MethodDeclList
 							 | 	(EmptyClassMethodConstructorLists) /* empty */
 							 ;
+							 
+ConstructorDecl_Start ::= (ConstructorDecl_Start) IDENT:constructorName LPAREN;
 
 MethodDeclList ::= (MethodDeclList_Ident) 	MethodDeclList IDENT IDENT LPAREN MethodDecl
 				 | (MethodDeclList_Void) 	MethodDeclList VOID IDENT LPAREN MethodDecl
 				 | (OneMethodDecl) 			MethodDecl
 				 ;
 
-ConstructorDeclList ::= (ConstructorDeclList_) 	ConstructorDeclList IDENT LPAREN ConstructorDecl
+ConstructorDeclList ::= (ConstructorDeclList_) 	ConstructorDeclList ConstructorDecl_Start ConstructorDecl
 					  |	(NoConstructorDeclList) ConstructorDecl
 					  ;
+					  
+MethodDecl_Void ::= (MethodDecl_Void) VOID IDENT:methodName;	
+
+MethodDecl_Ident ::= (MethodDecl_Ident) Type IDENT:methodName;	
 						
 /****** ConstructorDecl *****/
 
 /* note that IDENT LPAREN is already parsed */
-ConstructorDecl ::= FormParsOptional RPAREN VarDeclList LBRACE StatementList RBRACE;
+ConstructorDecl ::= (ConstructorDecl) FormParsOptional RPAREN VarDeclList LBRACE StatementList RBRACE;
 
 VarDeclList ::= (VarDeclList_) 				VarDeclList VarDecl
 			| 	(EmptyClassVarDeclList) 	/* empty */
@@ -282,13 +296,13 @@ StatementList ::= (StatementList_) 		StatementList Statement
 /****** MethodDecl **********/
 
 /* note that IDENT/VOID IDENT LPAREN is already parsed */
-MethodDecl ::= FormParsOptional RPAREN VarDeclList LBRACE StatementList RBRACE; 
+MethodDecl ::= (MethodDecl) FormParsOptional RPAREN VarDeclList LBRACE StatementList RBRACE; 
 
 /************ FormPars ********/
 
 FormPars ::= (FormPars) OneFormPar TypeIdentList;
 
-OneFormPar ::= 	(OneFormPar_) Type IDENT OptionalSquare
+OneFormPar ::= 	(OneFormPar_) Type IDENT:formParName OptionalSquare
 			|	(ERROR_OneFormPar) error:l {: parser.report_error("Greska pri deklaraciji formalnog parametra funkcije u liniji " + lleft, null); :}
 			;
 					
@@ -315,7 +329,7 @@ Matched ::= (M_Designator) 	DesignatorStatement
 		|	(M_While) 		WHILE LPAREN ConditionWhile RPAREN Statement 
 		|	(M_Break) 		BREAK SEMICOLON 
 		|	(M_Continue) 	CONTINUE SEMICOLON 
-		|	(M_Return) 		RETURN OptionalExpr SEMICOLON 
+		|	(M_Return) 		RETURN ReturnOptionalExpr SEMICOLON 
 		|	(M_Read) 		READ LPAREN Designator RPAREN SEMICOLON 
 		|	(M_Print) 		PRINT LPAREN Expr PrintNumConst RPAREN SEMICOLON 
 		|	(M_Foreach) 	DesignatorForeach IDENT LAMBDA Statement RPAREN SEMICOLON 
@@ -324,8 +338,8 @@ Matched ::= (M_Designator) 	DesignatorStatement
 
 DesignatorForeach ::= (DesignatorForeach) IDENT IdentExprList DOT FOREACH LPAREN;
 				 
-OptionalExpr ::= (OptionalExpr_) 	Expr 
-			|	 (NoExpr) 			/* empty */
+ReturnOptionalExpr ::= (ReturnOptionalExpr_) 	Expr 
+			|	 (NoReturnExpr) 			/* empty */
 			;
 				 
 PrintNumConst ::= (PrintNumConst_) 	COMMA NUM_CONST 

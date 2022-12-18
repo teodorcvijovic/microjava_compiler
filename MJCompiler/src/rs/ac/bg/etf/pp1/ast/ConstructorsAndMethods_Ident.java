@@ -1,34 +1,34 @@
 // generated with ast extension for cup
 // version 0.8
-// 18/11/2022 2:36:12
+// 18/11/2022 22:7:1
 
 
 package rs.ac.bg.etf.pp1.ast;
 
 public class ConstructorsAndMethods_Ident extends ClassMethodConstructorLists {
 
-    private String I1;
+    private ConstructorDecl_Start ConstructorDecl_Start;
     private ConstructorDeclList ConstructorDeclList;
-    private String I3;
-    private String I4;
+    private MethodDecl_Ident MethodDecl_Ident;
     private MethodDeclList MethodDeclList;
 
-    public ConstructorsAndMethods_Ident (String I1, ConstructorDeclList ConstructorDeclList, String I3, String I4, MethodDeclList MethodDeclList) {
-        this.I1=I1;
+    public ConstructorsAndMethods_Ident (ConstructorDecl_Start ConstructorDecl_Start, ConstructorDeclList ConstructorDeclList, MethodDecl_Ident MethodDecl_Ident, MethodDeclList MethodDeclList) {
+        this.ConstructorDecl_Start=ConstructorDecl_Start;
+        if(ConstructorDecl_Start!=null) ConstructorDecl_Start.setParent(this);
         this.ConstructorDeclList=ConstructorDeclList;
         if(ConstructorDeclList!=null) ConstructorDeclList.setParent(this);
-        this.I3=I3;
-        this.I4=I4;
+        this.MethodDecl_Ident=MethodDecl_Ident;
+        if(MethodDecl_Ident!=null) MethodDecl_Ident.setParent(this);
         this.MethodDeclList=MethodDeclList;
         if(MethodDeclList!=null) MethodDeclList.setParent(this);
     }
 
-    public String getI1() {
-        return I1;
+    public ConstructorDecl_Start getConstructorDecl_Start() {
+        return ConstructorDecl_Start;
     }
 
-    public void setI1(String I1) {
-        this.I1=I1;
+    public void setConstructorDecl_Start(ConstructorDecl_Start ConstructorDecl_Start) {
+        this.ConstructorDecl_Start=ConstructorDecl_Start;
     }
 
     public ConstructorDeclList getConstructorDeclList() {
@@ -39,20 +39,12 @@ public class ConstructorsAndMethods_Ident extends ClassMethodConstructorLists {
         this.ConstructorDeclList=ConstructorDeclList;
     }
 
-    public String getI3() {
-        return I3;
+    public MethodDecl_Ident getMethodDecl_Ident() {
+        return MethodDecl_Ident;
     }
 
-    public void setI3(String I3) {
-        this.I3=I3;
-    }
-
-    public String getI4() {
-        return I4;
-    }
-
-    public void setI4(String I4) {
-        this.I4=I4;
+    public void setMethodDecl_Ident(MethodDecl_Ident MethodDecl_Ident) {
+        this.MethodDecl_Ident=MethodDecl_Ident;
     }
 
     public MethodDeclList getMethodDeclList() {
@@ -68,18 +60,24 @@ public class ConstructorsAndMethods_Ident extends ClassMethodConstructorLists {
     }
 
     public void childrenAccept(Visitor visitor) {
+        if(ConstructorDecl_Start!=null) ConstructorDecl_Start.accept(visitor);
         if(ConstructorDeclList!=null) ConstructorDeclList.accept(visitor);
+        if(MethodDecl_Ident!=null) MethodDecl_Ident.accept(visitor);
         if(MethodDeclList!=null) MethodDeclList.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
+        if(ConstructorDecl_Start!=null) ConstructorDecl_Start.traverseTopDown(visitor);
         if(ConstructorDeclList!=null) ConstructorDeclList.traverseTopDown(visitor);
+        if(MethodDecl_Ident!=null) MethodDecl_Ident.traverseTopDown(visitor);
         if(MethodDeclList!=null) MethodDeclList.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
+        if(ConstructorDecl_Start!=null) ConstructorDecl_Start.traverseBottomUp(visitor);
         if(ConstructorDeclList!=null) ConstructorDeclList.traverseBottomUp(visitor);
+        if(MethodDecl_Ident!=null) MethodDecl_Ident.traverseBottomUp(visitor);
         if(MethodDeclList!=null) MethodDeclList.traverseBottomUp(visitor);
         accept(visitor);
     }
@@ -89,7 +87,10 @@ public class ConstructorsAndMethods_Ident extends ClassMethodConstructorLists {
         buffer.append(tab);
         buffer.append("ConstructorsAndMethods_Ident(\n");
 
-        buffer.append(" "+tab+I1);
+        if(ConstructorDecl_Start!=null)
+            buffer.append(ConstructorDecl_Start.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
         buffer.append("\n");
 
         if(ConstructorDeclList!=null)
@@ -98,10 +99,10 @@ public class ConstructorsAndMethods_Ident extends ClassMethodConstructorLists {
             buffer.append(tab+"  null");
         buffer.append("\n");
 
-        buffer.append(" "+tab+I3);
-        buffer.append("\n");
-
-        buffer.append(" "+tab+I4);
+        if(MethodDecl_Ident!=null)
+            buffer.append(MethodDecl_Ident.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
         buffer.append("\n");
 
         if(MethodDeclList!=null)

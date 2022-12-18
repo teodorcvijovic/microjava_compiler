@@ -1,25 +1,25 @@
 // generated with ast extension for cup
 // version 0.8
-// 18/11/2022 2:36:12
+// 18/11/2022 22:7:1
 
 
 package rs.ac.bg.etf.pp1.ast;
 
 public class M_Return extends Matched {
 
-    private OptionalExpr OptionalExpr;
+    private ReturnOptionalExpr ReturnOptionalExpr;
 
-    public M_Return (OptionalExpr OptionalExpr) {
-        this.OptionalExpr=OptionalExpr;
-        if(OptionalExpr!=null) OptionalExpr.setParent(this);
+    public M_Return (ReturnOptionalExpr ReturnOptionalExpr) {
+        this.ReturnOptionalExpr=ReturnOptionalExpr;
+        if(ReturnOptionalExpr!=null) ReturnOptionalExpr.setParent(this);
     }
 
-    public OptionalExpr getOptionalExpr() {
-        return OptionalExpr;
+    public ReturnOptionalExpr getReturnOptionalExpr() {
+        return ReturnOptionalExpr;
     }
 
-    public void setOptionalExpr(OptionalExpr OptionalExpr) {
-        this.OptionalExpr=OptionalExpr;
+    public void setReturnOptionalExpr(ReturnOptionalExpr ReturnOptionalExpr) {
+        this.ReturnOptionalExpr=ReturnOptionalExpr;
     }
 
     public void accept(Visitor visitor) {
@@ -27,16 +27,16 @@ public class M_Return extends Matched {
     }
 
     public void childrenAccept(Visitor visitor) {
-        if(OptionalExpr!=null) OptionalExpr.accept(visitor);
+        if(ReturnOptionalExpr!=null) ReturnOptionalExpr.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
-        if(OptionalExpr!=null) OptionalExpr.traverseTopDown(visitor);
+        if(ReturnOptionalExpr!=null) ReturnOptionalExpr.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
-        if(OptionalExpr!=null) OptionalExpr.traverseBottomUp(visitor);
+        if(ReturnOptionalExpr!=null) ReturnOptionalExpr.traverseBottomUp(visitor);
         accept(visitor);
     }
 
@@ -45,8 +45,8 @@ public class M_Return extends Matched {
         buffer.append(tab);
         buffer.append("M_Return(\n");
 
-        if(OptionalExpr!=null)
-            buffer.append(OptionalExpr.toString("  "+tab));
+        if(ReturnOptionalExpr!=null)
+            buffer.append(ReturnOptionalExpr.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");

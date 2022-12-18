@@ -1,37 +1,28 @@
 // generated with ast extension for cup
 // version 0.8
-// 18/11/2022 2:36:12
+// 18/11/2022 22:7:1
 
 
 package rs.ac.bg.etf.pp1.ast;
 
 public class Methods_Ident extends ClassMethodConstructorLists {
 
-    private String I1;
-    private String I2;
+    private MethodDecl_Ident MethodDecl_Ident;
     private MethodDeclList MethodDeclList;
 
-    public Methods_Ident (String I1, String I2, MethodDeclList MethodDeclList) {
-        this.I1=I1;
-        this.I2=I2;
+    public Methods_Ident (MethodDecl_Ident MethodDecl_Ident, MethodDeclList MethodDeclList) {
+        this.MethodDecl_Ident=MethodDecl_Ident;
+        if(MethodDecl_Ident!=null) MethodDecl_Ident.setParent(this);
         this.MethodDeclList=MethodDeclList;
         if(MethodDeclList!=null) MethodDeclList.setParent(this);
     }
 
-    public String getI1() {
-        return I1;
+    public MethodDecl_Ident getMethodDecl_Ident() {
+        return MethodDecl_Ident;
     }
 
-    public void setI1(String I1) {
-        this.I1=I1;
-    }
-
-    public String getI2() {
-        return I2;
-    }
-
-    public void setI2(String I2) {
-        this.I2=I2;
+    public void setMethodDecl_Ident(MethodDecl_Ident MethodDecl_Ident) {
+        this.MethodDecl_Ident=MethodDecl_Ident;
     }
 
     public MethodDeclList getMethodDeclList() {
@@ -47,15 +38,18 @@ public class Methods_Ident extends ClassMethodConstructorLists {
     }
 
     public void childrenAccept(Visitor visitor) {
+        if(MethodDecl_Ident!=null) MethodDecl_Ident.accept(visitor);
         if(MethodDeclList!=null) MethodDeclList.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
+        if(MethodDecl_Ident!=null) MethodDecl_Ident.traverseTopDown(visitor);
         if(MethodDeclList!=null) MethodDeclList.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
+        if(MethodDecl_Ident!=null) MethodDecl_Ident.traverseBottomUp(visitor);
         if(MethodDeclList!=null) MethodDeclList.traverseBottomUp(visitor);
         accept(visitor);
     }
@@ -65,10 +59,10 @@ public class Methods_Ident extends ClassMethodConstructorLists {
         buffer.append(tab);
         buffer.append("Methods_Ident(\n");
 
-        buffer.append(" "+tab+I1);
-        buffer.append("\n");
-
-        buffer.append(" "+tab+I2);
+        if(MethodDecl_Ident!=null)
+            buffer.append(MethodDecl_Ident.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
         buffer.append("\n");
 
         if(MethodDeclList!=null)

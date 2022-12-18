@@ -1,6 +1,9 @@
 package rs.ac.bg.etf.pp1;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -45,10 +48,22 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	private static Struct currentType = null;
 	private static boolean currentTypeIsArray = false;
 	
-	private static String currentClassName;
+	private static String currentClassName = "";
 	private static Struct currentClassStruct;
 	
 	private static Map<Struct, String> map_ClassStructToName = new HashMap<>();
+	
+	private static Obj currentMethodObjNode;
+	private static Struct currentMethodReturnTypeStruct;
+	private static boolean returnStatementFound = false;
+	
+	private static Obj constructorObjNode = Tab.noObj;
+	
+	private static int argCounter = 0;
+	
+	private static List<Obj> listOfFormParsObjectNodes = new ArrayList<>();
+	private static Map<Obj, List<Obj>> listOfDefiniedConstructors = new HashMap<>();
+	
 	
 	/********************** Program ************************/
 	
@@ -275,6 +290,9 @@ public class SemanticAnalyzer extends VisitorAdaptor {
     		}
     	}
     	
+    	/* PAY ATTENTION */
+    	listOfDefiniedConstructors.clear(); 
+    	
     	report_info("Klasa '" + className + "' je uspesno deklarisana" + (parentClassName.equals("") ? "" : " i izvedena iz klase '" + parentClassName + "'"), classNameAndDerivation);
     }
     
@@ -285,6 +303,8 @@ public class SemanticAnalyzer extends VisitorAdaptor {
     	Tab.closeScope();
     	currentClassName = "";
     	currentClassStruct = null;
+    	/* PAY ATTENTION */
+    	listOfDefiniedConstructors.clear(); 
     }
     
     /*************************** Class_VarDecl ******************************/
@@ -309,5 +329,242 @@ public class SemanticAnalyzer extends VisitorAdaptor {
     	/* PAY ATTENTION */
     	currentTypeIsArray = false;
     }
+    
+    /********************* GlobalMethodDecl ***************************/
+    
+    public void visit(GlobalMethodDecl_Void globalMethodDecl) {
+    	String methodName = globalMethodDecl.getMethodName();
+    	currentMethodReturnTypeStruct = Tab.noType;
+    	currentMethodObjNode = Tab.insert(Obj.Meth, methodName, currentMethodReturnTypeStruct);
+    	
+    	Tab.openScope();
+		report_info("Zapoceta je definicija globalne funkcije '" + methodName + "'", globalMethodDecl);
+    }
+    
+    public void visit(GlobalMethodDecl_Ident globalMethodDecl) {
+    	String methodName = globalMethodDecl.getMethodName();
+    	currentMethodReturnTypeStruct = globalMethodDecl.getType().struct;
+    	currentMethodObjNode = Tab.insert(Obj.Meth, methodName, currentMethodReturnTypeStruct);
+    	
+    	Tab.openScope();
+		report_info("Zapoceta je definicija globalne funkcije '" + methodName + "'", globalMethodDecl);
+    }
+    
+    public void visit(MethodDecl methodDecl) {
+    	if (!returnStatementFound && currentMethodReturnTypeStruct != Tab.noType) {
+    		report_error("Funkcija '" + currentMethodObjNode.getName() + "' nema return iskaz", null);
+    		
+    		/* PAY ATTENTION: should we call return if error occurs */
+    	}
+    	
+    	Tab.chainLocalSymbols(currentMethodObjNode);
+    	Tab.closeScope();
+    	
+		report_info("Kraj dosega " + (currentClassName.length()==0? "globalne funkcije":"metode") + "'" + currentMethodObjNode.getName() + "'", methodDecl);
+
+    	returnStatementFound = false;
+    	currentMethodObjNode = null;
+    	currentMethodReturnTypeStruct = null;
+    	listOfFormParsObjectNodes = new ArrayList<>(); /* PAY ATTENTION */
+    }
+    
+    /***************** M_Return ***************/
+    
+    public boolean checkIfFunctionScopeIsOpened() {
+    	/* constructor is not included */
+    	return currentMethodObjNode != Tab.noObj && currentMethodObjNode != null;
+    }
+    
+    public void visit(ReturnOptionalExpr_ returnOptionalExpr) {
+    	if (!checkIfFunctionScopeIsOpened()) {
+    		report_error("Return iskaz se ne nalazi u funkciji", returnOptionalExpr);
+    		return;
+    	}
+    	
+    	returnStatementFound = true;
+    	
+    	if (currentMethodReturnTypeStruct == Tab.noType) {
+    		report_error("Funkcija '" + currentMethodObjNode.getName() + "' je definisana kao void, a sadrzi izraz u return naredbi", returnOptionalExpr);
+    	}
+    	
+    	/* PAY ATTENTION: check type compatibility */
+    	/* TO DO */
+    	
+		report_info("Return naredba" + " sa opcionim izrazom", null);
+    }
+    
+    public void visit(NoReturnExpr noReturnExpr) {
+    	if (!checkIfFunctionScopeIsOpened()) {
+    		report_error("Return iskaz se ne nalazi u funkciji", noReturnExpr);
+    		return;
+    	}
+    	
+    	returnStatementFound = true;
+    	
+    	if (currentMethodReturnTypeStruct != Tab.noType) {
+    		report_error("Funkcija '" + currentMethodObjNode.getName() + "' ima povratni tip, a return naredba ne sadrzi izraz", noReturnExpr);
+    	}
+    	
+		report_info("Return naredba pronadjena", null);
+    }
+    
+    /******************** ConstructorDecl ************************/
+    
+    public void visit(ConstructorDecl_Start constructorDeclStart) {
+    	String constructorName = constructorDeclStart.getConstructorName();
+    	
+    	if (!constructorName.equals(currentClassName)) {
+    		report_error("Neispravno deklarisan konstruktor klase '" + currentClassName + "'", constructorDeclStart);
+    		constructorObjNode = Tab.noObj;
+    	}
+    	else {
+    		constructorObjNode = Tab.insert(Obj.Meth, constructorName, Tab.noType);
+    	}
+    	constructorDeclStart.obj = constructorObjNode;
+    	Tab.openScope();
+    	// we are now inside constructor scope
+    	if (!constructorName.equals(currentClassName)) return;
+    	
+    	/* PAY ATTENTION: implicit this field */
+    	Tab.insert(Obj.Var, "this", currentClassStruct);
+    	++argCounter;
+    }
+    
+    public void visit(ConstructorDecl constructorDecl) {
+    	if (checkIfConstructorExists()) {
+    		report_error("Konstruktor klase '" + currentClassName + "' sa datim parametrima vec postoji", constructorDecl);
+    	}
+    	else {
+    		Tab.chainLocalSymbols(constructorObjNode);
+    		listOfDefiniedConstructors.put(constructorObjNode, listOfFormParsObjectNodes);
+    		report_info("Konstruktor klase '" + currentClassName + "' je definisan", constructorDecl);
+    	}
+    	
+    	Tab.closeScope();
+    	
+    	constructorObjNode.setLevel(argCounter);
+    	constructorObjNode = null;
+    	argCounter = 0;
+    	listOfFormParsObjectNodes = new ArrayList<>(); /* PAY ATTENTION */
+    }
+    
+    /*************** no constructor defined *************/
+    
+    public void visit(Methods_Ident node) {
+    	openDefaultConstructorScope();
+    	closeDefaultConstructorScope();
+    }
+    
+    public void visit(Methods_Void node) {
+    	openDefaultConstructorScope();
+    	closeDefaultConstructorScope();
+    }
+ 
+    public void visit(EmptyClassMethodConstructorLists node) {
+    	openDefaultConstructorScope();
+    	closeDefaultConstructorScope();
+    }
+    
+    public void visit(EmptyConstructorMethodLists node) {
+    	openDefaultConstructorScope();
+    	closeDefaultConstructorScope();
+    }
+    
+    public void openDefaultConstructorScope() {
+    	constructorObjNode = Tab.insert(Obj.Meth, currentClassName, Tab.noType);
+    	Tab.openScope();
+    	
+    	Tab.insert(Obj.Var, "this", currentClassStruct);
+    	++argCounter;
+    }
+	
+    public void closeDefaultConstructorScope() {
+    	Tab.chainLocalSymbols(constructorObjNode);
+    	Tab.closeScope();
+    	
+    	listOfDefiniedConstructors.put(constructorObjNode, listOfFormParsObjectNodes);
+    	constructorObjNode.setLevel(argCounter);
+    	constructorObjNode = null;
+    	argCounter = 0;
+    
+    	report_info("Podrazumevani konstruktor klase '" + currentClassName + "' je definisan", null);
+    }
+    
+    /******************************* FormPars ******************************/
+    
+    public void visit(OneFormPar_ formPar) {
+    	String formParName = formPar.getFormParName();
+    	Obj objNode = Tab.find(formParName);
+    	
+    	if(objNode != Tab.noObj && Tab.currentScope.findSymbol(formParName) != null) {
+			report_error("Parametar '" + formParName + "' funkcije  je vec deklarisan", formPar);
+			return;
+    	}
+    	
+    	// check if form par is array
+    	Struct formParTypeStruct = currentTypeIsArray ? new Struct(Struct.Array, formPar.getType().struct) : formPar.getType().struct;
+    	
+    	objNode = Tab.insert(Obj.Var, formParName, formParTypeStruct);
+    	
+    	report_info("Parametar '" + formParName + "' je deklarisan " + (currentTypeIsArray?"kao niz":""), formPar);
+    	currentTypeIsArray = false;
+    	listOfFormParsObjectNodes.add(objNode);
+    }
+    
+    /****** helper functions for constructor already exists error ******/
+    
+    public boolean checkIfConstructorExists() {    	
+    	for (Obj objNodeOfDefiniedConstructor: listOfDefiniedConstructors.keySet()) {
+    		List<Obj> formParsOfDefiniedConstructor = listOfDefiniedConstructors.get(objNodeOfDefiniedConstructor);
+    		
+    		if (formParsOfDefiniedConstructor.size() != listOfFormParsObjectNodes.size()) continue;
+    		
+    		int similarityCounter = formParsOfDefiniedConstructor.size();
+    		for (Obj formParOfDefinied: formParsOfDefiniedConstructor) {
+    			if (listContainsSameType(listOfFormParsObjectNodes, formParOfDefinied)) {
+    				--similarityCounter;
+    			}
+    		}
+    		
+    		if (similarityCounter == 0) return true;
+    	
+    	}
+    	
+    	return false;
+    }
+    
+    public boolean listContainsSameType(List<Obj> list, Obj elem) {
+    	for(Obj obj: list) {
+    		if (obj.getType().equals(elem.getType())) return true;
+    	}
+    	return false;
+    }
+    
+    /********************** class MethodDecl ****************************/
+    
+    public void visit(MethodDecl_Void methodDecl) {
+    	String methodName = methodDecl.getMethodName();
+    	currentMethodReturnTypeStruct = Tab.noType;
+    	currentMethodObjNode = Tab.insert(Obj.Meth, methodName, currentMethodReturnTypeStruct);
+    	
+    	Tab.openScope();
+		report_info("Zapoceta je definicija metode '" + methodName + "'", methodDecl);
+		
+		/* PAY ATTENTION: add implicit this parameter */
+		Tab.insert(Obj.Var, "this", currentClassStruct);
+    }
+    
+    public void visit(MethodDecl_Ident methodDecl) {
+    	String methodName = methodDecl.getMethodName();
+    	currentMethodReturnTypeStruct = methodDecl.getType().struct;
+    	currentMethodObjNode = Tab.insert(Obj.Meth, methodName, currentMethodReturnTypeStruct);
+    	
+    	Tab.openScope();
+		report_info("Zapoceta je definicija metode '" + methodName + "'", methodDecl);
+		
+		/* PAY ATTENTION: add implicit this parameter */
+		Tab.insert(Obj.Var, "this", currentClassStruct);
+    }
+    
     
 }
