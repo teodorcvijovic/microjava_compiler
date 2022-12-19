@@ -13,7 +13,7 @@ class B {
 	}
 	
 	char metoda(int b) { 
-		return 3; 
+	
 	}
 	
 	
@@ -27,7 +27,7 @@ class Tabela extends B {
 	Tabela(int b) {}
 	
 	char metoda(int c) {
-		return 4;
+		
 	}
 }
 }

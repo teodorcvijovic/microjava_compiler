@@ -357,11 +357,11 @@ public class SemanticAnalyzer extends VisitorAdaptor {
     }
     
     public void visit(MethodDecl methodDecl) {
-    	if (!returnStatementFound && currentMethodReturnTypeStruct != Tab.noType) {
-    		report_error("Funkcija '" + currentMethodObjNode.getName() + "' nema return iskaz", null);
-    		
-    		/* PAY ATTENTION: should we call return if error occurs */
-    	}
+//    	if (!returnStatementFound && currentMethodReturnTypeStruct != Tab.noType) {
+//    		report_error("Funkcija '" + currentMethodObjNode.getName() + "' nema return iskaz", null);
+//    		
+//    		/* PAY ATTENTION: should we call return if error occurs */
+//    	}
     	
     	currentMethodObjNode.setLevel(listOfFormParsObjectNodes.size() + 1); /* PAY ATTENTION: +1 for this */
     	Tab.chainLocalSymbols(currentMethodObjNode);
@@ -665,8 +665,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 				return false;
 			}
 		}
-    		
-    	// else: this is only param
+    	
     	return true;
     }
     
