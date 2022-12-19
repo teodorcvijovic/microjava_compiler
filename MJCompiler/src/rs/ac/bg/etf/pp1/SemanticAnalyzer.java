@@ -3,6 +3,7 @@ package rs.ac.bg.etf.pp1;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -49,7 +50,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	private static boolean currentTypeIsArray = false;
 	
 	private static String currentClassName = "";
-	private static Struct currentClassStruct;
+	private static Struct currentClassStruct = null;
 	
 	private static Map<Struct, String> map_ClassStructToName = new HashMap<>();
 	
@@ -63,6 +64,8 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	
 	private static List<Obj> listOfFormParsObjectNodes = new ArrayList<>();
 	private static Map<Obj, List<Obj>> listOfDefiniedConstructors = new HashMap<>();
+	
+	private Obj methodToBeOverridenObjNode = null;
 	
 	
 	/********************** Program ************************/
@@ -286,7 +289,10 @@ public class SemanticAnalyzer extends VisitorAdaptor {
     			else if (field.getKind() == Obj.Fld) {
     				Tab.insert(Obj.Fld, field.getName(), field.getType());
     			}
-    			/* PAY ATTENTION: methods are not copied yet */
+    			else if(field.getKind() == Obj.Meth && !parentClassName.equals(field.getName())) {
+    				/* PAY ATTENTION: parent class constructors should not be inherited */
+            		Tab.currentScope().addToLocals(field);
+    			}
     		}
     	}
     	
@@ -357,7 +363,10 @@ public class SemanticAnalyzer extends VisitorAdaptor {
     		/* PAY ATTENTION: should we call return if error occurs */
     	}
     	
+    	currentMethodObjNode.setLevel(listOfFormParsObjectNodes.size() + 1); /* PAY ATTENTION: +1 for this */
     	Tab.chainLocalSymbols(currentMethodObjNode);
+    	/* PAY ATTENTION: method overriding */
+    	if (currentClassStruct != null) overrideMethod(methodDecl);
     	Tab.closeScope();
     	
 		report_info("Kraj dosega " + (currentClassName.length()==0? "globalne funkcije":"metode") + "'" + currentMethodObjNode.getName() + "'", methodDecl);
@@ -365,6 +374,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
     	returnStatementFound = false;
     	currentMethodObjNode = null;
     	currentMethodReturnTypeStruct = null;
+    	methodToBeOverridenObjNode = null;
     	listOfFormParsObjectNodes = new ArrayList<>(); /* PAY ATTENTION */
     }
     
@@ -390,7 +400,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
     	/* PAY ATTENTION: check type compatibility */
     	/* TO DO */
     	
-		report_info("Return naredba" + " sa opcionim izrazom", null);
+		report_info("Return naredba" + " sa opcionim izrazom", returnOptionalExpr);
     }
     
     public void visit(NoReturnExpr noReturnExpr) {
@@ -405,7 +415,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
     		report_error("Funkcija '" + currentMethodObjNode.getName() + "' ima povratni tip, a return naredba ne sadrzi izraz", noReturnExpr);
     	}
     	
-		report_info("Return naredba pronadjena", null);
+		report_info("Return naredba pronadjena", noReturnExpr);
     }
     
     /******************** ConstructorDecl ************************/
@@ -544,6 +554,12 @@ public class SemanticAnalyzer extends VisitorAdaptor {
     
     public void visit(MethodDecl_Void methodDecl) {
     	String methodName = methodDecl.getMethodName();
+    	if(checkIfMethodRedefinitionIsAttempted(methodName)) {
+    		/* PAY ATTENTION */
+    		// but we saved that object node in 'methodToBeOverridenObjNode' variable
+    		Tab.currentScope().getLocals().deleteKey(methodName);
+    	}
+    	
     	currentMethodReturnTypeStruct = Tab.noType;
     	currentMethodObjNode = Tab.insert(Obj.Meth, methodName, currentMethodReturnTypeStruct);
     	
@@ -556,6 +572,12 @@ public class SemanticAnalyzer extends VisitorAdaptor {
     
     public void visit(MethodDecl_Ident methodDecl) {
     	String methodName = methodDecl.getMethodName();
+    	if(checkIfMethodRedefinitionIsAttempted(methodName)) {
+    		/* PAY ATTENTION */
+    		// but we saved that object node in 'methodToBeOverridenObjNode' variable
+    		Tab.currentScope().getLocals().deleteKey(methodName);
+    	}
+    	
     	currentMethodReturnTypeStruct = methodDecl.getType().struct;
     	currentMethodObjNode = Tab.insert(Obj.Meth, methodName, currentMethodReturnTypeStruct);
     	
@@ -566,5 +588,88 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		Tab.insert(Obj.Var, "this", currentClassStruct);
     }
     
+    public boolean checkIfMethodRedefinitionIsAttempted(String methodName) {
+    	// may be inherited
+    	Obj objNode = Tab.currentScope().findSymbol(methodName);
+    	
+    	if(objNode != null) {
+    		// inherited method should be overriden with this one
+			methodToBeOverridenObjNode = objNode;
+			return true;
+    	}
+    	else {
+    		methodToBeOverridenObjNode = null;
+    		return false;
+    	}
+    }
+    
+    /*************** overrideMethod ***************/
+    
+    public boolean overrideMethod(SyntaxNode node) {
+    	// method may or may not be overriden
+    	
+    	if (methodToBeOverridenObjNode == null) return false; 
+    	
+    	int argCount1 = methodToBeOverridenObjNode.getLevel();
+    	int argCount2 = currentMethodObjNode.getLevel();
+    	if (argCount1 != argCount2) {
+    		// method overloading is not supported
+    		report_error("Method overloading nije podrzan", node);
+    		return false;
+    	}
+    	
+    	/**** get param types of overrided method *****/
+    	
+    	List<Struct> listOfOveridedMethodParamStructs = new ArrayList<Struct>(); 
+    	int numOfParamsInOveridedMethod = methodToBeOverridenObjNode.getLevel();
+    	int i = 0;
+    	Collection<Obj> listOfOveridedMethodParamObjNodes = methodToBeOverridenObjNode.getLocalSymbols();
+    	Iterator<Obj> iterator = listOfOveridedMethodParamObjNodes.iterator();
+    	
+    	while (i < numOfParamsInOveridedMethod && iterator.hasNext()) {
+    		
+    	    Obj overridedMethodParamObjNode = iterator.next();
+    	    
+    	    if(i == 0 && overridedMethodParamObjNode.getName().equals("this")) {
+    	    	++i;
+    	    	continue;
+    	    }
+    	    else if (i == 0 && !overridedMethodParamObjNode.getName().equals("this")) {
+	        		report_error("Greska u override-ovanju, metod'" + methodToBeOverridenObjNode.getName() + "' nema implicitni this kao prvi parametar", node);    		    		
+			    	return false;
+    	    }
+    	    listOfOveridedMethodParamStructs.add(overridedMethodParamObjNode.getType());    	    
+    	    ++i;
+    	}
+	
+    	/**** get param types of current method ******/
+    	
+    	List<Struct> listOfCurrentMethodParamStructs = new ArrayList<Struct>(); 
+    	iterator = listOfFormParsObjectNodes.iterator();
+    	i = 0;
+    	while (i < currentMethodObjNode.getLevel() - 1 && iterator.hasNext()) {
+    		Obj currentMethodParamObjNode = iterator.next();
+    		listOfCurrentMethodParamStructs.add(currentMethodParamObjNode.getType());
+    		++i;
+    	}
+    	
+    	/********** check other params ***************/
+    	
+    	
+		for (int j = 0; j < i; j++) {
+			Struct param1 = listOfOveridedMethodParamStructs.get(j);
+			Struct param2 = listOfCurrentMethodParamStructs.get(j);
+			
+			if (!param1.equals(param2)) {
+	    		report_error("Preklopljeni metod '" + currentMethodObjNode.getName()+ "' nema odgovarajuci potpis", node);   
+				return false;
+			}
+		}
+    		
+    	// else: this is only param
+    	return true;
+    }
+    
+    /**********************************************/
     
 }

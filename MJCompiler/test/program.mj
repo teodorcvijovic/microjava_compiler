@@ -1,10 +1,9 @@
 program MJProgram
 
-const int a = 5;
-char b[], v;
 
 class B {
-	int a;
+	int b1;
+	char b2;
 	
 	{
 	
@@ -13,7 +12,7 @@ class B {
 	
 	}
 	
-	char ww(int b) { 
+	char metoda(int b) { 
 		return 3; 
 	}
 	
@@ -22,15 +21,18 @@ class B {
 	}
 }
 
-class Tabela {
-{
+class Tabela extends B {
+	int t3;
+	{
 	Tabela(int b) {}
+	
+	char metoda(int c) {
+		return 4;
 	}
+}
 }
 
 {
-	void main(int b) Tabela t; {
-		return;
-	}
+
 
 }
