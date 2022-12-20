@@ -19,13 +19,19 @@ class B {
 }
 
 
-B obj;
+B obj[];
+B it, l;
+int mm;
 
 {
 	void f1() { return; }
 
 	void main(int k)  {
-		
+		obj = new B[4];
+		obj.foreach(it => {
+			l = it;
+	
+		});
 	}
 
 }

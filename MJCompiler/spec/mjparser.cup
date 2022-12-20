@@ -103,9 +103,10 @@ nonterminal rs.etf.pp1.symboltable.concepts.Obj OneFormPar;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type;
 
 /* Statement */
-nonterminal Statement, Unmatched, Matched, PrintNumConst, DesignatorForeach;
+nonterminal Statement, Unmatched, Matched, PrintNumConst;
 nonterminal WhileLoopStart;
-nonterminal rs.etf.pp1.symboltable.concepts.Struct ReturnOptionalExpr;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct ReturnOptionalExpr, DesignatorForeach;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj CurrVarDesignator; 
 
 /* DesignatorStatement */
 nonterminal IncOrDec, DesignatorStatement, DesignatorOptions, OptionalDesignatorList, OptionalActPars, OptionalDesignator, DesignatorList;
@@ -338,13 +339,15 @@ Matched ::= (M_Designator) 	DesignatorStatement
 		|	(M_Return) 		RETURN ReturnOptionalExpr SEMICOLON 
 		|	(M_Read) 		READ LPAREN Designator RPAREN SEMICOLON 
 		|	(M_Print) 		PRINT LPAREN Expr PrintNumConst RPAREN SEMICOLON 
-		|	(M_Foreach) 	DesignatorForeach IDENT LAMBDA Statement RPAREN SEMICOLON 
+		|	(M_Foreach) 	DesignatorForeach CurrVarDesignator LAMBDA Statement RPAREN SEMICOLON 
 		|	(M_Block) 		LBRACE StatementList RBRACE
 		;
 		
 WhileLoopStart ::= (WhileLoopStart) WHILE LPAREN;	
 
 DesignatorForeach ::= (DesignatorForeach) Designator DOT FOREACH LPAREN;
+
+CurrVarDesignator ::= (CurrVarDesignator) IDENT:currVar;
 				 
 ReturnOptionalExpr ::= (ReturnOptionalExpr_) 	Expr 
 			|	 (NoReturnExpr) 			/* empty */

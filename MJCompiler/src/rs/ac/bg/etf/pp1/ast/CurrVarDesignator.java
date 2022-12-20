@@ -5,24 +5,24 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class ProgramName implements SyntaxNode {
+public class CurrVarDesignator implements SyntaxNode {
 
     private SyntaxNode parent;
     private int line;
     public rs.etf.pp1.symboltable.concepts.Obj obj = null;
 
-    private String programName;
+    private String currVar;
 
-    public ProgramName (String programName) {
-        this.programName=programName;
+    public CurrVarDesignator (String currVar) {
+        this.currVar=currVar;
     }
 
-    public String getProgramName() {
-        return programName;
+    public String getCurrVar() {
+        return currVar;
     }
 
-    public void setProgramName(String programName) {
-        this.programName=programName;
+    public void setCurrVar(String currVar) {
+        this.currVar=currVar;
     }
 
     public SyntaxNode getParent() {
@@ -59,13 +59,13 @@ public class ProgramName implements SyntaxNode {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("ProgramName(\n");
+        buffer.append("CurrVarDesignator(\n");
 
-        buffer.append(" "+tab+programName);
+        buffer.append(" "+tab+currVar);
         buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [ProgramName]");
+        buffer.append(") [CurrVarDesignator]");
         return buffer.toString();
     }
 }

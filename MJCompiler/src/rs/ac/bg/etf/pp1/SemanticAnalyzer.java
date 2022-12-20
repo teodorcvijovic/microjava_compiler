@@ -74,6 +74,8 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	
 	private static List<Obj> listOfGlobalFunctionObjNodes = new ArrayList<>();
 	
+	private static Obj currVarForeach = null;
+	
 	/********************** Program ************************/
 	
 	public void visit(ProgramName programName){
@@ -885,12 +887,17 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	}
 	
 	public void visit(F_NewObjConstruction factor) {
-		// TO DO: collect actual params and check if compatible
+		Struct identTypeStruct = factor.getType().struct;
+		int identKind = identTypeStruct.getKind();
 		
+		if (identKind != Struct.Class) {
+			factor.struct = Tab.noType;
+			report_error("Tip za koji se poziva konstruktor mora biti klasa", factor);
+			return;
+		}
 		
-		
-		
-		
+		factor.struct = identTypeStruct;
+		report_info("Kreiran je objekat klase '" + map_ClassStructToName.get(identTypeStruct) + "'", factor);
 	}
 	
 	public void visit(F_NewArray factor) {
@@ -1075,6 +1082,12 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 			return;
 		}
 		
+		/* PAY ATTENTION: foreach constraint */
+		if (currVarForeach != null && leftDesignatorObjNode == currVarForeach) {
+			report_error("Nije moguce koristiti foreach varijablu '" + currVarForeach.getName() + "' za promenu vrednosti elementa niza (nedozvoljen upis)", designatorStatement);
+			return;
+		}
+		
 //		/* PAY ATTENTION: field access right from = */
 //		
 //		if (leftDesignatorKind == Obj.Var && checkIfFuncFormParamIsAccessed(leftDesignatorObjNode)) {
@@ -1125,8 +1138,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	public void visit(ReverseArrayAssignment designatorStatement) {
 		// TO DO
 		
-		
-		
+
 		
 		
 		
@@ -1158,10 +1170,59 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	
 	public void visit(DesignatorForeach designatorForeach) {
 		++openLoopScopeCounter;
+		
+		// check designator type
+		Obj leftDesignatorObjNode = designatorForeach.getDesignator().obj;
+		Struct leftDesignatorTypeStruct = leftDesignatorObjNode.getType();
+		int leftDesignatorKind = leftDesignatorTypeStruct.getKind();
+		
+		if (leftDesignatorKind != Struct.Array) {
+			designatorForeach.struct = Tab.noType;
+			report_error("Foreach se moze pozivati samo nad nizovima", designatorForeach);
+			return;
+		}
+		
+		Struct elemTypeStruct = leftDesignatorTypeStruct.getElemType();
+		
+		designatorForeach.struct = elemTypeStruct;
 	}
 	
-	public void visit(M_Foreach foreachMatched) {
+	public void visit(M_Foreach node) {
 		--openLoopScopeCounter;
+		
+		Struct leftElemTypeStruct = node.getDesignatorForeach().struct;
+		Obj currVarObjNode = node.getCurrVarDesignator().obj;
+		Struct currVarTypeStruct = currVarObjNode.getType();
+		
+		if (leftElemTypeStruct != currVarTypeStruct) {
+			report_error("Identifikator za iteriranje '" + currVarObjNode.getName() + "' nije istog tipa kao elementi niza nad kojim je pozvan foreach", node);
+			currVarForeach = null;
+			return;
+		}
+		
+		currVarForeach = null;
+	}
+	
+	public void visit(CurrVarDesignator node) {
+		String identName = node.getCurrVar();
+    	Obj identObjNode = Tab.find(identName);
+    	
+    	if (identObjNode == Tab.noObj) {
+    		node.obj = Tab.noObj;
+    		report_error("Promenjiva '" + identName + "' nije deklarisana", node);
+    		return;
+    	}
+    	
+    	node.obj = identObjNode;
+    	int identObjNodeKind = identObjNode.getKind();
+    	
+    	if (identObjNodeKind != Obj.Var) {
+			node.obj = Tab.noObj;
+			report_error("Varijabla za iteriranje mora biti lokalna ili globalna promenljiva", node);
+			return;
+		}
+    	
+    	currVarForeach = identObjNode;
 	}
 	
 	/******************* M_Read ****************/

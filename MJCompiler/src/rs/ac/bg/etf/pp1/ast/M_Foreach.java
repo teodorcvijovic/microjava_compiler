@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 20/11/2022 14:13:48
+// 20/11/2022 18:4:58
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -8,13 +8,14 @@ package rs.ac.bg.etf.pp1.ast;
 public class M_Foreach extends Matched {
 
     private DesignatorForeach DesignatorForeach;
-    private String I2;
+    private CurrVarDesignator CurrVarDesignator;
     private Statement Statement;
 
-    public M_Foreach (DesignatorForeach DesignatorForeach, String I2, Statement Statement) {
+    public M_Foreach (DesignatorForeach DesignatorForeach, CurrVarDesignator CurrVarDesignator, Statement Statement) {
         this.DesignatorForeach=DesignatorForeach;
         if(DesignatorForeach!=null) DesignatorForeach.setParent(this);
-        this.I2=I2;
+        this.CurrVarDesignator=CurrVarDesignator;
+        if(CurrVarDesignator!=null) CurrVarDesignator.setParent(this);
         this.Statement=Statement;
         if(Statement!=null) Statement.setParent(this);
     }
@@ -27,12 +28,12 @@ public class M_Foreach extends Matched {
         this.DesignatorForeach=DesignatorForeach;
     }
 
-    public String getI2() {
-        return I2;
+    public CurrVarDesignator getCurrVarDesignator() {
+        return CurrVarDesignator;
     }
 
-    public void setI2(String I2) {
-        this.I2=I2;
+    public void setCurrVarDesignator(CurrVarDesignator CurrVarDesignator) {
+        this.CurrVarDesignator=CurrVarDesignator;
     }
 
     public Statement getStatement() {
@@ -49,17 +50,20 @@ public class M_Foreach extends Matched {
 
     public void childrenAccept(Visitor visitor) {
         if(DesignatorForeach!=null) DesignatorForeach.accept(visitor);
+        if(CurrVarDesignator!=null) CurrVarDesignator.accept(visitor);
         if(Statement!=null) Statement.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
         if(DesignatorForeach!=null) DesignatorForeach.traverseTopDown(visitor);
+        if(CurrVarDesignator!=null) CurrVarDesignator.traverseTopDown(visitor);
         if(Statement!=null) Statement.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
         if(DesignatorForeach!=null) DesignatorForeach.traverseBottomUp(visitor);
+        if(CurrVarDesignator!=null) CurrVarDesignator.traverseBottomUp(visitor);
         if(Statement!=null) Statement.traverseBottomUp(visitor);
         accept(visitor);
     }
@@ -75,7 +79,10 @@ public class M_Foreach extends Matched {
             buffer.append(tab+"  null");
         buffer.append("\n");
 
-        buffer.append(" "+tab+I2);
+        if(CurrVarDesignator!=null)
+            buffer.append(CurrVarDesignator.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
         buffer.append("\n");
 
         if(Statement!=null)

@@ -126,9 +126,9 @@ nonterminal Statement Statement;
 nonterminal Unmatched Unmatched;
 nonterminal Matched Matched;
 nonterminal PrintNumConst PrintNumConst;
-nonterminal DesignatorForeach DesignatorForeach;
 nonterminal WhileLoopStart WhileLoopStart;
-nonterminal rs.etf.pp1.symboltable.concepts.Struct ReturnOptionalExpr;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct ReturnOptionalExpr, DesignatorForeach;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj CurrVarDesignator; 
 
 /* DesignatorStatement */
 nonterminal IncOrDec IncOrDec;
@@ -372,13 +372,15 @@ Matched ::= (M_Designator) 	DesignatorStatement:D1 {: RESULT=new M_Designator(D1
 		|	(M_Return) 		RETURN ReturnOptionalExpr:R1 SEMICOLON {: RESULT=new M_Return(R1); RESULT.setLine(R1left); :} 
 		|	(M_Read) 		READ LPAREN Designator:D1 RPAREN SEMICOLON {: RESULT=new M_Read(D1); RESULT.setLine(D1left); :} 
 		|	(M_Print) 		PRINT LPAREN Expr:E1 PrintNumConst:P2 RPAREN SEMICOLON {: RESULT=new M_Print(E1, P2); RESULT.setLine(E1left); :} 
-		|	(M_Foreach) 	DesignatorForeach:D1 IDENT:I2 LAMBDA Statement:S3 RPAREN SEMICOLON {: RESULT=new M_Foreach(D1, I2, S3); RESULT.setLine(D1left); :} 
+		|	(M_Foreach) 	DesignatorForeach:D1 CurrVarDesignator:C2 LAMBDA Statement:S3 RPAREN SEMICOLON {: RESULT=new M_Foreach(D1, C2, S3); RESULT.setLine(D1left); :} 
 		|	(M_Block) 		LBRACE StatementList:S1 RBRACE {: RESULT=new M_Block(S1); RESULT.setLine(S1left); :}
 		;
 		
 WhileLoopStart ::= (WhileLoopStart) WHILE LPAREN {: RESULT=new WhileLoopStart(); :};	
 
 DesignatorForeach ::= (DesignatorForeach) Designator:D1 DOT FOREACH LPAREN {: RESULT=new DesignatorForeach(D1); RESULT.setLine(D1left); :};
+
+CurrVarDesignator ::= (CurrVarDesignator) IDENT:currVar {: RESULT=new CurrVarDesignator(currVar); RESULT.setLine(currVarleft); :};
 				 
 ReturnOptionalExpr ::= (ReturnOptionalExpr_) 	Expr:E1 {: RESULT=new ReturnOptionalExpr_(E1); RESULT.setLine(E1left); :} 
 			|	 (NoReturnExpr) {: RESULT=new NoReturnExpr(); :} 			/* empty */
