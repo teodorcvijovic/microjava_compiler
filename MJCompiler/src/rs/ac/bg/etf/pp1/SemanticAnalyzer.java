@@ -72,6 +72,8 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	
 	int openLoopScopeCounter = 0; // while and foreach
 	
+	private static List<Obj> listOfGlobalFunctionObjNodes = new ArrayList<>();
+	
 	/********************** Program ************************/
 	
 	public void visit(ProgramName programName){
@@ -376,6 +378,12 @@ public class SemanticAnalyzer extends VisitorAdaptor {
     	
 		report_info("Kraj dosega " + (currentClassName.length()==0? "globalne funkcije":"metode") + "'" + currentMethodObjNode.getName() + "'", methodDecl);
 
+		/* PAY ATTENTION */
+		if (currentClassName.length()==0) {
+			// global function if definied
+			listOfGlobalFunctionObjNodes.add(currentMethodObjNode);
+		}
+		
     	returnStatementFound = false;
     	currentMethodObjNode = null;
     	currentMethodReturnTypeStruct = null;
@@ -392,6 +400,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
     
     public void visit(ReturnOptionalExpr_ returnOptionalExpr) {
     	if (!checkIfFunctionScopeIsOpened()) {
+    		returnOptionalExpr.struct = Tab.noType;
     		report_error("Return iskaz se ne nalazi u funkciji", returnOptionalExpr);
     		return;
     	}
@@ -399,16 +408,21 @@ public class SemanticAnalyzer extends VisitorAdaptor {
     	returnStatementFound = true;
     	
     	if (currentMethodReturnTypeStruct == Tab.noType) {
+    		returnOptionalExpr.struct = Tab.noType;
     		report_error("Funkcija '" + currentMethodObjNode.getName() + "' je definisana kao void, a sadrzi izraz u return naredbi", returnOptionalExpr);
+    		return;
     	}
     	
     	/* PAY ATTENTION: check type compatibility */
-    	/* TO DO */
+    	Struct returnTypeStruct = returnOptionalExpr.getExpr().struct;
+    	returnOptionalExpr.struct = returnTypeStruct;
     	
 		report_info("Return naredba" + " sa opcionim izrazom", returnOptionalExpr);
     }
     
     public void visit(NoReturnExpr noReturnExpr) {
+    	noReturnExpr.struct = Tab.noType;
+    	
     	if (!checkIfFunctionScopeIsOpened()) {
     		report_error("Return iskaz se ne nalazi u funkciji", noReturnExpr);
     		return;
@@ -421,6 +435,15 @@ public class SemanticAnalyzer extends VisitorAdaptor {
     	}
     	
 		report_info("Return naredba pronadjena", noReturnExpr);
+    }
+    
+    public void visit(M_Return node) {
+    	Struct returnTypeStruct = node.getReturnOptionalExpr().struct;
+    	
+    	if (!returnTypeStruct.equals(currentMethodReturnTypeStruct)) {
+    		report_error("Tip izraza u return naredbi nije ekvivalentan sa povratnim tipom funkcije", node);
+    		return;
+    	}
     }
     
     /******************** ConstructorDecl ************************/
@@ -837,14 +860,23 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	/****************************/
 	
 	public void visit(F_DesignatorFuncCall factor) {
-		// TO DO: collect actual params and check if compatible
-		// FactorFunctionCall
+		// D: FactorFunctionCall
+		Obj designatorObjNode = factor.getDesignator().obj;
+		Struct returnTypeStruct = designatorObjNode.getType();
+		int designatorKind = designatorObjNode.getKind();
+		String funcName = designatorObjNode.getName();
 		
+		if (designatorKind != Obj.Meth) {
+			factor.struct = Tab.noType;
+			report_error("Identifikator mora oznacavati metodu ili funkciju glavnog programa", factor);
+			return;
+		}
 		
+		if (listOfGlobalFunctionObjNodes.contains(designatorObjNode)) {
+			report_info("Poziv globalne funkcije '" + funcName + "'", factor);
+		}
 		
-		
-		
-	
+		factor.struct = returnTypeStruct;
 	}
 	
 	public void visit(F_Expr factor) {
@@ -1059,14 +1091,18 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	}
 	
 	public void visit(DesignatorFunctionCall designatorStatement) {
-		// TO DO
+		Obj designatorObjNode = designatorStatement.getDesignator().obj;
+		int designatorKind = designatorObjNode.getKind();
+		String funcName = designatorObjNode.getName();
 		
+		if (designatorKind != Obj.Meth) {
+			report_error("Identifikator mora oznacavati metodu ili funkciju glavnog programa", designatorStatement);
+			return;
+		}
 		
-		
-		
-		
-		
-		
+		if (listOfGlobalFunctionObjNodes.contains(designatorObjNode)) {
+			report_info("Poziv globalne funkcije '" + funcName + "'", designatorStatement);
+		}
 	}
 	
 	public void visit(DesignatorIncDec designatorStatement) {

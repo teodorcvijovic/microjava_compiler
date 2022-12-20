@@ -2,13 +2,14 @@ program MJProgram
 
 const int SS = 2;
 int x;
+bool bo;
 
 class B {
 	int b;
 
 	{
-		char metoda(int param) { 
-		
+		int metoda(int param) { 
+			
 		}
 	
 	
@@ -17,17 +18,14 @@ class B {
 
 }
 
-class BB extends B {
 
-}
-
-B globalniObjekat;
+B obj;
 
 {
-	void main(int k) B objekat; BB obj; int c; {
-		while (objekat) {}
-		while (obj < 3) {}
+	void f1() { return; }
 
+	void main(int k)  {
+		
 	}
 
 }

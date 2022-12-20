@@ -125,10 +125,10 @@ nonterminal rs.etf.pp1.symboltable.concepts.Struct Type;
 nonterminal Statement Statement;
 nonterminal Unmatched Unmatched;
 nonterminal Matched Matched;
-nonterminal ReturnOptionalExpr ReturnOptionalExpr;
 nonterminal PrintNumConst PrintNumConst;
 nonterminal DesignatorForeach DesignatorForeach;
 nonterminal WhileLoopStart WhileLoopStart;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct ReturnOptionalExpr;
 
 /* DesignatorStatement */
 nonterminal IncOrDec IncOrDec;
@@ -492,7 +492,7 @@ Term ::= (Term_Factor) Factor:F1 {: RESULT=new Term_Factor(F1); RESULT.setLine(F
 
 /*********** Factor **********/
 
-Factor ::= 	(F_DesignatorFuncCall)  Designator:D1 ParenWithOptionalActPars:P2 {: RESULT=new F_DesignatorFuncCall(D1, P2); RESULT.setLine(D1left); :}
+Factor ::= 	(F_DesignatorFuncCall)  Designator:D1 LPAREN OptionalActPars:O2 RPAREN {: RESULT=new F_DesignatorFuncCall(D1, O2); RESULT.setLine(D1left); :}
 		|	(F_Designator)			Designator:D1 {: RESULT=new F_Designator(D1); RESULT.setLine(D1left); :} 
 		|   (F_NumConst) 			NUM_CONST:N1 {: RESULT=new F_NumConst(N1); RESULT.setLine(N1left); :} 
 		|   (F_CharConst) 			CHAR_CONST:C1 {: RESULT=new F_CharConst(C1); RESULT.setLine(C1left); :} 

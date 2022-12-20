@@ -103,8 +103,9 @@ nonterminal rs.etf.pp1.symboltable.concepts.Obj OneFormPar;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type;
 
 /* Statement */
-nonterminal Statement, Unmatched, Matched, ReturnOptionalExpr, PrintNumConst, DesignatorForeach;
+nonterminal Statement, Unmatched, Matched, PrintNumConst, DesignatorForeach;
 nonterminal WhileLoopStart;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct ReturnOptionalExpr;
 
 /* DesignatorStatement */
 nonterminal IncOrDec, DesignatorStatement, DesignatorOptions, OptionalDesignatorList, OptionalActPars, OptionalDesignator, DesignatorList;
@@ -457,7 +458,7 @@ Term ::= (Term_Factor) Factor
 
 /*********** Factor **********/
 
-Factor ::= 	(F_DesignatorFuncCall)  Designator ParenWithOptionalActPars
+Factor ::= 	(F_DesignatorFuncCall)  Designator LPAREN OptionalActPars RPAREN
 		|	(F_Designator)			Designator 
 		|   (F_NumConst) 			NUM_CONST 
 		|   (F_CharConst) 			CHAR_CONST 

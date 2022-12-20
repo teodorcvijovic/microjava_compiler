@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 20/11/2022 1:59:16
+// 20/11/2022 14:13:48
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -8,13 +8,13 @@ package rs.ac.bg.etf.pp1.ast;
 public class F_DesignatorFuncCall extends Factor {
 
     private Designator Designator;
-    private ParenWithOptionalActPars ParenWithOptionalActPars;
+    private OptionalActPars OptionalActPars;
 
-    public F_DesignatorFuncCall (Designator Designator, ParenWithOptionalActPars ParenWithOptionalActPars) {
+    public F_DesignatorFuncCall (Designator Designator, OptionalActPars OptionalActPars) {
         this.Designator=Designator;
         if(Designator!=null) Designator.setParent(this);
-        this.ParenWithOptionalActPars=ParenWithOptionalActPars;
-        if(ParenWithOptionalActPars!=null) ParenWithOptionalActPars.setParent(this);
+        this.OptionalActPars=OptionalActPars;
+        if(OptionalActPars!=null) OptionalActPars.setParent(this);
     }
 
     public Designator getDesignator() {
@@ -25,12 +25,12 @@ public class F_DesignatorFuncCall extends Factor {
         this.Designator=Designator;
     }
 
-    public ParenWithOptionalActPars getParenWithOptionalActPars() {
-        return ParenWithOptionalActPars;
+    public OptionalActPars getOptionalActPars() {
+        return OptionalActPars;
     }
 
-    public void setParenWithOptionalActPars(ParenWithOptionalActPars ParenWithOptionalActPars) {
-        this.ParenWithOptionalActPars=ParenWithOptionalActPars;
+    public void setOptionalActPars(OptionalActPars OptionalActPars) {
+        this.OptionalActPars=OptionalActPars;
     }
 
     public void accept(Visitor visitor) {
@@ -39,18 +39,18 @@ public class F_DesignatorFuncCall extends Factor {
 
     public void childrenAccept(Visitor visitor) {
         if(Designator!=null) Designator.accept(visitor);
-        if(ParenWithOptionalActPars!=null) ParenWithOptionalActPars.accept(visitor);
+        if(OptionalActPars!=null) OptionalActPars.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
         if(Designator!=null) Designator.traverseTopDown(visitor);
-        if(ParenWithOptionalActPars!=null) ParenWithOptionalActPars.traverseTopDown(visitor);
+        if(OptionalActPars!=null) OptionalActPars.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
         if(Designator!=null) Designator.traverseBottomUp(visitor);
-        if(ParenWithOptionalActPars!=null) ParenWithOptionalActPars.traverseBottomUp(visitor);
+        if(OptionalActPars!=null) OptionalActPars.traverseBottomUp(visitor);
         accept(visitor);
     }
 
@@ -65,8 +65,8 @@ public class F_DesignatorFuncCall extends Factor {
             buffer.append(tab+"  null");
         buffer.append("\n");
 
-        if(ParenWithOptionalActPars!=null)
-            buffer.append(ParenWithOptionalActPars.toString("  "+tab));
+        if(OptionalActPars!=null)
+            buffer.append(OptionalActPars.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");
