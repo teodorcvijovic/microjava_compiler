@@ -1,28 +1,28 @@
 // generated with ast extension for cup
 // version 0.8
-// 18/11/2022 22:7:1
+// 20/11/2022 1:59:16
 
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class IdentExprListExpr extends IdentExprList {
+public class Designator_Indexing extends Designator {
 
-    private IdentExprList IdentExprList;
+    private Designator Designator;
     private Expr Expr;
 
-    public IdentExprListExpr (IdentExprList IdentExprList, Expr Expr) {
-        this.IdentExprList=IdentExprList;
-        if(IdentExprList!=null) IdentExprList.setParent(this);
+    public Designator_Indexing (Designator Designator, Expr Expr) {
+        this.Designator=Designator;
+        if(Designator!=null) Designator.setParent(this);
         this.Expr=Expr;
         if(Expr!=null) Expr.setParent(this);
     }
 
-    public IdentExprList getIdentExprList() {
-        return IdentExprList;
+    public Designator getDesignator() {
+        return Designator;
     }
 
-    public void setIdentExprList(IdentExprList IdentExprList) {
-        this.IdentExprList=IdentExprList;
+    public void setDesignator(Designator Designator) {
+        this.Designator=Designator;
     }
 
     public Expr getExpr() {
@@ -38,18 +38,18 @@ public class IdentExprListExpr extends IdentExprList {
     }
 
     public void childrenAccept(Visitor visitor) {
-        if(IdentExprList!=null) IdentExprList.accept(visitor);
+        if(Designator!=null) Designator.accept(visitor);
         if(Expr!=null) Expr.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
-        if(IdentExprList!=null) IdentExprList.traverseTopDown(visitor);
+        if(Designator!=null) Designator.traverseTopDown(visitor);
         if(Expr!=null) Expr.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
-        if(IdentExprList!=null) IdentExprList.traverseBottomUp(visitor);
+        if(Designator!=null) Designator.traverseBottomUp(visitor);
         if(Expr!=null) Expr.traverseBottomUp(visitor);
         accept(visitor);
     }
@@ -57,10 +57,10 @@ public class IdentExprListExpr extends IdentExprList {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("IdentExprListExpr(\n");
+        buffer.append("Designator_Indexing(\n");
 
-        if(IdentExprList!=null)
-            buffer.append(IdentExprList.toString("  "+tab));
+        if(Designator!=null)
+            buffer.append(Designator.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");
@@ -72,7 +72,7 @@ public class IdentExprListExpr extends IdentExprList {
         buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [IdentExprListExpr]");
+        buffer.append(") [Designator_Indexing]");
         return buffer.toString();
     }
 }

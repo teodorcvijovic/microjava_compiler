@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 18/11/2022 22:7:1
+// 20/11/2022 1:59:16
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -9,29 +9,19 @@ public class DesignatorForeach implements SyntaxNode {
 
     private SyntaxNode parent;
     private int line;
-    private String I1;
-    private IdentExprList IdentExprList;
+    private Designator Designator;
 
-    public DesignatorForeach (String I1, IdentExprList IdentExprList) {
-        this.I1=I1;
-        this.IdentExprList=IdentExprList;
-        if(IdentExprList!=null) IdentExprList.setParent(this);
+    public DesignatorForeach (Designator Designator) {
+        this.Designator=Designator;
+        if(Designator!=null) Designator.setParent(this);
     }
 
-    public String getI1() {
-        return I1;
+    public Designator getDesignator() {
+        return Designator;
     }
 
-    public void setI1(String I1) {
-        this.I1=I1;
-    }
-
-    public IdentExprList getIdentExprList() {
-        return IdentExprList;
-    }
-
-    public void setIdentExprList(IdentExprList IdentExprList) {
-        this.IdentExprList=IdentExprList;
+    public void setDesignator(Designator Designator) {
+        this.Designator=Designator;
     }
 
     public SyntaxNode getParent() {
@@ -55,16 +45,16 @@ public class DesignatorForeach implements SyntaxNode {
     }
 
     public void childrenAccept(Visitor visitor) {
-        if(IdentExprList!=null) IdentExprList.accept(visitor);
+        if(Designator!=null) Designator.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
-        if(IdentExprList!=null) IdentExprList.traverseTopDown(visitor);
+        if(Designator!=null) Designator.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
-        if(IdentExprList!=null) IdentExprList.traverseBottomUp(visitor);
+        if(Designator!=null) Designator.traverseBottomUp(visitor);
         accept(visitor);
     }
 
@@ -73,11 +63,8 @@ public class DesignatorForeach implements SyntaxNode {
         buffer.append(tab);
         buffer.append("DesignatorForeach(\n");
 
-        buffer.append(" "+tab+I1);
-        buffer.append("\n");
-
-        if(IdentExprList!=null)
-            buffer.append(IdentExprList.toString("  "+tab));
+        if(Designator!=null)
+            buffer.append(Designator.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");

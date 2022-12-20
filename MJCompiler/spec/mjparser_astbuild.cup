@@ -128,8 +128,10 @@ nonterminal Matched Matched;
 nonterminal ReturnOptionalExpr ReturnOptionalExpr;
 nonterminal PrintNumConst PrintNumConst;
 nonterminal DesignatorForeach DesignatorForeach;
+nonterminal WhileLoopStart WhileLoopStart;
 
 /* DesignatorStatement */
+nonterminal IncOrDec IncOrDec;
 nonterminal DesignatorStatement DesignatorStatement;
 nonterminal DesignatorOptions DesignatorOptions;
 nonterminal OptionalDesignatorList OptionalDesignatorList;
@@ -148,12 +150,12 @@ nonterminal ConditionWhile ConditionWhile;
 nonterminal Or_CondTermList Or_CondTermList;
 
 /* CondTerm */
-nonterminal CondTerm CondTerm;
 nonterminal And_CondFactList And_CondFactList;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct CondTerm;
 
 /* CondFact */
-nonterminal CondFact CondFact;
 nonterminal OptionalRelopExpr OptionalRelopExpr;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct CondFact;
 
 /* Expr */
 nonterminal OptionalMinus OptionalMinus;
@@ -163,14 +165,14 @@ nonterminal rs.etf.pp1.symboltable.concepts.Struct Expr, AddopTermList;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Term, MulopFactorList;
 
 /* Factor */
-nonterminal OptionalActParsParen OptionalActParsParen;
+// nonterminal OptionalActParsParen;
 nonterminal ExprActPars ExprActPars;
 nonterminal ParenWithOptionalActPars ParenWithOptionalActPars;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Factor;
 
 /* Designator */
-nonterminal Designator Designator;
-nonterminal IdentExprList IdentExprList;
+// nonterminal IdentExprList;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj Designator;
 
 /* Label */
 nonterminal Label Label;
@@ -364,7 +366,7 @@ Unmatched ::= (U_If) 		IF LPAREN ConditionIf:C1 RPAREN Statement:S2 {: RESULT=ne
 
 Matched ::= (M_Designator) 	DesignatorStatement:D1 {: RESULT=new M_Designator(D1); RESULT.setLine(D1left); :}
 		|	(M_IfElse) 		IF LPAREN ConditionIf:C1 RPAREN Matched:M2 ELSE Matched:M3 {: RESULT=new M_IfElse(C1, M2, M3); RESULT.setLine(C1left); :} 
-		|	(M_While) 		WHILE LPAREN ConditionWhile:C1 RPAREN Statement:S2 {: RESULT=new M_While(C1, S2); RESULT.setLine(C1left); :} 
+		|	(M_While) 		WhileLoopStart:W1 ConditionWhile:C2 RPAREN Statement:S3 {: RESULT=new M_While(W1, C2, S3); RESULT.setLine(W1left); :} 
 		|	(M_Break) 		BREAK SEMICOLON {: RESULT=new M_Break(); :} 
 		|	(M_Continue) 	CONTINUE SEMICOLON {: RESULT=new M_Continue(); :} 
 		|	(M_Return) 		RETURN ReturnOptionalExpr:R1 SEMICOLON {: RESULT=new M_Return(R1); RESULT.setLine(R1left); :} 
@@ -372,9 +374,11 @@ Matched ::= (M_Designator) 	DesignatorStatement:D1 {: RESULT=new M_Designator(D1
 		|	(M_Print) 		PRINT LPAREN Expr:E1 PrintNumConst:P2 RPAREN SEMICOLON {: RESULT=new M_Print(E1, P2); RESULT.setLine(E1left); :} 
 		|	(M_Foreach) 	DesignatorForeach:D1 IDENT:I2 LAMBDA Statement:S3 RPAREN SEMICOLON {: RESULT=new M_Foreach(D1, I2, S3); RESULT.setLine(D1left); :} 
 		|	(M_Block) 		LBRACE StatementList:S1 RBRACE {: RESULT=new M_Block(S1); RESULT.setLine(S1left); :}
-		;	
+		;
+		
+WhileLoopStart ::= (WhileLoopStart) WHILE LPAREN {: RESULT=new WhileLoopStart(); :};	
 
-DesignatorForeach ::= (DesignatorForeach) IDENT:I1 IdentExprList:I2 DOT FOREACH LPAREN {: RESULT=new DesignatorForeach(I1, I2); RESULT.setLine(I1left); :};
+DesignatorForeach ::= (DesignatorForeach) Designator:D1 DOT FOREACH LPAREN {: RESULT=new DesignatorForeach(D1); RESULT.setLine(D1left); :};
 				 
 ReturnOptionalExpr ::= (ReturnOptionalExpr_) 	Expr:E1 {: RESULT=new ReturnOptionalExpr_(E1); RESULT.setLine(E1left); :} 
 			|	 (NoReturnExpr) {: RESULT=new NoReturnExpr(); :} 			/* empty */
@@ -386,16 +390,25 @@ PrintNumConst ::= (PrintNumConst_) 	COMMA NUM_CONST:N1 {: RESULT=new PrintNumCon
 
 /************** DesignatorStatement ***************/
 
-DesignatorStatement ::= (DesignatorWithOptions) 	Designator:D1 DesignatorOptions:D2 SEMICOLON {: RESULT=new DesignatorWithOptions(D1, D2); RESULT.setLine(D1left); :} 
-					|	(DesignatorWithSquare) 		LSQUARE OptionalDesignatorList:O1 RSQUARE EQ Designator:D2 SEMICOLON {: RESULT=new DesignatorWithSquare(O1, D2); RESULT.setLine(O1left); :} 
+DesignatorStatement ::= (DesignatorAssignment)		Designator:D1 Assignop:A2 Expr:E3 SEMICOLON {: RESULT=new DesignatorAssignment(D1, A2, E3); RESULT.setLine(D1left); :}
+					|	(DesignatorFunctionCall)	Designator:D1 LPAREN OptionalActPars:O2 RPAREN SEMICOLON {: RESULT=new DesignatorFunctionCall(D1, O2); RESULT.setLine(D1left); :}
+					|	(DesignatorIncDec)			Designator:D1 IncOrDec:I2 SEMICOLON {: RESULT=new DesignatorIncDec(D1, I2); RESULT.setLine(D1left); :}
+					|	(ReverseArrayAssignment) 	LSQUARE OptionalDesignatorList:O1 RSQUARE EQ Designator:D2 SEMICOLON {: RESULT=new ReverseArrayAssignment(O1, D2); RESULT.setLine(O1left); :} 
 					|	(ERROR_DesignatorStatement) error SEMICOLON:l {: parser.report_error("Greska pri konstrukciji iskaza dodele u liniji " + lleft, null); :} {: RESULT=new ERROR_DesignatorStatement(); :}
 					;
+					
+IncOrDec ::= (Inc) INC {: RESULT=new Inc(); :} | (Dec) DEC {: RESULT=new Dec(); :}; 
+
+//DesignatorStatement ::= (DesignatorWithOptions) 	Designator DesignatorOptions SEMICOLON 
+//					|	(DesignatorWithSquare) 		LSQUARE OptionalDesignatorList RSQUARE EQ Designator SEMICOLON 
+//					|	(ERROR_DesignatorStatement) error SEMICOLON:l {: parser.report_error("Greska pri konstrukciji iskaza dodele u liniji " + lleft, null); :}
+//					;
 						
-DesignatorOptions ::= 	(Option_Assign) 	Assignop:A1 Expr:E2 {: RESULT=new Option_Assign(A1, E2); RESULT.setLine(A1left); :}
-			|  			(Option_ActPars) 	LPAREN OptionalActPars:O1 RPAREN {: RESULT=new Option_ActPars(O1); RESULT.setLine(O1left); :} 
-			|  			(Option_Inc) 		INC {: RESULT=new Option_Inc(); :} 
-			|  			(Option_Dec) 		DEC {: RESULT=new Option_Dec(); :}
-			;  
+//DesignatorOptions ::= 	(Option_Assign) 	Assignop Expr
+//			|  			(Option_ActPars) 	LPAREN OptionalActPars RPAREN 
+//			|  			(Option_Inc) 		INC 
+//			|  			(Option_Dec) 		DEC
+//			;  
 			
 OptionalDesignatorList ::= OptionalDesignator:O1 DesignatorList:D2 {: RESULT=new OptionalDesignatorListDerived1(O1, D2); RESULT.setLine(O1left); :};
 
@@ -443,60 +456,76 @@ And_CondFactList ::= (AndCondFactList) 		And_CondFactList:A1 AND CondFact:C2 {: 
 
 /********* CondFact **********/
 
-CondFact ::= (CondFact) Expr:E1 OptionalRelopExpr:O2 {: RESULT=new CondFact(E1, O2); RESULT.setLine(E1left); :};
+/* zanimljivo: nema shift/reduce konflikta */
+CondFact ::= (CondFact_Expr) 		Expr:E1 {: RESULT=new CondFact_Expr(E1); RESULT.setLine(E1left); :}
+			|(CondFact_RelopExpr) 	Expr:leftExpr Relop:R1 Expr:rightExpr {: RESULT=new CondFact_RelopExpr(leftExpr, R1, rightExpr); RESULT.setLine(leftExprleft); :}
+			;
 
-OptionalRelopExpr ::= (OptionalRelopExpr_) 	Relop:R1 Expr:E2 {: RESULT=new OptionalRelopExpr_(R1, E2); RESULT.setLine(R1left); :} 
-					| (NoOptionalRelopExpr) {: RESULT=new NoOptionalRelopExpr(); :} /* empty */
-					;
+//OptionalRelopExpr ::= (OptionalRelopExpr_) 	Relop Expr 
+//					| (NoOptionalRelopExpr) /* empty */
+//					;
 
 /******** Expr *********/
 
-Expr ::= (Expr) OptionalMinus:O1 Term:T2 AddopTermList:A3 {: RESULT=new Expr(O1, T2, A3); RESULT.setLine(O1left); :};
+Expr ::= (Expr_Term)	Term:T1 {: RESULT=new Expr_Term(T1); RESULT.setLine(T1left); :}
+	  |	 (Expr_NegTerm)	MINUS Term:T1 {: RESULT=new Expr_NegTerm(T1); RESULT.setLine(T1left); :}
+	  |	 (Expr_AddTerm)	Expr:E1 Addop:A2 Term:T3 {: RESULT=new Expr_AddTerm(E1, A2, T3); RESULT.setLine(E1left); :}
+	  ;
 
-OptionalMinus ::= 	(OptionalMinus_) 	MINUS {: RESULT=new OptionalMinus_(); :}
-			 	|	(NoMinus) {: RESULT=new NoMinus(); :} 			/* empty */
-			 	;
+//OptionalMinus ::= 	(OptionalMinus_) 	MINUS
+//			 	|	(NoMinus) 			/* empty */
+//			 	;
 			 
-AddopTermList ::= (AddopTermList_) 		AddopTermList:A1 Addop:A2 Term:T3 {: RESULT=new AddopTermList_(A1, A2, T3); RESULT.setLine(A1left); :}
-				| (EmptyAddopTermList) {: RESULT=new EmptyAddopTermList(); :} 	/* empty */
-				;
+//AddopTermList ::= (AddopTermList_) 		AddopTermList Addop Term
+//				| (EmptyAddopTermList) 	/* empty */
+//				;
  				  
 /*********** Term *********/
 
-Term ::= (Term) Factor:F1 MulopFactorList:M2 {: RESULT=new Term(F1, M2); RESULT.setLine(F1left); :};
+Term ::= (Term_Factor) Factor:F1 {: RESULT=new Term_Factor(F1); RESULT.setLine(F1left); :}
+	  |  (Term_MulFactor) Term:T1 Mulop:M2 Factor:F3 {: RESULT=new Term_MulFactor(T1, M2, F3); RESULT.setLine(T1left); :}
+	  ;
 
-MulopFactorList ::= (MulopFactorList_) 		MulopFactorList:M1 Mulop:M2 Factor:F3 {: RESULT=new MulopFactorList_(M1, M2, F3); RESULT.setLine(M1left); :}
-				|	(EmptyMulopFactorList) {: RESULT=new EmptyMulopFactorList(); :} 	/* empty */
-				;
+//MulopFactorList ::= (MulopFactorList_) 		MulopFactorList Mulop Factor
+//				|	(EmptyMulopFactorList) 	/* empty */
+//				;
 
 /*********** Factor **********/
 
-Factor ::= 	(F_DesignatorActPars) 	Designator:D1 OptionalActParsParen:O2 {: RESULT=new F_DesignatorActPars(D1, O2); RESULT.setLine(D1left); :} 
+Factor ::= 	(F_DesignatorFuncCall)  Designator:D1 ParenWithOptionalActPars:P2 {: RESULT=new F_DesignatorFuncCall(D1, P2); RESULT.setLine(D1left); :}
+		|	(F_Designator)			Designator:D1 {: RESULT=new F_Designator(D1); RESULT.setLine(D1left); :} 
 		|   (F_NumConst) 			NUM_CONST:N1 {: RESULT=new F_NumConst(N1); RESULT.setLine(N1left); :} 
 		|   (F_CharConst) 			CHAR_CONST:C1 {: RESULT=new F_CharConst(C1); RESULT.setLine(C1left); :} 
 		|   (F_BoolConst) 			BOOL_CONST:B1 {: RESULT=new F_BoolConst(B1); RESULT.setLine(B1left); :} 
-		|   (F_TypeExprActPars) 	NEW Type:T1 ExprActPars:E2 {: RESULT=new F_TypeExprActPars(T1, E2); RESULT.setLine(T1left); :} 
+		|   (F_NewObjConstruction) 	NEW Type:T1 LPAREN OptionalActPars:O2 RPAREN {: RESULT=new F_NewObjConstruction(T1, O2); RESULT.setLine(T1left); :}
+		|	(F_NewArray)			NEW Type:T1 LSQUARE Expr:E2 RSQUARE {: RESULT=new F_NewArray(T1, E2); RESULT.setLine(T1left); :} 
 		|   (F_Expr) 				LPAREN Expr:E1 RPAREN {: RESULT=new F_Expr(E1); RESULT.setLine(E1left); :}
 		;
 
-OptionalActParsParen ::= 	(OptionalActParsParen_) ParenWithOptionalActPars:P1 {: RESULT=new OptionalActParsParen_(P1); RESULT.setLine(P1left); :}
-				 	| 		(NoActParsParen) {: RESULT=new NoActParsParen(); :} 		/* empty */
-				 	;
+//OptionalActParsParen ::= 	(OptionalActParsParen_) ParenWithOptionalActPars
+//				 	| 		(NoActParsParen) 		/* empty */
+//				 	;
 
-ExprActPars ::= (ExprOrActParsExpr) 	LSQUARE Expr:E1 RSQUARE {: RESULT=new ExprOrActParsExpr(E1); RESULT.setLine(E1left); :} 
-			|	(ExprOrActParsActPars) 	ParenWithOptionalActPars:P1 {: RESULT=new ExprOrActParsActPars(P1); RESULT.setLine(P1left); :}
-			;
+//ExprActPars ::= (ExprOrActParsExpr) 	LSQUARE Expr RSQUARE
+//			|	(ExprOrActParsActPars) 	ParenWithOptionalActPars
+//			;
 			
-ParenWithOptionalActPars ::= (ParenWithOptionalActPars) LPAREN OptionalActPars:O1 RPAREN {: RESULT=new ParenWithOptionalActPars(O1); RESULT.setLine(O1left); :};
+/* actual params of constructor with arguments */
+//ParenWithOptionalActPars ::= (ParenWithOptionalActPars) LPAREN OptionalActPars RPAREN;
 
 /************* Designator ************/
 
-Designator ::= (Designator) IDENT:designatorIdentName IdentExprList:I1 {: RESULT=new Designator(designatorIdentName, I1); RESULT.setLine(designatorIdentNameleft); :};
+// Designator ::= (Designator) IDENT:designatorIdentName IdentExprList;
 
-IdentExprList ::= (IdentExprListIdent) 	IdentExprList:I1 DOT IDENT:I2 {: RESULT=new IdentExprListIdent(I1, I2); RESULT.setLine(I1left); :}
-				| (IdentExprListExpr) 	IdentExprList:I1 LSQUARE Expr:E2 RSQUARE {: RESULT=new IdentExprListExpr(I1, E2); RESULT.setLine(I1left); :}
-				| (EmptyIdentExprList) {: RESULT=new EmptyIdentExprList(); :} 	/* empty */
-				;
+//IdentExprList ::= (IdentExprListIdent) 	IdentExprList DOT IDENT:fieldName
+//				| (IdentExprListExpr) 	IdentExprList LSQUARE Expr:indexExpr RSQUARE
+//				| (EmptyIdentExprList) 	/* empty */
+//				;
+				
+Designator ::= (Designator_Ident) 		IDENT:designatorIdentName {: RESULT=new Designator_Ident(designatorIdentName); RESULT.setLine(designatorIdentNameleft); :}
+			|  (Designator_FieldAccess) Designator:D1 DOT IDENT:fieldName {: RESULT=new Designator_FieldAccess(D1, fieldName); RESULT.setLine(D1left); :}
+			|  (Designator_Indexing) 	Designator:D1 LSQUARE Expr:indexExpr RSQUARE {: RESULT=new Designator_Indexing(D1, indexExpr); RESULT.setLine(D1left); :}
+			;
 				  
 /************* Label ************/
 

@@ -67,6 +67,10 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	
 	private Obj methodToBeOverridenObjNode = null;
 	
+	private enum Operators {PLUS, MINUS, MUL, DIV, PERCENT, DEQ, NE, GT, GE, LT, LE, AND, OR, EQ, INC, DEC};
+	Operators operator;
+	
+	int openLoopScopeCounter = 0; // while and foreach
 	
 	/********************** Program ************************/
 	
@@ -269,7 +273,8 @@ public class SemanticAnalyzer extends VisitorAdaptor {
     	String parentClassName = map_ClassStructToName.getOrDefault(parentClassStruct, "");
     	
     	currentClassName = className;
-    	currentClassStruct = new Struct(Struct.Class, parentClassStruct);
+    	currentClassStruct = new Struct(Struct.Class, parentClassStruct); /* CUP IS NOT WORKING PROPERLY HERE */
+    	currentClassStruct.setElementType(parentClassStruct);
     	map_ClassStructToName.put(currentClassStruct, currentClassName);
     	
     	// add new class to symbol table
@@ -671,4 +676,486 @@ public class SemanticAnalyzer extends VisitorAdaptor {
     
     /**********************************************/
     
+    /************************ Designator ***********************/
+    
+    public void visit(Designator_Ident designator) {
+    	String identName = designator.getDesignatorIdentName();
+    	Obj identObjNode = Tab.find(identName);
+    	
+    	if (identObjNode == Tab.noObj) {
+    		designator.obj = Tab.noObj;
+    		report_error("Promenjiva '" + identName + "' nije deklarisana", designator);
+    		return;
+    	}
+    	
+    	designator.obj = identObjNode;
+    	int identObjNodeKind = identObjNode.getKind();
+    	
+    	if (identObjNodeKind == Obj.Var && checkIfFuncFormParamIsAccessed(identObjNode)) {
+			report_info("Pristup formalnom parametru '" + identObjNode.getName() + "'", designator);
+		}
+		else if (identObjNodeKind == Obj.Var) {
+			report_info("Pristup (" + (
+						identObjNode.getLevel() == 0 ? "globalnoj" : "lokalnoj"
+					) +") promenljivoj '" + identObjNode.getName() + "'", designator);
+		}
+		else if (identObjNodeKind == Obj.Con) {
+			report_info("Pristup simbolickoj konstanti '" + identObjNode.getName() + "'", designator);
+		}
+    }
+    
+    public void visit(Designator_FieldAccess designator) {
+    	Obj leftDesignatorObjNode = designator.getDesignator().obj;
+    	Obj fieldObjNode = null;
+    	Struct leftDesignatorTypeStruct = leftDesignatorObjNode.getType();
+    	String leftDesignatorTypeName = map_ClassStructToName.getOrDefault(leftDesignatorTypeStruct, "");
+    	String fieldName = designator.getFieldName();
+    	
+    	if (leftDesignatorObjNode == Tab.noObj) {
+    		designator.obj = Tab.noObj;
+    		return;
+    	}
+    	else if (leftDesignatorTypeStruct.getKind() != Struct.Class) {
+    		designator.obj = Tab.noObj;
+    		report_error("Simbol '" + leftDesignatorObjNode.getName() + "' ne predstavlja referencu na klasu", designator);
+    		return;
+    	}
+    	else if (leftDesignatorTypeStruct == currentClassStruct) {
+    		// we are inside the class that is not completely definied
+    		
+    		fieldObjNode = Tab.currentScope().getOuter().findSymbol(fieldName);
+    		if (fieldObjNode == null) {
+    			designator.obj = Tab.noObj;
+    			report_error("Polje '" + fieldName + "' ne predstavlja polje klase '" + currentClassName + "'", designator);
+    			return;
+    		}
+    		
+    		designator.obj = fieldObjNode;
+    		report_info("Pristup polju '" + fieldName + "' klase '" + currentClassName + "'", designator);
+    		return;
+    	}
+    	else if (leftDesignatorTypeStruct != currentClassStruct) {
+    		Collection<Obj> classMembers = leftDesignatorTypeStruct.getMembers();
+    		
+    		for (Obj member: classMembers) {
+    			if (member.getName().equals(fieldName)) {
+    				designator.obj = member;
+    				
+    				if (member.getKind() == Obj.Fld) {
+    					report_info("Pristup polju '" + fieldName + "' klase '"  + leftDesignatorTypeName + "'", designator);
+    				}
+    				/* PAY ATTENTION */
+    				else if (member.getKind() == Obj.Meth) {
+    					report_info("Poziv metode '" + fieldName + "' klase '"  + leftDesignatorTypeName + "'", designator);
+    				}
+    				
+    				return;
+    			}
+    		}
+    		
+    		report_error("Ime '" + fieldName + "' nije clan klase '" + leftDesignatorTypeName + "'", designator);   
+    	}
+    	
+    }
+    
+    public void visit(Designator_Indexing designator) {
+    	Obj designatorObjNode = designator.getDesignator().obj;
+    	Struct designatorTypeStruct = designatorObjNode.getType();
+    	String designatorName =  designatorObjNode.getName();
+    	int designatorStructKind = designatorTypeStruct.getKind();
+    	
+    	if (designatorStructKind != Struct.Array) {
+    		designator.obj = Tab.noObj;
+    		report_error("Promenljiva '" + designatorName + "' nije deklarisana kao niz", designator);
+    		return;
+    	}
+    	
+    	Struct indexingExprTypeStruct = designator.getExpr().struct;
+    	if (indexingExprTypeStruct != Tab.intType) {
+    		designator.obj = Tab.noObj;
+    		report_error("Tip izraza unutar [] mora biti tipa int", designator);
+    		return;
+    	}
+    	
+    	/* PAY ATTENTION */ 
+    	Struct typeOfArrayElemsStruct = designatorTypeStruct.getElemType();
+    	Obj arrayElemObjNode = new Obj(Obj.Elem, designatorName, typeOfArrayElemsStruct);
+    	designator.obj = arrayElemObjNode;
+    	
+    	report_info("Pristup nizu '" + designatorName + "'", designator);
+    }
+    
+    /******************** Factor *********************/
+    
+    public void visit(F_NumConst factor) {
+    	factor.struct = Tab.intType;
+    }
+    
+    public void visit(F_CharConst factor) {
+    	factor.struct = Tab.charType;
+    }
+ 
+	public void visit(F_BoolConst factor) {
+	 	factor.struct = TabExtension.boolType;
+	}
+	
+	public void visit(F_Designator factor) {
+		Obj factorDesignatorObjNode = factor.getDesignator().obj;
+		int factorDesignatorNestingLevel = factorDesignatorObjNode.getLevel();
+		Struct factorDesignatorTypeStruct = factorDesignatorObjNode.getType();
+		int factorDesignatorKind = factorDesignatorObjNode.getKind();
+		
+		factor.struct = factorDesignatorTypeStruct;
+		
+		/* PAY ATTENTION: this is only for vars left from '=' 		   */
+		/* take a look at designator assignment in DesignatorStatement */
+		
+		//if (factorDesignatorKind == Obj.Var && factorDesignatorTypeStruct.getKind() != Struct.Class && factorDesignatorTypeStruct.getKind() != Struct.Array) {
+//		if (factorDesignatorKind == Obj.Var && checkIfFuncFormParamIsAccessed(factorDesignatorObjNode)) {
+//			report_info("Pristup formalnom parametru '" + factorDesignatorObjNode.getName() + "'", factor);
+//		}
+//		else if (factorDesignatorKind == Obj.Var) {
+//			report_info("Pristup (" + (
+//						factorDesignatorNestingLevel == 0 ? "globalnoj" : "lokalnoj"
+//					) +") promenljivoj '" + factorDesignatorObjNode.getName() + "'", factor);
+//		}
+//		else if (factorDesignatorKind == Obj.Con) {
+//			report_info("Pristup simbolickoj konstanti '" + factorDesignatorObjNode.getName() + "'", factor);
+//		}
+		
+	}
+	
+	/****** helper function *****/
+	
+	public boolean checkIfFuncFormParamIsAccessed(Obj factorObjNode) {
+		for(Obj formPar: listOfFormParsObjectNodes) {
+			if (factorObjNode.equals(formPar)) return true;
+		}
+		return false;
+	}
+	
+	/****************************/
+	
+	public void visit(F_DesignatorFuncCall factor) {
+		// TO DO: collect actual params and check if compatible
+		// FactorFunctionCall
+		
+		
+		
+		
+		
+	
+	}
+	
+	public void visit(F_Expr factor) {
+		Struct innerExprTypeStruct = factor.getExpr().struct;
+		factor.struct = innerExprTypeStruct;
+	}
+	
+	public void visit(F_NewObjConstruction factor) {
+		// TO DO: collect actual params and check if compatible
+		
+		
+		
+		
+		
+	}
+	
+	public void visit(F_NewArray factor) {
+		Struct arraySizeTypeStruct = factor.getExpr().struct;
+		Struct elemTypeStruct = factor.getType().struct;
+		
+		if (arraySizeTypeStruct != Tab.intType) {
+			factor.struct = Tab.noType;
+			report_error("Velicina niza mora biti tipa int", factor);
+			return;
+		}
+		
+		Struct newArrayTypeStruct = new Struct(Struct.Array, elemTypeStruct);
+		factor.struct = newArrayTypeStruct;
+	}
+	
+	/************************* Term **************************/
+	
+	public void visit(Term_Factor term) {
+		Struct factorTypeStruct = term.getFactor().struct;
+		term.struct = factorTypeStruct;
+	}
+	
+	public void visit(Term_MulFactor term) {
+		Struct recursiveTermTypeStruct = term.getTerm().struct;
+		Struct factorTypeStruct = term.getFactor().struct;
+		
+		if (recursiveTermTypeStruct != Tab.intType || factorTypeStruct != Tab.intType) {
+			term.struct = Tab.noType;
+			report_error("Svi cinioci moraju biti int tipa", term);
+			return;
+		}
+		
+		term.struct = Tab.intType;
+	}
+    
+	/********************** Expr *****************************/
+	
+	public void visit(Expr_Term expr) {
+		expr.struct = expr.getTerm().struct;
+	}
+	
+	public void visit(Expr_NegTerm expr) {
+		Struct termTypeStruct = expr.getTerm().struct;
+		
+		if (termTypeStruct != Tab.intType) {
+			expr.struct = Tab.noType;
+			report_error("Izraz koji se negira mora biti tipa int", expr);
+			return;
+		}
+		
+		expr.struct = Tab.intType;
+	}
+	
+	public void visit(Expr_AddTerm expr) {
+		Struct recursiveExprTypeStruct = expr.getExpr().struct;
+		Struct termTypeStruct = expr.getTerm().struct;
+		
+		if (!recursiveExprTypeStruct.compatibleWith(termTypeStruct)) {
+			expr.struct = Tab.noType;
+			report_error("Tipovi nisu kompatibilni", expr);
+			return;
+		}
+		
+		if (recursiveExprTypeStruct != Tab.intType || termTypeStruct != Tab.intType) {
+			expr.struct = Tab.noType;
+			report_error("Svi sabirci moraju biti int tipa", expr);
+			return;
+		}
+		
+		expr.struct = Tab.intType;
+	}
+	
+	/********************* CondFact ********************/
+	
+	public void visit(CondFact_Expr condfact) {
+		Struct exprTypeStruct = condfact.getExpr().struct;
+		
+		if (exprTypeStruct != TabExtension.boolType) {
+			condfact.struct = Tab.noType;
+			report_error("Tip uslovnog izraza mora biti tipa bool", condfact);
+			return;
+		}
+		
+		condfact.struct = exprTypeStruct;
+	}
+	
+	public void visit(CondFact_RelopExpr condfact) {
+		Struct leftExprTypeStruct = condfact.getExpr().struct;
+		int leftKind = leftExprTypeStruct.getKind();
+		Struct rightExprTypeStruct = condfact.getExpr1().struct;
+		int rightKind = rightExprTypeStruct.getKind();
+		
+		if (!leftExprTypeStruct.compatibleWith(rightExprTypeStruct)) {
+			condfact.struct = Tab.noType;
+			report_error("Podizrazi u uslovnom izrazu moraju biti kompatibilnog tipa", condfact);
+			return;
+		}
+		
+		if ((
+				leftKind == Struct.Array || leftKind == Struct.Class ||
+				rightKind == Struct.Array || rightKind == Struct.Class
+			) && (
+				!operator.equals(Operators.DEQ) && !operator.equals(Operators.NE)	
+			)) 
+		{
+			condfact.struct = Tab.noType;
+			report_error("Uz promenljive tipa klase ili niza, od relacionih operatora, mogu se koristiti samo != i ==", condfact);
+
+			return;
+		}
+	}
+	
+	/*********************** operators **************************/
+	
+	public void visit(Assignop op) {
+		operator = Operators.EQ;
+	}
+	
+	public void visit(R_Deq op) {
+		operator = Operators.DEQ;
+	}
+	
+	public void visit(R_Ne op) {
+		operator = Operators.NE;
+	}
+	
+	public void visit(R_Gt op) {
+		operator = Operators.GT;
+	}
+	
+	public void visit(R_Ge op) {
+		operator = Operators.GE;
+	}
+	
+	public void visit(R_Lt op) {
+		operator = Operators.LT;
+	}
+	
+	public void visit(R_Le op) {
+		operator = Operators.LE;
+	}
+	
+	public void visit(A_Plus op) {
+		operator = Operators.PLUS;
+	}
+	
+	public void visit(A_Minus op) {
+		operator = Operators.MINUS;
+	}
+	
+	public void visit(M_Mul op) {
+		operator = Operators.MUL;
+	}
+	
+	public void visit(M_Div op) {
+		operator = Operators.DIV;
+	}
+	
+	public void visit(M_Percent op) {
+		operator = Operators.PERCENT;
+	}
+	
+	/**********************************************************/ 
+	
+	/**************** DesignatorStatement *********************/
+	
+	public void visit(DesignatorAssignment designatorStatement) {
+		operator = null;
+		Obj leftDesignatorObjNode = designatorStatement.getDesignator().obj;
+		Struct leftDesignatorTypeStruct = leftDesignatorObjNode.getType();
+		Struct rightExprTypeStruct = designatorStatement.getExpr().struct;
+		
+		int leftDesignatorKind = leftDesignatorObjNode.getKind();
+		if (leftDesignatorKind != Obj.Var && leftDesignatorKind != Obj.Elem && leftDesignatorKind != Obj.Fld) {
+			report_error("Izraz sa leve strane = mora oznacavati promenljivu, element niza, ili polje unutar objekta", designatorStatement);
+			return;
+		}
+		
+		if (!StructExtension.assignableTo(rightExprTypeStruct, leftDesignatorTypeStruct)) {
+			report_error("Tipovi nisu kompatibilni da bi se izvrsila dodela", designatorStatement);
+			return;
+		}
+		
+//		/* PAY ATTENTION: field access right from = */
+//		
+//		if (leftDesignatorKind == Obj.Var && checkIfFuncFormParamIsAccessed(leftDesignatorObjNode)) {
+//			report_info("Pristup formalnom parametru '" + leftDesignatorObjNode.getName() + "'", designatorStatement);
+//		}
+//		else if (leftDesignatorKind == Obj.Var) {
+//			report_info("Pristup (" + (
+//						leftDesignatorObjNode.getLevel() == 0 ? "globalnoj" : "lokalnoj"
+//					) +") promenljivoj '" + leftDesignatorObjNode.getName() + "'", designatorStatement);
+//		}
+//		else if (leftDesignatorKind == Obj.Con) {
+//			report_info("Pristup simbolickoj konstanti '" + leftDesignatorObjNode.getName() + "'", designatorStatement);
+//		}
+	}
+	
+	public void visit(DesignatorFunctionCall designatorStatement) {
+		// TO DO
+		
+		
+		
+		
+		
+		
+		
+	}
+	
+	public void visit(DesignatorIncDec designatorStatement) {
+		operator = null;
+		Obj leftDesignatorObjNode = designatorStatement.getDesignator().obj;
+		Struct leftDesignatorTypeStruct = leftDesignatorObjNode.getType();
+		
+		int leftDesignatorKind = leftDesignatorObjNode.getKind();
+		if (leftDesignatorKind != Obj.Var && leftDesignatorKind != Obj.Elem && leftDesignatorKind != Obj.Fld) {
+			report_error("Izraz koji se inkrementira/dekrementira mora oznacavati promenljivu, element niza, ili polje unutar objekta", designatorStatement);
+			return;
+		}
+		
+		if (leftDesignatorTypeStruct != Tab.intType) {
+			report_error("Izraz koji se inkrementira/dekrementira mora biti tipa int", designatorStatement);
+			return;
+		}
+	}
+
+	public void visit(ReverseArrayAssignment designatorStatement) {
+		// TO DO
+		
+		
+		
+		
+		
+		
+	}
+	
+	/********************************** break and continue ***********************************/
+	
+	public void visit(M_Break node) {
+		if (openLoopScopeCounter == 0) {
+			report_error("Naredba break se mora nalaziti unutar petlje", node);
+		}
+	}
+	
+	public void visit(M_Continue node) {
+		if (openLoopScopeCounter == 0) {
+			report_error("Naredba continue se mora nalaziti unutar petlje", node);
+		}
+	}
+	
+	public void visit(WhileLoopStart node) {
+		++openLoopScopeCounter;
+	}
+	
+	public void visit(M_While node) {
+		--openLoopScopeCounter;
+	}
+	
+	/* PAY ATTENTION: foreach */
+	
+	public void visit(DesignatorForeach designatorForeach) {
+		++openLoopScopeCounter;
+	}
+	
+	public void visit(M_Foreach foreachMatched) {
+		--openLoopScopeCounter;
+	}
+	
+	/******************* M_Read ****************/
+	
+	public void visit(M_Read node) {
+		Obj designatorObjNode = node.getDesignator().obj;
+		Struct designatorTypeStruct = designatorObjNode.getType();
+		
+		int designatorKind = designatorObjNode.getKind();
+		if (designatorKind != Obj.Var && designatorKind != Obj.Elem && designatorKind != Obj.Fld) {
+			report_error("Izraz mora oznacavati promenljivu, element niza, ili polje unutar objekta", node);
+			return;
+		}
+		
+		if (designatorTypeStruct != Tab.intType && designatorTypeStruct != Tab.charType && designatorTypeStruct != TabExtension.boolType) {
+			report_error("Izraz mora biti char, int ili bool", node);
+			return;
+		}
+		
+	}
+	
+	/******************* M_Print ***************/
+	
+	public void visit(M_Print node) {
+		Struct exprTypeStruct = node.getExpr().struct;
+		
+		if (exprTypeStruct != Tab.intType && exprTypeStruct != Tab.charType && exprTypeStruct != TabExtension.boolType) {
+			report_error("Prvi argument funkcije print mora biti int, char ili bool", node);
+			return;
+		}
+	}
+	
 }

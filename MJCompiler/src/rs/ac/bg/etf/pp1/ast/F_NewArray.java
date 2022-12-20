@@ -1,17 +1,28 @@
 // generated with ast extension for cup
 // version 0.8
-// 18/11/2022 22:7:1
+// 20/11/2022 1:59:16
 
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class ExprOrActParsExpr extends ExprActPars {
+public class F_NewArray extends Factor {
 
+    private Type Type;
     private Expr Expr;
 
-    public ExprOrActParsExpr (Expr Expr) {
+    public F_NewArray (Type Type, Expr Expr) {
+        this.Type=Type;
+        if(Type!=null) Type.setParent(this);
         this.Expr=Expr;
         if(Expr!=null) Expr.setParent(this);
+    }
+
+    public Type getType() {
+        return Type;
+    }
+
+    public void setType(Type Type) {
+        this.Type=Type;
     }
 
     public Expr getExpr() {
@@ -27,15 +38,18 @@ public class ExprOrActParsExpr extends ExprActPars {
     }
 
     public void childrenAccept(Visitor visitor) {
+        if(Type!=null) Type.accept(visitor);
         if(Expr!=null) Expr.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
+        if(Type!=null) Type.traverseTopDown(visitor);
         if(Expr!=null) Expr.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
+        if(Type!=null) Type.traverseBottomUp(visitor);
         if(Expr!=null) Expr.traverseBottomUp(visitor);
         accept(visitor);
     }
@@ -43,7 +57,13 @@ public class ExprOrActParsExpr extends ExprActPars {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("ExprOrActParsExpr(\n");
+        buffer.append("F_NewArray(\n");
+
+        if(Type!=null)
+            buffer.append(Type.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
 
         if(Expr!=null)
             buffer.append(Expr.toString("  "+tab));
@@ -52,7 +72,7 @@ public class ExprOrActParsExpr extends ExprActPars {
         buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [ExprOrActParsExpr]");
+        buffer.append(") [F_NewArray]");
         return buffer.toString();
     }
 }

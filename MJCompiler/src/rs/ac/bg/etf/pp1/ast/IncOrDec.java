@@ -1,11 +1,11 @@
 // generated with ast extension for cup
 // version 0.8
-// 18/11/2022 22:7:1
+// 20/11/2022 1:59:16
 
 
 package rs.ac.bg.etf.pp1.ast;
 
-public abstract class IdentExprList implements SyntaxNode {
+public abstract class IncOrDec implements SyntaxNode {
 
     private SyntaxNode parent;
 

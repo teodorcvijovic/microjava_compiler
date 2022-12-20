@@ -1,20 +1,20 @@
 // generated with ast extension for cup
 // version 0.8
-// 18/11/2022 22:7:1
+// 20/11/2022 1:59:16
 
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class F_TypeExprActPars extends Factor {
+public class F_NewObjConstruction extends Factor {
 
     private Type Type;
-    private ExprActPars ExprActPars;
+    private OptionalActPars OptionalActPars;
 
-    public F_TypeExprActPars (Type Type, ExprActPars ExprActPars) {
+    public F_NewObjConstruction (Type Type, OptionalActPars OptionalActPars) {
         this.Type=Type;
         if(Type!=null) Type.setParent(this);
-        this.ExprActPars=ExprActPars;
-        if(ExprActPars!=null) ExprActPars.setParent(this);
+        this.OptionalActPars=OptionalActPars;
+        if(OptionalActPars!=null) OptionalActPars.setParent(this);
     }
 
     public Type getType() {
@@ -25,12 +25,12 @@ public class F_TypeExprActPars extends Factor {
         this.Type=Type;
     }
 
-    public ExprActPars getExprActPars() {
-        return ExprActPars;
+    public OptionalActPars getOptionalActPars() {
+        return OptionalActPars;
     }
 
-    public void setExprActPars(ExprActPars ExprActPars) {
-        this.ExprActPars=ExprActPars;
+    public void setOptionalActPars(OptionalActPars OptionalActPars) {
+        this.OptionalActPars=OptionalActPars;
     }
 
     public void accept(Visitor visitor) {
@@ -39,25 +39,25 @@ public class F_TypeExprActPars extends Factor {
 
     public void childrenAccept(Visitor visitor) {
         if(Type!=null) Type.accept(visitor);
-        if(ExprActPars!=null) ExprActPars.accept(visitor);
+        if(OptionalActPars!=null) OptionalActPars.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
         if(Type!=null) Type.traverseTopDown(visitor);
-        if(ExprActPars!=null) ExprActPars.traverseTopDown(visitor);
+        if(OptionalActPars!=null) OptionalActPars.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
         if(Type!=null) Type.traverseBottomUp(visitor);
-        if(ExprActPars!=null) ExprActPars.traverseBottomUp(visitor);
+        if(OptionalActPars!=null) OptionalActPars.traverseBottomUp(visitor);
         accept(visitor);
     }
 
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("F_TypeExprActPars(\n");
+        buffer.append("F_NewObjConstruction(\n");
 
         if(Type!=null)
             buffer.append(Type.toString("  "+tab));
@@ -65,14 +65,14 @@ public class F_TypeExprActPars extends Factor {
             buffer.append(tab+"  null");
         buffer.append("\n");
 
-        if(ExprActPars!=null)
-            buffer.append(ExprActPars.toString("  "+tab));
+        if(OptionalActPars!=null)
+            buffer.append(OptionalActPars.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [F_TypeExprActPars]");
+        buffer.append(") [F_NewObjConstruction]");
         return buffer.toString();
     }
 }

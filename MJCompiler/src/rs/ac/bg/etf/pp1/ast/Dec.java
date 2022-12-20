@@ -1,13 +1,13 @@
 // generated with ast extension for cup
 // version 0.8
-// 18/11/2022 22:7:1
+// 20/11/2022 1:59:16
 
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class NoMinus extends OptionalMinus {
+public class Dec extends IncOrDec {
 
-    public NoMinus () {
+    public Dec () {
     }
 
     public void accept(Visitor visitor) {
@@ -28,10 +28,10 @@ public class NoMinus extends OptionalMinus {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("NoMinus(\n");
+        buffer.append("Dec(\n");
 
         buffer.append(tab);
-        buffer.append(") [NoMinus]");
+        buffer.append(") [Dec]");
         return buffer.toString();
     }
 }

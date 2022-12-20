@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 18/11/2022 22:7:1
+// 20/11/2022 1:59:16
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -14,12 +14,12 @@ public interface Visitor {
     public void visit(OtherConstDeclarations OtherConstDeclarations);
     public void visit(Or_CondTermList Or_CondTermList);
     public void visit(ExprList ExprList);
-    public void visit(OptionalActParsParen OptionalActParsParen);
     public void visit(Relop Relop);
     public void visit(Global_NewVarDecl Global_NewVarDecl);
     public void visit(And_CondFactList And_CondFactList);
     public void visit(Class_VarDecl Class_VarDecl);
     public void visit(OptionalVarDeclList OptionalVarDeclList);
+    public void visit(Expr Expr);
     public void visit(MulopFactorList MulopFactorList);
     public void visit(Class_OptionalVarDeclList Class_OptionalVarDeclList);
     public void visit(AddopTermList AddopTermList);
@@ -27,6 +27,7 @@ public interface Visitor {
     public void visit(Dummy_ClassBody Dummy_ClassBody);
     public void visit(ExprActPars ExprActPars);
     public void visit(Unmatched Unmatched);
+    public void visit(ParenWithOptionalActPars ParenWithOptionalActPars);
     public void visit(NewVarDecl NewVarDecl);
     public void visit(ReturnOptionalExpr ReturnOptionalExpr);
     public void visit(Program Program);
@@ -44,18 +45,21 @@ public interface Visitor {
     public void visit(StatementList StatementList);
     public void visit(OptionalDerivation OptionalDerivation);
     public void visit(ConstructorDeclList ConstructorDeclList);
-    public void visit(IdentExprList IdentExprList);
     public void visit(MethodDeclList MethodDeclList);
     public void visit(ClassMethodConstructorLists ClassMethodConstructorLists);
     public void visit(OneFormPar OneFormPar);
     public void visit(DesignatorOptions DesignatorOptions);
+    public void visit(IncOrDec IncOrDec);
     public void visit(Class_VarDeclList Class_VarDeclList);
+    public void visit(Designator Designator);
     public void visit(OptionalMinus OptionalMinus);
     public void visit(GlobalMethodDeclList GlobalMethodDeclList);
     public void visit(Matched Matched);
     public void visit(VarDeclList VarDeclList);
+    public void visit(CondFact CondFact);
     public void visit(TypeIdentList TypeIdentList);
     public void visit(FormParsOptional FormParsOptional);
+    public void visit(Term Term);
     public void visit(ConditionIf ConditionIf);
     public void visit(M_Percent M_Percent);
     public void visit(M_Div M_Div);
@@ -70,32 +74,24 @@ public interface Visitor {
     public void visit(R_Deq R_Deq);
     public void visit(Assignop Assignop);
     public void visit(Label Label);
-    public void visit(EmptyIdentExprList EmptyIdentExprList);
-    public void visit(IdentExprListExpr IdentExprListExpr);
-    public void visit(IdentExprListIdent IdentExprListIdent);
-    public void visit(Designator Designator);
-    public void visit(ParenWithOptionalActPars ParenWithOptionalActPars);
-    public void visit(ExprOrActParsActPars ExprOrActParsActPars);
-    public void visit(ExprOrActParsExpr ExprOrActParsExpr);
-    public void visit(NoActParsParen NoActParsParen);
-    public void visit(OptionalActParsParen_ OptionalActParsParen_);
+    public void visit(Designator_Indexing Designator_Indexing);
+    public void visit(Designator_FieldAccess Designator_FieldAccess);
+    public void visit(Designator_Ident Designator_Ident);
     public void visit(F_Expr F_Expr);
-    public void visit(F_TypeExprActPars F_TypeExprActPars);
+    public void visit(F_NewArray F_NewArray);
+    public void visit(F_NewObjConstruction F_NewObjConstruction);
     public void visit(F_BoolConst F_BoolConst);
     public void visit(F_CharConst F_CharConst);
     public void visit(F_NumConst F_NumConst);
-    public void visit(F_DesignatorActPars F_DesignatorActPars);
-    public void visit(EmptyMulopFactorList EmptyMulopFactorList);
-    public void visit(MulopFactorList_ MulopFactorList_);
-    public void visit(Term Term);
-    public void visit(EmptyAddopTermList EmptyAddopTermList);
-    public void visit(AddopTermList_ AddopTermList_);
-    public void visit(NoMinus NoMinus);
-    public void visit(OptionalMinus_ OptionalMinus_);
-    public void visit(Expr Expr);
-    public void visit(NoOptionalRelopExpr NoOptionalRelopExpr);
-    public void visit(OptionalRelopExpr_ OptionalRelopExpr_);
-    public void visit(CondFact CondFact);
+    public void visit(F_Designator F_Designator);
+    public void visit(F_DesignatorFuncCall F_DesignatorFuncCall);
+    public void visit(Term_MulFactor Term_MulFactor);
+    public void visit(Term_Factor Term_Factor);
+    public void visit(Expr_AddTerm Expr_AddTerm);
+    public void visit(Expr_NegTerm Expr_NegTerm);
+    public void visit(Expr_Term Expr_Term);
+    public void visit(CondFact_RelopExpr CondFact_RelopExpr);
+    public void visit(CondFact_Expr CondFact_Expr);
     public void visit(EmptyAndCondFactList EmptyAndCondFactList);
     public void visit(AndCondFactList AndCondFactList);
     public void visit(CondTerm CondTerm);
@@ -115,18 +111,19 @@ public interface Visitor {
     public void visit(NoOptionalActPars NoOptionalActPars);
     public void visit(OptionalActPars_ OptionalActPars_);
     public void visit(OptionalDesignatorListDerived1 OptionalDesignatorListDerived1);
-    public void visit(Option_Dec Option_Dec);
-    public void visit(Option_Inc Option_Inc);
-    public void visit(Option_ActPars Option_ActPars);
-    public void visit(Option_Assign Option_Assign);
+    public void visit(Dec Dec);
+    public void visit(Inc Inc);
     public void visit(ERROR_DesignatorStatement ERROR_DesignatorStatement);
-    public void visit(DesignatorWithSquare DesignatorWithSquare);
-    public void visit(DesignatorWithOptions DesignatorWithOptions);
+    public void visit(ReverseArrayAssignment ReverseArrayAssignment);
+    public void visit(DesignatorIncDec DesignatorIncDec);
+    public void visit(DesignatorFunctionCall DesignatorFunctionCall);
+    public void visit(DesignatorAssignment DesignatorAssignment);
     public void visit(NoPrintNumConst NoPrintNumConst);
     public void visit(PrintNumConst_ PrintNumConst_);
     public void visit(NoReturnExpr NoReturnExpr);
     public void visit(ReturnOptionalExpr_ ReturnOptionalExpr_);
     public void visit(DesignatorForeach DesignatorForeach);
+    public void visit(WhileLoopStart WhileLoopStart);
     public void visit(M_Block M_Block);
     public void visit(M_Foreach M_Foreach);
     public void visit(M_Print M_Print);
