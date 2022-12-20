@@ -373,7 +373,7 @@ IncOrDec ::= (Inc) INC | (Dec) DEC;
 //					|	(ERROR_DesignatorStatement) error SEMICOLON:l {: parser.report_error("Greska pri konstrukciji iskaza dodele u liniji " + lleft, null); :}
 //					;
 						
-//DesignatorOptions ::= 	(Option_Assign) 	Assignop Expr
+//DesignatorOptions ::= (Option_Assign) 	Assignop Expr
 //			|  			(Option_ActPars) 	LPAREN OptionalActPars RPAREN 
 //			|  			(Option_Inc) 		INC 
 //			|  			(Option_Dec) 		DEC

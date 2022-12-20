@@ -18,20 +18,23 @@ class B {
 
 }
 
+class BB extends B {
 
-B obj[];
+}
+
+
+BB obj[];
 B it, l;
-int mm;
+int mm[];
+B der;
 
 {
 	void f1() { return; }
 
 	void main(int k)  {
-		obj = new B[4];
-		obj.foreach(it => {
-			l = it;
-	
-		});
+		
+		
+		[, der, ,] = obj;
 	}
 
 }

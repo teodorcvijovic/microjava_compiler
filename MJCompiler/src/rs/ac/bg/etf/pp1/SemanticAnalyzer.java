@@ -76,6 +76,8 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	
 	private static Obj currVarForeach = null;
 	
+	private static List<Obj> listOfObjNodesToBeAssigned = new ArrayList<>();
+	
 	/********************** Program ************************/
 	
 	public void visit(ProgramName programName){
@@ -1136,12 +1138,48 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	}
 
 	public void visit(ReverseArrayAssignment designatorStatement) {
-		// TO DO
+		Obj rightDesignatorObjNode = designatorStatement.getDesignator().obj;
+		Struct rightDesignatorTypeStruct = rightDesignatorObjNode.getType();
 		
-
+		// check right designator (must be array)
+		if (rightDesignatorTypeStruct.getKind() != Struct.Array) {
+			report_error("Varijabla sa desne strane znaka za dodelu vrednosti mora predstavljati niz", designatorStatement);
+			return;
+		}
+		
+		// check type compatibility with array elems /* PAY ATTENTION */
+		Struct arrayElemTypeStruct = rightDesignatorTypeStruct.getElemType();
+		for (Obj objNode : listOfObjNodesToBeAssigned) {
+			if (objNode == null) continue;
+			Struct leftElemTypeStruct = objNode.getType();
+			
+			// src, dst
+			if (!StructExtension.assignableTo(arrayElemTypeStruct, leftElemTypeStruct)) {
+				report_error("Element niza '" + rightDesignatorObjNode.getName() + "' nije kompatibilan pri dodeli sa '" + objNode.getName() + "'", designatorStatement);
+				return;
+			}
+		}
 		
 		
+		listOfObjNodesToBeAssigned.clear();
+	}
+	
+	public void visit (OptionalDesignator_ node) {
+		Obj designatorObjNode = node.getDesignator().obj;
+		Struct designatorTypeStruct = designatorObjNode.getType();
+		int designatorKind = designatorObjNode.getKind();
 		
+		/* PAY ATTENTION left designator check for reverse array assignment */
+		if (designatorKind != Obj.Var && designatorKind != Obj.Elem && designatorKind != Obj.Fld) {
+			report_error("Izraz mora oznacavati promenljivu, element niza, ili polje unutar objekta", node);
+			return;
+		}
+		
+		listOfObjNodesToBeAssigned.add(designatorObjNode);
+	}
+	
+	public void visit(NoOptionalDesignator node) {
+		listOfObjNodesToBeAssigned.add(null);
 	}
 	
 	/********************************** break and continue ***********************************/
@@ -1241,7 +1279,6 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 			report_error("Izraz mora biti char, int ili bool", node);
 			return;
 		}
-		
 	}
 	
 	/******************* M_Print ***************/

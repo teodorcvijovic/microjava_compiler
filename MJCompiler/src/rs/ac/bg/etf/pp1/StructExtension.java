@@ -9,7 +9,7 @@ public class StructExtension {
 	public static boolean assignableTo(Struct src, Struct dst) {
 		if(src.assignableTo(dst)) return true;
 
-		// bottom up check if dst is derived from src
+		// bottom up check if src is derived from dst
 		if(src.getKind() == Struct.Class && dst.getKind() == Struct.Class)
 			for (Struct curr = src; curr != null; curr = curr.getElemType())
 				if (curr.equals(dst))
