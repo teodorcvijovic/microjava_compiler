@@ -1,11 +1,19 @@
 program MJ 
 
+class A { }
 
+class B extends A { 
+
+	{
+		B(int a) { 
+		
+		
+		}
+	
+	}
+}
 {
 
-	int f1(int a) char c; {
-		return 2;
-	}
 
 	void main() {
 		

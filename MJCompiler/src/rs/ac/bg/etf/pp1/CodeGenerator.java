@@ -5,6 +5,13 @@ import rs.etf.pp1.mj.runtime.Code;
 import rs.etf.pp1.symboltable.Tab;
 import rs.etf.pp1.symboltable.concepts.Obj;
 import rs.etf.pp1.symboltable.concepts.Struct;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import rs.ac.bg.etf.pp1.SemanticAnalyzer;
 
 public class CodeGenerator extends VisitorAdaptor {
@@ -18,6 +25,8 @@ public class CodeGenerator extends VisitorAdaptor {
 	public static Obj currentClassObjNode = null;
 	public static boolean returnStatementFound = false;
 	public static Obj currentMethodDefinition = null;
+	public static Obj currentConstructorDefinition = null;
+	public static Map<Obj, Integer> mapClassObjNodeToVFTadr = new HashMap<>();
 	
 	/****** function, method and constructor start ******/
 	
@@ -25,7 +34,46 @@ public class CodeGenerator extends VisitorAdaptor {
 		
 		int staticDataCnt = SemanticAnalyzer.programVarCount;
 		
-		// TO DO
+		for (Obj classObjNode: mapClassObjNodeToVFTadr.keySet()) {
+			String className = classObjNode.getName();
+			int VFT_adr = staticDataCnt;
+			mapClassObjNodeToVFTadr.put(classObjNode, VFT_adr);
+			
+			Collection<Obj> classMemberObjNodes = classObjNode.getType().getMembers();
+			for (Obj classMember: classMemberObjNodes) {
+				int classMemberKind = classMember.getKind();
+				String methodName = classMember.getName();
+				
+				if (classMemberKind == Obj.Meth && !methodName.equals(className)) {
+					// put method name
+					
+					for(int i = 0; i < methodName.length(); ++i) {
+						Code.loadConst(methodName.charAt(i));
+						Code.put(Code.putstatic);
+						Code.put2(staticDataCnt);
+						++staticDataCnt;
+					}
+					
+					Code.loadConst(-1);
+					Code.put(Code.putstatic);
+					Code.put2(staticDataCnt);
+					++staticDataCnt;
+					
+					// put method address
+					int method_adr = classMember.getAdr();
+					Code.loadConst(method_adr);
+					Code.put(Code.putstatic);
+					Code.put2(staticDataCnt);
+					++staticDataCnt;
+				}
+			}
+			
+			// end of VFT for curr class
+			Code.loadConst(-2);
+			Code.put(Code.putstatic);
+			Code.put2(staticDataCnt);
+			++staticDataCnt;
+		}
 		
 		SemanticAnalyzer.programVarCount = staticDataCnt;
 	}
@@ -44,13 +92,13 @@ public class CodeGenerator extends VisitorAdaptor {
 		int argCnt = funcObjNode.getLevel();
 		int argAndLocalVarCnt = funcObjNode.getLocalSymbols().size();
 		
-		Code.put(Code.enter);
-		Code.put(argCnt);
-		Code.put(argAndLocalVarCnt);
-		
 		if ("main".equals(funcName)) {
 			initVFT();
 		}
+		
+		Code.put(Code.enter);
+		Code.put(argCnt);
+		Code.put(argAndLocalVarCnt);
 	}
 	
 	public void visit(GlobalMethodDecl_Ident node) {
@@ -67,13 +115,13 @@ public class CodeGenerator extends VisitorAdaptor {
 		int argCnt = funcObjNode.getLevel();
 		int argAndLocalVarCnt = funcObjNode.getLocalSymbols().size();
 		
-		Code.put(Code.enter);
-		Code.put(argCnt);
-		Code.put(argAndLocalVarCnt);
-		
 		if ("main".equals(funcName)) {
 			initVFT();
 		}
+		
+		Code.put(Code.enter);
+		Code.put(argCnt);
+		Code.put(argAndLocalVarCnt);
 	}
 	
 	public void visit(M_Return node) {
@@ -97,6 +145,7 @@ public class CodeGenerator extends VisitorAdaptor {
 		}
 		
 		returnStatementFound = false;
+		currentMethodDefinition = null;
 	}
 	
 	public void visit(MethodDecl_Void node) {
@@ -128,7 +177,24 @@ public class CodeGenerator extends VisitorAdaptor {
 	}
 	
 	public void visit(ConstructorDecl_Start node) {
-		// TO DO
+		Obj constructorObjNode = node.obj;
+		currentConstructorDefinition = constructorObjNode;
+
+		constructorObjNode.setAdr(Code.pc);
+		
+		int argCnt = constructorObjNode.getLevel();
+		int argAndLocalVarCnt = constructorObjNode.getLocalSymbols().size();
+		
+		Code.put(Code.enter);
+		Code.put(argCnt);
+		Code.put(argAndLocalVarCnt);
+	}
+	
+	public void visit(ConstructorDecl node) {
+		Code.put(Code.exit);
+		Code.put(Code.return_);
+		
+		currentConstructorDefinition = null;
 	}
 	
 	/***** default constructor ******/
@@ -150,7 +216,26 @@ public class CodeGenerator extends VisitorAdaptor {
     }
     
     public void generateDefaultConstructorCode() {
-    	// TO DO
+    	Obj defaultConstructorObjNode = null;
+    	
+    	Collection<Obj> classMembers = currentClassObjNode.getType().getMembers();
+    	for(Obj classMember: classMembers) {
+    		if (classMember.getKind() == Obj.Meth && classMember.getName().equals(currentClassObjNode.getName())) {
+    			defaultConstructorObjNode = classMember;
+    			break;
+    		}
+    	}
+    	
+    	defaultConstructorObjNode.setAdr(Code.pc);
+    	
+    	Code.put(Code.enter);
+		Code.put(1); // only argument is this
+		Code.put(1);
+		
+		// empty body
+		
+		Code.put(Code.exit);
+		Code.put(Code.return_);
     }
     
     /*** class scope enter and exit ***/
@@ -160,6 +245,7 @@ public class CodeGenerator extends VisitorAdaptor {
     }
     
     public void visit(ClassDecl node) {
+    	mapClassObjNodeToVFTadr.put(currentClassObjNode, -1);
     	currentClassObjNode = null;
     }
     

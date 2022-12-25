@@ -561,6 +561,8 @@ public class SemanticAnalyzer extends VisitorAdaptor {
     /******************************* FormPars ******************************/
     
     public void visit(OneFormPar_ formPar) {
+    	if (constructorObjNode != null) ++argCounter;
+    	
     	String formParName = formPar.getFormParName();
     	Obj objNode = Tab.find(formParName);
     	
@@ -620,6 +622,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
     	
     	currentMethodReturnTypeStruct = Tab.noType;
     	currentMethodObjNode = Tab.insert(Obj.Meth, methodName, currentMethodReturnTypeStruct);
+    	methodDecl.obj = currentMethodObjNode;
     	
     	Tab.openScope();
 		report_info("Zapoceta je definicija metode '" + methodName + "'", methodDecl);
@@ -638,6 +641,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
     	
     	currentMethodReturnTypeStruct = methodDecl.getType().struct;
     	currentMethodObjNode = Tab.insert(Obj.Meth, methodName, currentMethodReturnTypeStruct);
+    	methodDecl.obj = currentMethodObjNode;
     	
     	Tab.openScope();
 		report_info("Zapoceta je definicija metode '" + methodName + "'", methodDecl);
