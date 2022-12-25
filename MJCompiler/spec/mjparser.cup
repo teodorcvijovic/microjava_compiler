@@ -270,8 +270,8 @@ ClassMethodConstructorLists ::= (ConstructorsAndMethods_Ident) 	ConstructorDecl_
 							 
 ConstructorDecl_Start ::= (ConstructorDecl_Start) IDENT:constructorName LPAREN;
 
-MethodDeclList ::= (MethodDeclList_Ident) 	MethodDeclList IDENT IDENT LPAREN MethodDecl
-				 | (MethodDeclList_Void) 	MethodDeclList VOID IDENT LPAREN MethodDecl
+MethodDeclList ::= (MethodDeclList_Ident) 	MethodDeclList MethodDecl_Ident LPAREN MethodDecl
+				 | (MethodDeclList_Void) 	MethodDeclList MethodDecl_Void LPAREN MethodDecl
 				 | (OneMethodDecl) 			MethodDecl
 				 ;
 

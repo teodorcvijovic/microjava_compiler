@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 20/11/2022 18:4:58
+// 24/11/2022 20:29:47
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -8,15 +8,14 @@ package rs.ac.bg.etf.pp1.ast;
 public class MethodDeclList_Ident extends MethodDeclList {
 
     private MethodDeclList MethodDeclList;
-    private String I2;
-    private String I3;
+    private MethodDecl_Ident MethodDecl_Ident;
     private MethodDecl MethodDecl;
 
-    public MethodDeclList_Ident (MethodDeclList MethodDeclList, String I2, String I3, MethodDecl MethodDecl) {
+    public MethodDeclList_Ident (MethodDeclList MethodDeclList, MethodDecl_Ident MethodDecl_Ident, MethodDecl MethodDecl) {
         this.MethodDeclList=MethodDeclList;
         if(MethodDeclList!=null) MethodDeclList.setParent(this);
-        this.I2=I2;
-        this.I3=I3;
+        this.MethodDecl_Ident=MethodDecl_Ident;
+        if(MethodDecl_Ident!=null) MethodDecl_Ident.setParent(this);
         this.MethodDecl=MethodDecl;
         if(MethodDecl!=null) MethodDecl.setParent(this);
     }
@@ -29,20 +28,12 @@ public class MethodDeclList_Ident extends MethodDeclList {
         this.MethodDeclList=MethodDeclList;
     }
 
-    public String getI2() {
-        return I2;
+    public MethodDecl_Ident getMethodDecl_Ident() {
+        return MethodDecl_Ident;
     }
 
-    public void setI2(String I2) {
-        this.I2=I2;
-    }
-
-    public String getI3() {
-        return I3;
-    }
-
-    public void setI3(String I3) {
-        this.I3=I3;
+    public void setMethodDecl_Ident(MethodDecl_Ident MethodDecl_Ident) {
+        this.MethodDecl_Ident=MethodDecl_Ident;
     }
 
     public MethodDecl getMethodDecl() {
@@ -59,17 +50,20 @@ public class MethodDeclList_Ident extends MethodDeclList {
 
     public void childrenAccept(Visitor visitor) {
         if(MethodDeclList!=null) MethodDeclList.accept(visitor);
+        if(MethodDecl_Ident!=null) MethodDecl_Ident.accept(visitor);
         if(MethodDecl!=null) MethodDecl.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
         if(MethodDeclList!=null) MethodDeclList.traverseTopDown(visitor);
+        if(MethodDecl_Ident!=null) MethodDecl_Ident.traverseTopDown(visitor);
         if(MethodDecl!=null) MethodDecl.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
         if(MethodDeclList!=null) MethodDeclList.traverseBottomUp(visitor);
+        if(MethodDecl_Ident!=null) MethodDecl_Ident.traverseBottomUp(visitor);
         if(MethodDecl!=null) MethodDecl.traverseBottomUp(visitor);
         accept(visitor);
     }
@@ -85,10 +79,10 @@ public class MethodDeclList_Ident extends MethodDeclList {
             buffer.append(tab+"  null");
         buffer.append("\n");
 
-        buffer.append(" "+tab+I2);
-        buffer.append("\n");
-
-        buffer.append(" "+tab+I3);
+        if(MethodDecl_Ident!=null)
+            buffer.append(MethodDecl_Ident.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
         buffer.append("\n");
 
         if(MethodDecl!=null)

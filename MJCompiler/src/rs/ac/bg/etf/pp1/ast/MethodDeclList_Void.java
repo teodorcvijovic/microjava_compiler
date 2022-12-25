@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 20/11/2022 18:4:58
+// 24/11/2022 20:29:47
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -8,13 +8,14 @@ package rs.ac.bg.etf.pp1.ast;
 public class MethodDeclList_Void extends MethodDeclList {
 
     private MethodDeclList MethodDeclList;
-    private String I2;
+    private MethodDecl_Void MethodDecl_Void;
     private MethodDecl MethodDecl;
 
-    public MethodDeclList_Void (MethodDeclList MethodDeclList, String I2, MethodDecl MethodDecl) {
+    public MethodDeclList_Void (MethodDeclList MethodDeclList, MethodDecl_Void MethodDecl_Void, MethodDecl MethodDecl) {
         this.MethodDeclList=MethodDeclList;
         if(MethodDeclList!=null) MethodDeclList.setParent(this);
-        this.I2=I2;
+        this.MethodDecl_Void=MethodDecl_Void;
+        if(MethodDecl_Void!=null) MethodDecl_Void.setParent(this);
         this.MethodDecl=MethodDecl;
         if(MethodDecl!=null) MethodDecl.setParent(this);
     }
@@ -27,12 +28,12 @@ public class MethodDeclList_Void extends MethodDeclList {
         this.MethodDeclList=MethodDeclList;
     }
 
-    public String getI2() {
-        return I2;
+    public MethodDecl_Void getMethodDecl_Void() {
+        return MethodDecl_Void;
     }
 
-    public void setI2(String I2) {
-        this.I2=I2;
+    public void setMethodDecl_Void(MethodDecl_Void MethodDecl_Void) {
+        this.MethodDecl_Void=MethodDecl_Void;
     }
 
     public MethodDecl getMethodDecl() {
@@ -49,17 +50,20 @@ public class MethodDeclList_Void extends MethodDeclList {
 
     public void childrenAccept(Visitor visitor) {
         if(MethodDeclList!=null) MethodDeclList.accept(visitor);
+        if(MethodDecl_Void!=null) MethodDecl_Void.accept(visitor);
         if(MethodDecl!=null) MethodDecl.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
         if(MethodDeclList!=null) MethodDeclList.traverseTopDown(visitor);
+        if(MethodDecl_Void!=null) MethodDecl_Void.traverseTopDown(visitor);
         if(MethodDecl!=null) MethodDecl.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
         if(MethodDeclList!=null) MethodDeclList.traverseBottomUp(visitor);
+        if(MethodDecl_Void!=null) MethodDecl_Void.traverseBottomUp(visitor);
         if(MethodDecl!=null) MethodDecl.traverseBottomUp(visitor);
         accept(visitor);
     }
@@ -75,7 +79,10 @@ public class MethodDeclList_Void extends MethodDeclList {
             buffer.append(tab+"  null");
         buffer.append("\n");
 
-        buffer.append(" "+tab+I2);
+        if(MethodDecl_Void!=null)
+            buffer.append(MethodDecl_Void.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
         buffer.append("\n");
 
         if(MethodDecl!=null)

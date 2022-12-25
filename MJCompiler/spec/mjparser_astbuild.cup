@@ -303,8 +303,8 @@ ClassMethodConstructorLists ::= (ConstructorsAndMethods_Ident) 	ConstructorDecl_
 							 
 ConstructorDecl_Start ::= (ConstructorDecl_Start) IDENT:constructorName LPAREN {: RESULT=new ConstructorDecl_Start(constructorName); RESULT.setLine(constructorNameleft); :};
 
-MethodDeclList ::= (MethodDeclList_Ident) 	MethodDeclList:M1 IDENT:I2 IDENT:I3 LPAREN MethodDecl:M4 {: RESULT=new MethodDeclList_Ident(M1, I2, I3, M4); RESULT.setLine(M1left); :}
-				 | (MethodDeclList_Void) 	MethodDeclList:M1 VOID IDENT:I2 LPAREN MethodDecl:M3 {: RESULT=new MethodDeclList_Void(M1, I2, M3); RESULT.setLine(M1left); :}
+MethodDeclList ::= (MethodDeclList_Ident) 	MethodDeclList:M1 MethodDecl_Ident:M2 LPAREN MethodDecl:M3 {: RESULT=new MethodDeclList_Ident(M1, M2, M3); RESULT.setLine(M1left); :}
+				 | (MethodDeclList_Void) 	MethodDeclList:M1 MethodDecl_Void:M2 LPAREN MethodDecl:M3 {: RESULT=new MethodDeclList_Void(M1, M2, M3); RESULT.setLine(M1left); :}
 				 | (OneMethodDecl) 			MethodDecl:M1 {: RESULT=new OneMethodDecl(M1); RESULT.setLine(M1left); :}
 				 ;
 
@@ -406,7 +406,7 @@ IncOrDec ::= (Inc) INC {: RESULT=new Inc(); :} | (Dec) DEC {: RESULT=new Dec(); 
 //					|	(ERROR_DesignatorStatement) error SEMICOLON:l {: parser.report_error("Greska pri konstrukciji iskaza dodele u liniji " + lleft, null); :}
 //					;
 						
-//DesignatorOptions ::= 	(Option_Assign) 	Assignop Expr
+//DesignatorOptions ::= (Option_Assign) 	Assignop Expr
 //			|  			(Option_ActPars) 	LPAREN OptionalActPars RPAREN 
 //			|  			(Option_Inc) 		INC 
 //			|  			(Option_Dec) 		DEC
