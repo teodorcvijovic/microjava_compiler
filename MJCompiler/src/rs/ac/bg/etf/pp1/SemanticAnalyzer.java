@@ -10,14 +10,25 @@ import java.util.Stack;
 
 import org.apache.log4j.Logger;
 
-import com.sun.tools.javac.util.Pair;
-
 import rs.ac.bg.etf.pp1.ast.*;
 import rs.etf.pp1.symboltable.Tab;
 import rs.etf.pp1.symboltable.concepts.Obj;
 import rs.etf.pp1.symboltable.concepts.Struct;
 
 public class SemanticAnalyzer extends VisitorAdaptor {
+	
+	/********************* helper struct ******************/
+	
+	public class Pair {
+		public Obj first;
+		public List<Struct> second;
+		
+		public Pair(Obj first, List<Struct> second) {
+			super();
+			this.first = first;
+			this.second = second;
+		}
+	}
 	
 	Logger log = Logger.getLogger(getClass());
 	
@@ -46,7 +57,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	
 	/******************** helper fields ********************/
 	
-	private static int programVarCount = 0;
+	public static int programVarCount = 0;
 	private static boolean mainMethodDefined = true;	/* PAY ATTENTION */
 	
 	private static Struct currentType = null;
@@ -81,7 +92,10 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	
 	private static List<Obj> listOfObjNodesToBeAssigned = new ArrayList<>();
 	
-	private static Stack<Pair<Obj, List<Struct>>> stackOfCallsWithActPars = new Stack<>();
+	private static Stack<Pair> stackOfCallsWithActPars = new Stack<>();
+	
+	private static Obj invokedConstructorObjNode = null;
+	
 	
 	/********************** Program ************************/
 	
@@ -910,6 +924,10 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		
 		factor.struct = identTypeStruct;
 		report_info("Kreiran je objekat klase '" + map_ClassStructToName.get(identTypeStruct) + "'", factor);
+		
+		// set obj node for invoked constructor
+		factor.getCalledConstructorName().obj = invokedConstructorObjNode;
+		invokedConstructorObjNode = null;
 	}
 	
 	public void visit(F_NewArray factor) {
@@ -1311,7 +1329,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		// put new act par in current list
 		
 		Struct actParTypeStruct = node.getExpr().struct;
-		stackOfCallsWithActPars.peek().snd.add(actParTypeStruct);
+		stackOfCallsWithActPars.peek().second.add(actParTypeStruct);
 	}
 	
 	public void visit(NoOptionalActPars node) {
@@ -1321,9 +1339,9 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	public void visit(ActPars node) {
 		// all act pars of current function/method/constructor collected
 		
-		Pair<Obj, List<Struct>> pair = stackOfCallsWithActPars.pop();
-		Obj calledIdentObjNode = pair.fst;
-		List<Struct> actParsTypeStructs = pair.snd;
+		Pair pair = stackOfCallsWithActPars.pop();
+		Obj calledIdentObjNode = pair.first;
+		List<Struct> actParsTypeStructs = pair.second;
 		boolean actParsAreCompatible = false;
 		String message = "";
 		
@@ -1343,7 +1361,10 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 					// class member is a constructor
 					message = checkActPars(classMember, actParsTypeStructs);
 					actParsAreCompatible = (message.length() == 0); 
-					if (actParsAreCompatible) break;
+					if (actParsAreCompatible) {
+						invokedConstructorObjNode = classMember;
+						break;
+					}
 				}
 			}
 			
@@ -1372,7 +1393,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		Struct classTypeStruct = node.getType().struct;
 		String className = map_ClassStructToName.get(classTypeStruct);
 		Obj classObjNode = Tab.find(className);
-		stackOfCallsWithActPars.push(new Pair<Obj, List<Struct>>(classObjNode, new ArrayList<>()));
+		stackOfCallsWithActPars.push(new Pair(classObjNode, new ArrayList<>()));
 	}
 	
 	public void visit(CalledFunctionOrMethodDesignator node) {
@@ -1380,7 +1401,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		// put func/method obj node on stack, create a new act par list
 		
 		Obj funcMethObjNode = node.getDesignator().obj;
-		stackOfCallsWithActPars.push(new Pair<Obj, List<Struct>>(funcMethObjNode, new ArrayList<>()));
+		stackOfCallsWithActPars.push(new Pair(funcMethObjNode, new ArrayList<>()));
 	}
 	
 	

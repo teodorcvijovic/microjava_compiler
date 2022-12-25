@@ -109,7 +109,7 @@ nonterminal rs.etf.pp1.symboltable.concepts.Struct ReturnOptionalExpr, Designato
 nonterminal rs.etf.pp1.symboltable.concepts.Obj CurrVarDesignator; 
 
 /* DesignatorStatement */
-nonterminal IncOrDec, DesignatorStatement, DesignatorOptions, OptionalDesignatorList, OptionalActPars, OptionalDesignator, DesignatorList;
+nonterminal IncOrDec, DesignatorStatement, OptionalDesignatorList, OptionalActPars, OptionalDesignator, DesignatorList;
 		 
 /* ActPars */
 nonterminal ActPars, ExprList;
@@ -123,23 +123,20 @@ nonterminal And_CondFactList;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct CondTerm;
 
 /* CondFact */
-nonterminal OptionalRelopExpr;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct CondFact;
 
 /* Expr */
-nonterminal OptionalMinus;
-nonterminal rs.etf.pp1.symboltable.concepts.Struct Expr, AddopTermList;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Expr;
 
 /* Term */
-nonterminal rs.etf.pp1.symboltable.concepts.Struct Term, MulopFactorList;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Term;
 
 /* Factor */
-// nonterminal OptionalActParsParen;
-nonterminal ExprActPars, ParenWithOptionalActPars, CalledConstructorName, CalledFunctionOrMethodDesignator;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj CalledConstructorName;
+nonterminal CalledFunctionOrMethodDesignator;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Factor;
 
 /* Designator */
-// nonterminal IdentExprList;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj Designator;
 
 /* Label */
@@ -367,18 +364,7 @@ DesignatorStatement ::= (DesignatorAssignment)		Designator Assignop Expr SEMICOL
 					|	(ERROR_DesignatorStatement) error SEMICOLON:l {: parser.report_error("Greska pri konstrukciji iskaza dodele u liniji " + lleft, null); :}
 					;
 					
-IncOrDec ::= (Inc) INC | (Dec) DEC; 
-
-//DesignatorStatement ::= (DesignatorWithOptions) 	Designator DesignatorOptions SEMICOLON 
-//					|	(DesignatorWithSquare) 		LSQUARE OptionalDesignatorList RSQUARE EQ Designator SEMICOLON 
-//					|	(ERROR_DesignatorStatement) error SEMICOLON:l {: parser.report_error("Greska pri konstrukciji iskaza dodele u liniji " + lleft, null); :}
-//					;
-						
-//DesignatorOptions ::= (Option_Assign) 	Assignop Expr
-//			|  			(Option_ActPars) 	LPAREN OptionalActPars RPAREN 
-//			|  			(Option_Inc) 		INC 
-//			|  			(Option_Dec) 		DEC
-//			;  
+IncOrDec ::= (Inc) INC | (Dec) DEC;  
 			
 OptionalDesignatorList ::= OptionalDesignator DesignatorList;
 
@@ -433,34 +419,18 @@ CondFact ::= (CondFact_Expr) 		Expr
 			|(CondFact_RelopExpr) 	Expr:leftExpr Relop Expr:rightExpr
 			;
 
-//OptionalRelopExpr ::= (OptionalRelopExpr_) 	Relop Expr 
-//					| (NoOptionalRelopExpr) /* empty */
-//					;
-
 /******** Expr *********/
 
 Expr ::= (Expr_Term)	Term
 	  |	 (Expr_NegTerm)	MINUS Term
 	  |	 (Expr_AddTerm)	Expr Addop Term
 	  ;
-
-//OptionalMinus ::= 	(OptionalMinus_) 	MINUS
-//			 	|	(NoMinus) 			/* empty */
-//			 	;
-			 
-//AddopTermList ::= (AddopTermList_) 		AddopTermList Addop Term
-//				| (EmptyAddopTermList) 	/* empty */
-//				;
  				  
 /*********** Term *********/
 
 Term ::= (Term_Factor) Factor
 	  |  (Term_MulFactor) Term Mulop Factor
 	  ;
-
-//MulopFactorList ::= (MulopFactorList_) 		MulopFactorList Mulop Factor
-//				|	(EmptyMulopFactorList) 	/* empty */
-//				;
 
 /*********** Factor **********/
 
@@ -478,26 +448,8 @@ CalledConstructorName ::= (CalledConstructorName) Type;
 
 CalledFunctionOrMethodDesignator ::= (CalledFunctionOrMethodDesignator) Designator;
 
-//OptionalActParsParen ::= 	(OptionalActParsParen_) ParenWithOptionalActPars
-//				 	| 		(NoActParsParen) 		/* empty */
-//				 	;
-
-//ExprActPars ::= (ExprOrActParsExpr) 	LSQUARE Expr RSQUARE
-//			|	(ExprOrActParsActPars) 	ParenWithOptionalActPars
-//			;
-			
-/* actual params of constructor with arguments */
-//ParenWithOptionalActPars ::= (ParenWithOptionalActPars) LPAREN OptionalActPars RPAREN;
-
 /************* Designator ************/
 
-// Designator ::= (Designator) IDENT:designatorIdentName IdentExprList;
-
-//IdentExprList ::= (IdentExprListIdent) 	IdentExprList DOT IDENT:fieldName
-//				| (IdentExprListExpr) 	IdentExprList LSQUARE Expr:indexExpr RSQUARE
-//				| (EmptyIdentExprList) 	/* empty */
-//				;
-				
 Designator ::= (Designator_Ident) 		IDENT:designatorIdentName
 			|  (Designator_FieldAccess) Designator DOT IDENT:fieldName
 			|  (Designator_Indexing) 	Designator LSQUARE Expr:indexExpr RSQUARE

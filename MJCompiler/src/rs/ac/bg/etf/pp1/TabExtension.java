@@ -9,6 +9,7 @@ public class TabExtension {
 	public static final Struct boolType = new Struct(Struct.Bool);
 	
 	public static void init() {
+		Tab.init();
 		Tab.currentScope.addToLocals(new Obj(Obj.Type, "bool", boolType));
 	}
 }

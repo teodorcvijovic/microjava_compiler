@@ -2,13 +2,11 @@ program MJ
 
 
 {
-	bool f1() {return true;}
-	int f2(bool b) {return -1;}
-	char f3(int a, bool b, char c) {return 'a';}
-	char f4() {return 'v';}
 
-	void main() char a; {
-		a = f3(f2(f1()), false, f4());
+
+	void main() int a; {
+		
+		
 	
 	}
 

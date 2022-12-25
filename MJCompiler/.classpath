@@ -13,5 +13,6 @@
 	<classpathentry kind="lib" path="lib/JFlex.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.17.jar"/>
 	<classpathentry kind="lib" path="lib/symboltable.jar"/>
+	<classpathentry kind="lib" path="lib/mj-runtime-1.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
