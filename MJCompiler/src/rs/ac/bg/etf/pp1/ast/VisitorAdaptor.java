@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 24/11/2022 20:29:47
+// 25/11/2022 2:21:17
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -77,6 +77,8 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(Designator_Indexing Designator_Indexing) { visit(); }
     public void visit(Designator_FieldAccess Designator_FieldAccess) { visit(); }
     public void visit(Designator_Ident Designator_Ident) { visit(); }
+    public void visit(CalledFunctionOrMethodDesignator CalledFunctionOrMethodDesignator) { visit(); }
+    public void visit(CalledConstructorName CalledConstructorName) { visit(); }
     public void visit(F_Expr F_Expr) { visit(); }
     public void visit(F_NewArray F_NewArray) { visit(); }
     public void visit(F_NewObjConstruction F_NewObjConstruction) { visit(); }
@@ -101,6 +103,7 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(ERROR_ConditionIf ERROR_ConditionIf) { visit(); }
     public void visit(ConditionIf_ ConditionIf_) { visit(); }
     public void visit(Condition Condition) { visit(); }
+    public void visit(ActPar ActPar) { visit(); }
     public void visit(EmptyExprList EmptyExprList) { visit(); }
     public void visit(ExprList_ ExprList_) { visit(); }
     public void visit(ActPars ActPars) { visit(); }

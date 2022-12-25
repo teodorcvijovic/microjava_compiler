@@ -1,28 +1,28 @@
 // generated with ast extension for cup
 // version 0.8
-// 24/11/2022 20:29:47
+// 25/11/2022 2:21:17
 
 
 package rs.ac.bg.etf.pp1.ast;
 
 public class F_NewObjConstruction extends Factor {
 
-    private Type Type;
+    private CalledConstructorName CalledConstructorName;
     private OptionalActPars OptionalActPars;
 
-    public F_NewObjConstruction (Type Type, OptionalActPars OptionalActPars) {
-        this.Type=Type;
-        if(Type!=null) Type.setParent(this);
+    public F_NewObjConstruction (CalledConstructorName CalledConstructorName, OptionalActPars OptionalActPars) {
+        this.CalledConstructorName=CalledConstructorName;
+        if(CalledConstructorName!=null) CalledConstructorName.setParent(this);
         this.OptionalActPars=OptionalActPars;
         if(OptionalActPars!=null) OptionalActPars.setParent(this);
     }
 
-    public Type getType() {
-        return Type;
+    public CalledConstructorName getCalledConstructorName() {
+        return CalledConstructorName;
     }
 
-    public void setType(Type Type) {
-        this.Type=Type;
+    public void setCalledConstructorName(CalledConstructorName CalledConstructorName) {
+        this.CalledConstructorName=CalledConstructorName;
     }
 
     public OptionalActPars getOptionalActPars() {
@@ -38,18 +38,18 @@ public class F_NewObjConstruction extends Factor {
     }
 
     public void childrenAccept(Visitor visitor) {
-        if(Type!=null) Type.accept(visitor);
+        if(CalledConstructorName!=null) CalledConstructorName.accept(visitor);
         if(OptionalActPars!=null) OptionalActPars.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
-        if(Type!=null) Type.traverseTopDown(visitor);
+        if(CalledConstructorName!=null) CalledConstructorName.traverseTopDown(visitor);
         if(OptionalActPars!=null) OptionalActPars.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
-        if(Type!=null) Type.traverseBottomUp(visitor);
+        if(CalledConstructorName!=null) CalledConstructorName.traverseBottomUp(visitor);
         if(OptionalActPars!=null) OptionalActPars.traverseBottomUp(visitor);
         accept(visitor);
     }
@@ -59,8 +59,8 @@ public class F_NewObjConstruction extends Factor {
         buffer.append(tab);
         buffer.append("F_NewObjConstruction(\n");
 
-        if(Type!=null)
-            buffer.append(Type.toString("  "+tab));
+        if(CalledConstructorName!=null)
+            buffer.append(CalledConstructorName.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");

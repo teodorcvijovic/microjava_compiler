@@ -5,35 +5,25 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class GlobalMethodDecl_Ident implements SyntaxNode {
+public class ActPar implements SyntaxNode {
 
     private SyntaxNode parent;
     private int line;
-    public rs.etf.pp1.symboltable.concepts.Obj obj = null;
+    public rs.etf.pp1.symboltable.concepts.Struct struct = null;
 
-    private Type Type;
-    private String methodName;
+    private Expr Expr;
 
-    public GlobalMethodDecl_Ident (Type Type, String methodName) {
-        this.Type=Type;
-        if(Type!=null) Type.setParent(this);
-        this.methodName=methodName;
+    public ActPar (Expr Expr) {
+        this.Expr=Expr;
+        if(Expr!=null) Expr.setParent(this);
     }
 
-    public Type getType() {
-        return Type;
+    public Expr getExpr() {
+        return Expr;
     }
 
-    public void setType(Type Type) {
-        this.Type=Type;
-    }
-
-    public String getMethodName() {
-        return methodName;
-    }
-
-    public void setMethodName(String methodName) {
-        this.methodName=methodName;
+    public void setExpr(Expr Expr) {
+        this.Expr=Expr;
     }
 
     public SyntaxNode getParent() {
@@ -57,35 +47,32 @@ public class GlobalMethodDecl_Ident implements SyntaxNode {
     }
 
     public void childrenAccept(Visitor visitor) {
-        if(Type!=null) Type.accept(visitor);
+        if(Expr!=null) Expr.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
-        if(Type!=null) Type.traverseTopDown(visitor);
+        if(Expr!=null) Expr.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
-        if(Type!=null) Type.traverseBottomUp(visitor);
+        if(Expr!=null) Expr.traverseBottomUp(visitor);
         accept(visitor);
     }
 
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("GlobalMethodDecl_Ident(\n");
+        buffer.append("ActPar(\n");
 
-        if(Type!=null)
-            buffer.append(Type.toString("  "+tab));
+        if(Expr!=null)
+            buffer.append(Expr.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");
 
-        buffer.append(" "+tab+methodName);
-        buffer.append("\n");
-
         buffer.append(tab);
-        buffer.append(") [GlobalMethodDecl_Ident]");
+        buffer.append(") [ActPar]");
         return buffer.toString();
     }
 }

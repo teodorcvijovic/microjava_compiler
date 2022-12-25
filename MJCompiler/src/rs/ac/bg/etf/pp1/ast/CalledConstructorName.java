@@ -5,19 +5,15 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class GlobalMethodDecl_Ident implements SyntaxNode {
+public class CalledConstructorName implements SyntaxNode {
 
     private SyntaxNode parent;
     private int line;
-    public rs.etf.pp1.symboltable.concepts.Obj obj = null;
-
     private Type Type;
-    private String methodName;
 
-    public GlobalMethodDecl_Ident (Type Type, String methodName) {
+    public CalledConstructorName (Type Type) {
         this.Type=Type;
         if(Type!=null) Type.setParent(this);
-        this.methodName=methodName;
     }
 
     public Type getType() {
@@ -26,14 +22,6 @@ public class GlobalMethodDecl_Ident implements SyntaxNode {
 
     public void setType(Type Type) {
         this.Type=Type;
-    }
-
-    public String getMethodName() {
-        return methodName;
-    }
-
-    public void setMethodName(String methodName) {
-        this.methodName=methodName;
     }
 
     public SyntaxNode getParent() {
@@ -73,7 +61,7 @@ public class GlobalMethodDecl_Ident implements SyntaxNode {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("GlobalMethodDecl_Ident(\n");
+        buffer.append("CalledConstructorName(\n");
 
         if(Type!=null)
             buffer.append(Type.toString("  "+tab));
@@ -81,11 +69,8 @@ public class GlobalMethodDecl_Ident implements SyntaxNode {
             buffer.append(tab+"  null");
         buffer.append("\n");
 
-        buffer.append(" "+tab+methodName);
-        buffer.append("\n");
-
         buffer.append(tab);
-        buffer.append(") [GlobalMethodDecl_Ident]");
+        buffer.append(") [CalledConstructorName]");
         return buffer.toString();
     }
 }

@@ -6,8 +6,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 import org.apache.log4j.Logger;
+
+import com.sun.tools.javac.util.Pair;
 
 import rs.ac.bg.etf.pp1.ast.*;
 import rs.etf.pp1.symboltable.Tab;
@@ -77,6 +80,8 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	private static Obj currVarForeach = null;
 	
 	private static List<Obj> listOfObjNodesToBeAssigned = new ArrayList<>();
+	
+	private static Stack<Pair<Obj, List<Struct>>> stackOfCallsWithActPars = new Stack<>();
 	
 	/********************** Program ************************/
 	
@@ -373,8 +378,12 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 //    		
 //    		/* PAY ATTENTION: should we call return if error occurs */
 //    	}
+    	// if global function is declared this should not be counted in level
+    	int incrementForThis = 0;
+    	if (currentClassStruct != null) ++incrementForThis;
     	
-    	currentMethodObjNode.setLevel(listOfFormParsObjectNodes.size() + 1); /* PAY ATTENTION: +1 for this */
+    	
+    	currentMethodObjNode.setLevel(listOfFormParsObjectNodes.size() + incrementForThis); /* PAY ATTENTION: +1 for this */
     	Tab.chainLocalSymbols(currentMethodObjNode);
     	/* PAY ATTENTION: method overriding */
     	if (currentClassStruct != null) overrideMethod(methodDecl);
@@ -773,7 +782,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
     				}
     				/* PAY ATTENTION */
     				else if (member.getKind() == Obj.Meth) {
-    					report_info("Poziv metode '" + fieldName + "' klase '"  + leftDesignatorTypeName + "'", designator);
+    					report_info("Poziv metode '" + fieldName + "' klase '"  + leftDesignatorTypeName + "'", designator);				
     				}
     				
     				return;
@@ -865,7 +874,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	
 	public void visit(F_DesignatorFuncCall factor) {
 		// D: FactorFunctionCall
-		Obj designatorObjNode = factor.getDesignator().obj;
+		Obj designatorObjNode = factor.getCalledFunctionOrMethodDesignator().getDesignator().obj;
 		Struct returnTypeStruct = designatorObjNode.getType();
 		int designatorKind = designatorObjNode.getKind();
 		String funcName = designatorObjNode.getName();
@@ -889,7 +898,8 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	}
 	
 	public void visit(F_NewObjConstruction factor) {
-		Struct identTypeStruct = factor.getType().struct;
+		//Struct identTypeStruct = factor.getType().struct;
+		Struct identTypeStruct = factor.getCalledConstructorName().getType().struct;
 		int identKind = identTypeStruct.getKind();
 		
 		if (identKind != Struct.Class) {
@@ -1106,7 +1116,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	}
 	
 	public void visit(DesignatorFunctionCall designatorStatement) {
-		Obj designatorObjNode = designatorStatement.getDesignator().obj;
+		Obj designatorObjNode = designatorStatement.getCalledFunctionOrMethodDesignator().getDesignator().obj;
 		int designatorKind = designatorObjNode.getKind();
 		String funcName = designatorObjNode.getName();
 		
@@ -1291,5 +1301,115 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 			return;
 		}
 	}
+	
+	/******************** ActPars *******************/
+	
+	// use a stack <Obj, List<Struct>>
+	
+	public void visit(ActPar node) {
+		// run into new act par
+		// put new act par in current list
+		
+		Struct actParTypeStruct = node.getExpr().struct;
+		stackOfCallsWithActPars.peek().snd.add(actParTypeStruct);
+	}
+	
+	public void visit(NoOptionalActPars node) {
+		stackOfCallsWithActPars.pop();
+	}
+	
+	public void visit(ActPars node) {
+		// all act pars of current function/method/constructor collected
+		
+		Pair<Obj, List<Struct>> pair = stackOfCallsWithActPars.pop();
+		Obj calledIdentObjNode = pair.fst;
+		List<Struct> actParsTypeStructs = pair.snd;
+		boolean actParsAreCompatible = false;
+		String message = "";
+		
+		if (calledIdentObjNode.getKind() == Obj.Type) {
+			// if constructor is called (obj is class)
+			// get type, get fields, find constructors
+			// iterate through constructors until you find a match
+			// check locals field, check type
+			// get adr field to differentiate form pars from local vars
+			
+			Struct classTypeStruct = calledIdentObjNode.getType();
+			String className = calledIdentObjNode.getName();
+			Collection<Obj> classMembers = classTypeStruct.getMembers();
+			
+			for(Obj classMember: classMembers) {
+				if (classMember.getName().equals(className)) {
+					// class member is a constructor
+					message = checkActPars(classMember, actParsTypeStructs);
+					actParsAreCompatible = (message.length() == 0); 
+					if (actParsAreCompatible) break;
+				}
+			}
+			
+			if (!actParsAreCompatible) message = "Ne postoji odgovarajuci konstruktor koji prihvata zadate parametre";
+		}
+		else if (calledIdentObjNode.getKind() == Obj.Meth) {
+			// if func/method is called (obj is meth)
+			// check locals field, check type
+			// get adr field to differentiate form pars from local vars
+			
+			message = checkActPars(calledIdentObjNode, actParsTypeStructs);
+			actParsAreCompatible = (message.length() == 0); 
+		}
+		
+		if (!actParsAreCompatible) {
+			// error
+			report_error(message, node);
+			return;
+		}
+	}
+		
+	public void visit(CalledConstructorName node) {
+		// new constructor call detected
+		// put class obj node on stack, create a new act par list
+		
+		Struct classTypeStruct = node.getType().struct;
+		String className = map_ClassStructToName.get(classTypeStruct);
+		Obj classObjNode = Tab.find(className);
+		stackOfCallsWithActPars.push(new Pair<Obj, List<Struct>>(classObjNode, new ArrayList<>()));
+	}
+	
+	public void visit(CalledFunctionOrMethodDesignator node) {
+		// new method or function call start detected
+		// put func/method obj node on stack, create a new act par list
+		
+		Obj funcMethObjNode = node.getDesignator().obj;
+		stackOfCallsWithActPars.push(new Pair<Obj, List<Struct>>(funcMethObjNode, new ArrayList<>()));
+	}
+	
+	
+	/************ helper for checking act pars ********************/
+	
+	public String checkActPars(Obj funcObjNode, List<Struct> actParsTypeStructs) {
+		int numOfFormPars = funcObjNode.getLevel();
+		int numOfActPars = actParsTypeStructs.size();
+		
+		if (numOfFormPars != numOfActPars) {
+			return "Broj formalnih i stvarnih argumenata metode mora biti isti";
+		}
+		
+		Collection<Obj> formParsAndLocalVarsObjNodes = funcObjNode.getLocalSymbols();
+		int i = 0;
+		for (Obj formPar: formParsAndLocalVarsObjNodes) {
+			if (i == numOfFormPars) break;
+			
+			// src, dst
+			if (!StructExtension.assignableTo(actParsTypeStructs.get(i), formPar.getType())) {
+				return "Tip stvarnog argumenta nije kompatibilan pri dodeli sa tipom formalnog parametra na poziciji (" + (i+1) + ")";
+			}
+			
+			++i;
+		}
+		
+		return "";
+	}
+	
+	/**************************************************************/
 	
 }

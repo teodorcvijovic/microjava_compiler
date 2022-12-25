@@ -5,16 +5,15 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class DesignatorIncDec extends DesignatorStatement {
+public class CalledFunctionOrMethodDesignator implements SyntaxNode {
 
+    private SyntaxNode parent;
+    private int line;
     private Designator Designator;
-    private IncOrDec IncOrDec;
 
-    public DesignatorIncDec (Designator Designator, IncOrDec IncOrDec) {
+    public CalledFunctionOrMethodDesignator (Designator Designator) {
         this.Designator=Designator;
         if(Designator!=null) Designator.setParent(this);
-        this.IncOrDec=IncOrDec;
-        if(IncOrDec!=null) IncOrDec.setParent(this);
     }
 
     public Designator getDesignator() {
@@ -25,12 +24,20 @@ public class DesignatorIncDec extends DesignatorStatement {
         this.Designator=Designator;
     }
 
-    public IncOrDec getIncOrDec() {
-        return IncOrDec;
+    public SyntaxNode getParent() {
+        return parent;
     }
 
-    public void setIncOrDec(IncOrDec IncOrDec) {
-        this.IncOrDec=IncOrDec;
+    public void setParent(SyntaxNode parent) {
+        this.parent=parent;
+    }
+
+    public int getLine() {
+        return line;
+    }
+
+    public void setLine(int line) {
+        this.line=line;
     }
 
     public void accept(Visitor visitor) {
@@ -39,25 +46,22 @@ public class DesignatorIncDec extends DesignatorStatement {
 
     public void childrenAccept(Visitor visitor) {
         if(Designator!=null) Designator.accept(visitor);
-        if(IncOrDec!=null) IncOrDec.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
         if(Designator!=null) Designator.traverseTopDown(visitor);
-        if(IncOrDec!=null) IncOrDec.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
         if(Designator!=null) Designator.traverseBottomUp(visitor);
-        if(IncOrDec!=null) IncOrDec.traverseBottomUp(visitor);
         accept(visitor);
     }
 
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("DesignatorIncDec(\n");
+        buffer.append("CalledFunctionOrMethodDesignator(\n");
 
         if(Designator!=null)
             buffer.append(Designator.toString("  "+tab));
@@ -65,14 +69,8 @@ public class DesignatorIncDec extends DesignatorStatement {
             buffer.append(tab+"  null");
         buffer.append("\n");
 
-        if(IncOrDec!=null)
-            buffer.append(IncOrDec.toString("  "+tab));
-        else
-            buffer.append(tab+"  null");
-        buffer.append("\n");
-
         buffer.append(tab);
-        buffer.append(") [DesignatorIncDec]");
+        buffer.append(") [CalledFunctionOrMethodDesignator]");
         return buffer.toString();
     }
 }

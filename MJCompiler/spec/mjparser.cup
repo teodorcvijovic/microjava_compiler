@@ -113,6 +113,7 @@ nonterminal IncOrDec, DesignatorStatement, DesignatorOptions, OptionalDesignator
 		 
 /* ActPars */
 nonterminal ActPars, ExprList;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct ActPar;
 
 /* Condition */
 nonterminal Condition, ConditionIf, ConditionWhile, Or_CondTermList;
@@ -134,7 +135,7 @@ nonterminal rs.etf.pp1.symboltable.concepts.Struct Term, MulopFactorList;
 
 /* Factor */
 // nonterminal OptionalActParsParen;
-nonterminal ExprActPars, ParenWithOptionalActPars;
+nonterminal ExprActPars, ParenWithOptionalActPars, CalledConstructorName, CalledFunctionOrMethodDesignator;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Factor;
 
 /* Designator */
@@ -360,7 +361,7 @@ PrintNumConst ::= (PrintNumConst_) 	COMMA NUM_CONST
 /************** DesignatorStatement ***************/
 
 DesignatorStatement ::= (DesignatorAssignment)		Designator Assignop Expr SEMICOLON
-					|	(DesignatorFunctionCall)	Designator LPAREN OptionalActPars RPAREN SEMICOLON
+					|	(DesignatorFunctionCall)	CalledFunctionOrMethodDesignator LPAREN OptionalActPars RPAREN SEMICOLON
 					|	(DesignatorIncDec)			Designator IncOrDec SEMICOLON
 					|	(ReverseArrayAssignment) 	LSQUARE OptionalDesignatorList RSQUARE EQ Designator SEMICOLON 
 					|	(ERROR_DesignatorStatement) error SEMICOLON:l {: parser.report_error("Greska pri konstrukciji iskaza dodele u liniji " + lleft, null); :}
@@ -395,11 +396,13 @@ DesignatorList ::= (DesignatorList_) 		DesignatorList COMMA OptionalDesignator
 
 /******* ActPars ********/
 
-ActPars ::= (ActPars) Expr ExprList;
+ActPars ::= (ActPars) ActPar ExprList;
 
-ExprList ::= (ExprList_) 		ExprList COMMA Expr
+ExprList ::= (ExprList_) 		ExprList COMMA ActPar
 		|	 (EmptyExprList) 	/* empty */
 		;
+
+ActPar ::= (ActPar) Expr;
 
 /******* Condition *********/
 
@@ -461,15 +464,19 @@ Term ::= (Term_Factor) Factor
 
 /*********** Factor **********/
 
-Factor ::= 	(F_DesignatorFuncCall)  Designator LPAREN OptionalActPars RPAREN
+Factor ::= 	(F_DesignatorFuncCall)  CalledFunctionOrMethodDesignator LPAREN OptionalActPars RPAREN
 		|	(F_Designator)			Designator 
 		|   (F_NumConst) 			NUM_CONST 
 		|   (F_CharConst) 			CHAR_CONST 
 		|   (F_BoolConst) 			BOOL_CONST 
-		|   (F_NewObjConstruction) 	NEW Type LPAREN OptionalActPars RPAREN
+		|   (F_NewObjConstruction) 	NEW CalledConstructorName LPAREN OptionalActPars RPAREN
 		|	(F_NewArray)			NEW Type LSQUARE Expr RSQUARE 
 		|   (F_Expr) 				LPAREN Expr RPAREN
 		;
+
+CalledConstructorName ::= (CalledConstructorName) Type;
+
+CalledFunctionOrMethodDesignator ::= (CalledFunctionOrMethodDesignator) Designator;
 
 //OptionalActParsParen ::= 	(OptionalActParsParen_) ParenWithOptionalActPars
 //				 	| 		(NoActParsParen) 		/* empty */

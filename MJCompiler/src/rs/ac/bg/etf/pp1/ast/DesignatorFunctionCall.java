@@ -1,28 +1,28 @@
 // generated with ast extension for cup
 // version 0.8
-// 24/11/2022 20:29:47
+// 25/11/2022 2:21:17
 
 
 package rs.ac.bg.etf.pp1.ast;
 
 public class DesignatorFunctionCall extends DesignatorStatement {
 
-    private Designator Designator;
+    private CalledFunctionOrMethodDesignator CalledFunctionOrMethodDesignator;
     private OptionalActPars OptionalActPars;
 
-    public DesignatorFunctionCall (Designator Designator, OptionalActPars OptionalActPars) {
-        this.Designator=Designator;
-        if(Designator!=null) Designator.setParent(this);
+    public DesignatorFunctionCall (CalledFunctionOrMethodDesignator CalledFunctionOrMethodDesignator, OptionalActPars OptionalActPars) {
+        this.CalledFunctionOrMethodDesignator=CalledFunctionOrMethodDesignator;
+        if(CalledFunctionOrMethodDesignator!=null) CalledFunctionOrMethodDesignator.setParent(this);
         this.OptionalActPars=OptionalActPars;
         if(OptionalActPars!=null) OptionalActPars.setParent(this);
     }
 
-    public Designator getDesignator() {
-        return Designator;
+    public CalledFunctionOrMethodDesignator getCalledFunctionOrMethodDesignator() {
+        return CalledFunctionOrMethodDesignator;
     }
 
-    public void setDesignator(Designator Designator) {
-        this.Designator=Designator;
+    public void setCalledFunctionOrMethodDesignator(CalledFunctionOrMethodDesignator CalledFunctionOrMethodDesignator) {
+        this.CalledFunctionOrMethodDesignator=CalledFunctionOrMethodDesignator;
     }
 
     public OptionalActPars getOptionalActPars() {
@@ -38,18 +38,18 @@ public class DesignatorFunctionCall extends DesignatorStatement {
     }
 
     public void childrenAccept(Visitor visitor) {
-        if(Designator!=null) Designator.accept(visitor);
+        if(CalledFunctionOrMethodDesignator!=null) CalledFunctionOrMethodDesignator.accept(visitor);
         if(OptionalActPars!=null) OptionalActPars.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
-        if(Designator!=null) Designator.traverseTopDown(visitor);
+        if(CalledFunctionOrMethodDesignator!=null) CalledFunctionOrMethodDesignator.traverseTopDown(visitor);
         if(OptionalActPars!=null) OptionalActPars.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
-        if(Designator!=null) Designator.traverseBottomUp(visitor);
+        if(CalledFunctionOrMethodDesignator!=null) CalledFunctionOrMethodDesignator.traverseBottomUp(visitor);
         if(OptionalActPars!=null) OptionalActPars.traverseBottomUp(visitor);
         accept(visitor);
     }
@@ -59,8 +59,8 @@ public class DesignatorFunctionCall extends DesignatorStatement {
         buffer.append(tab);
         buffer.append("DesignatorFunctionCall(\n");
 
-        if(Designator!=null)
-            buffer.append(Designator.toString("  "+tab));
+        if(CalledFunctionOrMethodDesignator!=null)
+            buffer.append(CalledFunctionOrMethodDesignator.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");
