@@ -367,11 +367,12 @@ public class SemanticAnalyzer extends VisitorAdaptor {
     }
     
     /********************* GlobalMethodDecl ***************************/
-    
+   
     public void visit(GlobalMethodDecl_Void globalMethodDecl) {
     	String methodName = globalMethodDecl.getMethodName();
     	currentMethodReturnTypeStruct = Tab.noType;
     	currentMethodObjNode = Tab.insert(Obj.Meth, methodName, currentMethodReturnTypeStruct);
+    	globalMethodDecl.obj = currentMethodObjNode;
     	
     	Tab.openScope();
 		report_info("Zapoceta je definicija globalne funkcije '" + methodName + "'", globalMethodDecl);
@@ -381,6 +382,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
     	String methodName = globalMethodDecl.getMethodName();
     	currentMethodReturnTypeStruct = globalMethodDecl.getType().struct;
     	currentMethodObjNode = Tab.insert(Obj.Meth, methodName, currentMethodReturnTypeStruct);
+    	globalMethodDecl.obj = currentMethodObjNode;
     	
     	Tab.openScope();
 		report_info("Zapoceta je definicija globalne funkcije '" + methodName + "'", globalMethodDecl);
@@ -393,6 +395,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 //    		/* PAY ATTENTION: should we call return if error occurs */
 //    	}
     	// if global function is declared this should not be counted in level
+    	methodDecl.obj = currentMethodObjNode;
     	int incrementForThis = 0;
     	if (currentClassStruct != null) ++incrementForThis;
     	

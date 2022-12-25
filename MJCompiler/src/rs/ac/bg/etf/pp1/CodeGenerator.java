@@ -90,6 +90,11 @@ public class CodeGenerator extends VisitorAdaptor {
 			Code.put(Code.trap);
 			Code.put(-1);
 		}
+		else if (currentMethodReturnTypeStruct == Tab.noType && !returnStatementFound) {
+			// method is void, return is not found
+			Code.put(Code.exit);
+			Code.put(Code.return_);
+		}
 		
 		returnStatementFound = false;
 	}
