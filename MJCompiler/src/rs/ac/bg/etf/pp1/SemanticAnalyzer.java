@@ -313,13 +313,17 @@ public class SemanticAnalyzer extends VisitorAdaptor {
     		// copy fields from parent class
     		
     		for (Obj field: parentClassStruct.getMembers()) {
-    			if (field.getName().equals("VFT_pointer")) {
+    			String fieldName = field.getName();
+    			String[] tmp = fieldName.split("#", -1);
+    			if (tmp.length == 2) fieldName = tmp[0];
+    			
+    			if (fieldName.equals("VFT_pointer")) {
     				continue;
     			}
     			else if (field.getKind() == Obj.Fld) {
     				Tab.insert(Obj.Fld, field.getName(), field.getType());
     			}
-    			else if(field.getKind() == Obj.Meth && !parentClassName.equals(field.getName())) {
+    			else if(field.getKind() == Obj.Meth && !parentClassName.equals(fieldName)) {
     				/* PAY ATTENTION: parent class constructors should not be inherited */
             		Tab.currentScope().addToLocals(field);
     			}
@@ -488,7 +492,9 @@ public class SemanticAnalyzer extends VisitorAdaptor {
     	}
     	else {
     		// TO DO: can't define more that one constructor
-    		constructorObjNode = Tab.insert(Obj.Meth, constructorName, Tab.noType);    		
+//    		constructorObjNode = Tab.insert(Obj.Meth, constructorName, Tab.noType); 
+    		int index = listOfDefiniedConstructors.size();
+    		constructorObjNode = Tab.insert(Obj.Meth, constructorName + ("#" + index), Tab.noType);    	
     	}
     	constructorDeclStart.obj = constructorObjNode;
     	Tab.openScope();
@@ -1361,7 +1367,12 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 			Collection<Obj> classMembers = classTypeStruct.getMembers();
 			
 			for(Obj classMember: classMembers) {
-				if (classMember.getName().equals(className)) {
+				String classMemberName = classMember.getName();
+				
+				String[] tmp = classMemberName.split("#", -1);
+				if (tmp.length == 2) classMemberName = tmp[0];
+				
+				if (classMemberName.equals(className)) {
 					// class member is a constructor
 					message = checkActPars(classMember, actParsTypeStructs, className);
 					actParsAreCompatible = (message.length() == 0); 
