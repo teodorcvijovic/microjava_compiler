@@ -251,5 +251,18 @@ public class CodeGenerator extends VisitorAdaptor {
     
     /**********************************/
     
-	
+	/*************************** operators ***************************/
+    
+    public void visit(A_Plus node) { Code.put(Code.add); }
+    
+    public void visit(A_Minus node) { Code.put(Code.sub); }
+    
+    public void visit(M_Mul node) { Code.put(Code.mul); }
+    
+    public void visit(M_Div node) { Code.put(Code.div); }
+    
+    public void visit(M_Percent node) { Code.put(Code.rem); }
+    
+    
+    
 }

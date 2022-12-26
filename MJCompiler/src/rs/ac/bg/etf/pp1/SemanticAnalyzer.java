@@ -419,6 +419,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
     	currentMethodReturnTypeStruct = null;
     	methodToBeOverridenObjNode = null;
     	listOfFormParsObjectNodes = new ArrayList<>(); /* PAY ATTENTION */
+    	argCounter = 0;
     }
     
     /***************** M_Return ***************/
@@ -486,7 +487,8 @@ public class SemanticAnalyzer extends VisitorAdaptor {
     		constructorObjNode = Tab.noObj;
     	}
     	else {
-    		constructorObjNode = Tab.insert(Obj.Meth, constructorName, Tab.noType);
+    		// TO DO: can't define more that one constructor
+    		constructorObjNode = Tab.insert(Obj.Meth, constructorName, Tab.noType);    		
     	}
     	constructorDeclStart.obj = constructorObjNode;
     	Tab.openScope();
@@ -1339,13 +1341,8 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		stackOfCallsWithActPars.peek().second.add(actParTypeStruct);
 	}
 	
-	public void visit(NoOptionalActPars node) {
-		stackOfCallsWithActPars.pop();
-	}
 	
-	public void visit(ActPars node) {
-		// all act pars of current function/method/constructor collected
-		
+	public void checkActParsCompatibility(SyntaxNode node) {
 		Pair pair = stackOfCallsWithActPars.pop();
 		Obj calledIdentObjNode = pair.first;
 		List<Struct> actParsTypeStructs = pair.second;
@@ -1366,7 +1363,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 			for(Obj classMember: classMembers) {
 				if (classMember.getName().equals(className)) {
 					// class member is a constructor
-					message = checkActPars(classMember, actParsTypeStructs);
+					message = checkActPars(classMember, actParsTypeStructs, className);
 					actParsAreCompatible = (message.length() == 0); 
 					if (actParsAreCompatible) {
 						invokedConstructorObjNode = classMember;
@@ -1382,7 +1379,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 			// check locals field, check type
 			// get adr field to differentiate form pars from local vars
 			
-			message = checkActPars(calledIdentObjNode, actParsTypeStructs);
+			message = checkActPars(calledIdentObjNode, actParsTypeStructs, "");
 			actParsAreCompatible = (message.length() == 0); 
 		}
 		
@@ -1392,7 +1389,17 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 			return;
 		}
 	}
-		
+	
+	public void visit(NoOptionalActPars node) {
+		// act pars are not mentioned at all
+		checkActParsCompatibility(node);
+	}
+	
+	public void visit(ActPars node) {
+		// all act pars of current function/method/constructor collected
+		checkActParsCompatibility(node);	
+	}
+	
 	public void visit(CalledConstructorName node) {
 		// new constructor call detected
 		// put class obj node on stack, create a new act par list
@@ -1414,9 +1421,13 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	
 	/************ helper for checking act pars ********************/
 	
-	public String checkActPars(Obj funcObjNode, List<Struct> actParsTypeStructs) {
+	public String checkActPars(Obj funcObjNode, List<Struct> actParsTypeStructs, String className) {
 		int numOfFormPars = funcObjNode.getLevel();
 		int numOfActPars = actParsTypeStructs.size();
+		if (!listOfGlobalFunctionObjNodes.contains(funcObjNode)) {
+			// this is passed implicitely
+			numOfActPars++;
+		}
 		
 		if (numOfFormPars != numOfActPars) {
 			return "Broj formalnih i stvarnih argumenata metode mora biti isti";
@@ -1426,6 +1437,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		int i = 0;
 		for (Obj formPar: formParsAndLocalVarsObjNodes) {
 			if (i == numOfFormPars) break;
+			if (i == 0 && !listOfGlobalFunctionObjNodes.contains(funcObjNode) && "this".equals(formPar.getName())) continue;
 			
 			// src, dst
 			if (!StructExtension.assignableTo(actParsTypeStructs.get(i), formPar.getType())) {
