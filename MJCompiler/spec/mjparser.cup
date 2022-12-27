@@ -103,9 +103,9 @@ nonterminal rs.etf.pp1.symboltable.concepts.Obj OneFormPar;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type;
 
 /* Statement */
-nonterminal Statement, Unmatched, Matched, PrintNumConst;
+nonterminal Statement, Unmatched, Matched;
 nonterminal WhileLoopStart;
-nonterminal rs.etf.pp1.symboltable.concepts.Struct ReturnOptionalExpr, DesignatorForeach;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct ReturnOptionalExpr, DesignatorForeach, PrintNumConst;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj CurrVarDesignator; 
 
 /* DesignatorStatement */
@@ -138,6 +138,7 @@ nonterminal rs.etf.pp1.symboltable.concepts.Struct Factor;
 
 /* Designator */
 nonterminal rs.etf.pp1.symboltable.concepts.Obj Designator;
+nonterminal ArrayTypeDesignator;
 
 /* Label */
 nonterminal Label;
@@ -351,7 +352,7 @@ ReturnOptionalExpr ::= (ReturnOptionalExpr_) 	Expr
 			|	 (NoReturnExpr) 			/* empty */
 			;
 				 
-PrintNumConst ::= (PrintNumConst_) 	COMMA NUM_CONST 
+PrintNumConst ::= (PrintNumConst_) 	COMMA NUM_CONST:printWidth 
 				| (NoPrintNumConst) /* empty */
 				;
 
@@ -359,12 +360,13 @@ PrintNumConst ::= (PrintNumConst_) 	COMMA NUM_CONST
 
 DesignatorStatement ::= (DesignatorAssignment)		Designator Assignop Expr SEMICOLON
 					|	(DesignatorFunctionCall)	CalledFunctionOrMethodDesignator LPAREN OptionalActPars RPAREN SEMICOLON
-					|	(DesignatorIncDec)			Designator IncOrDec SEMICOLON
+					|	(DesignatorInc)				Designator INC SEMICOLON
+					|	(DesignatorDec)				Designator DEC SEMICOLON
 					|	(ReverseArrayAssignment) 	LSQUARE OptionalDesignatorList RSQUARE EQ Designator SEMICOLON 
 					|	(ERROR_DesignatorStatement) error SEMICOLON:l {: parser.report_error("Greska pri konstrukciji iskaza dodele u liniji " + lleft, null); :}
 					;
 					
-IncOrDec ::= (Inc) INC | (Dec) DEC;  
+// IncOrDec ::= (Inc) INC | (Dec) DEC;  
 			
 OptionalDesignatorList ::= OptionalDesignator DesignatorList;
 
@@ -436,9 +438,9 @@ Term ::= (Term_Factor) Factor
 
 Factor ::= 	(F_DesignatorFuncCall)  CalledFunctionOrMethodDesignator LPAREN OptionalActPars RPAREN
 		|	(F_Designator)			Designator 
-		|   (F_NumConst) 			NUM_CONST 
-		|   (F_CharConst) 			CHAR_CONST 
-		|   (F_BoolConst) 			BOOL_CONST 
+		|   (F_NumConst) 			NUM_CONST:constValue 
+		|   (F_CharConst) 			CHAR_CONST:constValue 
+		|   (F_BoolConst) 			BOOL_CONST:constValue
 		|   (F_NewObjConstruction) 	NEW CalledConstructorName LPAREN OptionalActPars RPAREN
 		|	(F_NewArray)			NEW Type LSQUARE Expr RSQUARE 
 		|   (F_Expr) 				LPAREN Expr RPAREN
@@ -452,8 +454,10 @@ CalledFunctionOrMethodDesignator ::= (CalledFunctionOrMethodDesignator) Designat
 
 Designator ::= (Designator_Ident) 		IDENT:designatorIdentName
 			|  (Designator_FieldAccess) Designator DOT IDENT:fieldName
-			|  (Designator_Indexing) 	Designator LSQUARE Expr:indexExpr RSQUARE
+			|  (Designator_Indexing) 	ArrayTypeDesignator LSQUARE Expr:indexExpr RSQUARE
 			;
+			
+ArrayTypeDesignator ::= (ArrayTypeDesignator) Designator;
 				  
 /************* Label ************/
 

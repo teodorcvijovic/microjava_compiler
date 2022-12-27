@@ -1,24 +1,24 @@
 // generated with ast extension for cup
 // version 0.8
-// 25/11/2022 18:36:1
+// 27/11/2022 2:4:33
 
 
 package rs.ac.bg.etf.pp1.ast;
 
 public class PrintNumConst_ extends PrintNumConst {
 
-    private Integer N1;
+    private Integer printWidth;
 
-    public PrintNumConst_ (Integer N1) {
-        this.N1=N1;
+    public PrintNumConst_ (Integer printWidth) {
+        this.printWidth=printWidth;
     }
 
-    public Integer getN1() {
-        return N1;
+    public Integer getPrintWidth() {
+        return printWidth;
     }
 
-    public void setN1(Integer N1) {
-        this.N1=N1;
+    public void setPrintWidth(Integer printWidth) {
+        this.printWidth=printWidth;
     }
 
     public void accept(Visitor visitor) {
@@ -41,7 +41,7 @@ public class PrintNumConst_ extends PrintNumConst {
         buffer.append(tab);
         buffer.append("PrintNumConst_(\n");
 
-        buffer.append(" "+tab+N1);
+        buffer.append(" "+tab+printWidth);
         buffer.append("\n");
 
         buffer.append(tab);

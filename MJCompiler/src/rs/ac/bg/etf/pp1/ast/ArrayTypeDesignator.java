@@ -5,24 +5,23 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class MethodDecl_Void implements SyntaxNode {
+public class ArrayTypeDesignator implements SyntaxNode {
 
     private SyntaxNode parent;
     private int line;
-    public rs.etf.pp1.symboltable.concepts.Obj obj = null;
+    private Designator Designator;
 
-    private String methodName;
-
-    public MethodDecl_Void (String methodName) {
-        this.methodName=methodName;
+    public ArrayTypeDesignator (Designator Designator) {
+        this.Designator=Designator;
+        if(Designator!=null) Designator.setParent(this);
     }
 
-    public String getMethodName() {
-        return methodName;
+    public Designator getDesignator() {
+        return Designator;
     }
 
-    public void setMethodName(String methodName) {
-        this.methodName=methodName;
+    public void setDesignator(Designator Designator) {
+        this.Designator=Designator;
     }
 
     public SyntaxNode getParent() {
@@ -46,26 +45,32 @@ public class MethodDecl_Void implements SyntaxNode {
     }
 
     public void childrenAccept(Visitor visitor) {
+        if(Designator!=null) Designator.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
+        if(Designator!=null) Designator.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
+        if(Designator!=null) Designator.traverseBottomUp(visitor);
         accept(visitor);
     }
 
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("MethodDecl_Void(\n");
+        buffer.append("ArrayTypeDesignator(\n");
 
-        buffer.append(" "+tab+methodName);
+        if(Designator!=null)
+            buffer.append(Designator.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
         buffer.append("\n");
 
         buffer.append(tab);
-        buffer.append(") [MethodDecl_Void]");
+        buffer.append(") [ArrayTypeDesignator]");
         return buffer.toString();
     }
 }

@@ -125,9 +125,8 @@ nonterminal rs.etf.pp1.symboltable.concepts.Struct Type;
 nonterminal Statement Statement;
 nonterminal Unmatched Unmatched;
 nonterminal Matched Matched;
-nonterminal PrintNumConst PrintNumConst;
 nonterminal WhileLoopStart WhileLoopStart;
-nonterminal rs.etf.pp1.symboltable.concepts.Struct ReturnOptionalExpr, DesignatorForeach;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct ReturnOptionalExpr, DesignatorForeach, PrintNumConst;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj CurrVarDesignator; 
 
 /* DesignatorStatement */
@@ -169,6 +168,7 @@ nonterminal rs.etf.pp1.symboltable.concepts.Struct Factor;
 
 /* Designator */
 nonterminal rs.etf.pp1.symboltable.concepts.Obj Designator;
+nonterminal ArrayTypeDesignator ArrayTypeDesignator;
 
 /* Label */
 nonterminal Label Label;
@@ -382,7 +382,7 @@ ReturnOptionalExpr ::= (ReturnOptionalExpr_) 	Expr:E1 {: RESULT=new ReturnOption
 			|	 (NoReturnExpr) {: RESULT=new NoReturnExpr(); :} 			/* empty */
 			;
 				 
-PrintNumConst ::= (PrintNumConst_) 	COMMA NUM_CONST:N1 {: RESULT=new PrintNumConst_(N1); RESULT.setLine(N1left); :} 
+PrintNumConst ::= (PrintNumConst_) 	COMMA NUM_CONST:printWidth {: RESULT=new PrintNumConst_(printWidth); RESULT.setLine(printWidthleft); :} 
 				| (NoPrintNumConst) {: RESULT=new NoPrintNumConst(); :} /* empty */
 				;
 
@@ -390,12 +390,13 @@ PrintNumConst ::= (PrintNumConst_) 	COMMA NUM_CONST:N1 {: RESULT=new PrintNumCon
 
 DesignatorStatement ::= (DesignatorAssignment)		Designator:D1 Assignop:A2 Expr:E3 SEMICOLON {: RESULT=new DesignatorAssignment(D1, A2, E3); RESULT.setLine(D1left); :}
 					|	(DesignatorFunctionCall)	CalledFunctionOrMethodDesignator:C1 LPAREN OptionalActPars:O2 RPAREN SEMICOLON {: RESULT=new DesignatorFunctionCall(C1, O2); RESULT.setLine(C1left); :}
-					|	(DesignatorIncDec)			Designator:D1 IncOrDec:I2 SEMICOLON {: RESULT=new DesignatorIncDec(D1, I2); RESULT.setLine(D1left); :}
+					|	(DesignatorInc)				Designator:D1 INC SEMICOLON {: RESULT=new DesignatorInc(D1); RESULT.setLine(D1left); :}
+					|	(DesignatorDec)				Designator:D1 DEC SEMICOLON {: RESULT=new DesignatorDec(D1); RESULT.setLine(D1left); :}
 					|	(ReverseArrayAssignment) 	LSQUARE OptionalDesignatorList:O1 RSQUARE EQ Designator:D2 SEMICOLON {: RESULT=new ReverseArrayAssignment(O1, D2); RESULT.setLine(O1left); :} 
 					|	(ERROR_DesignatorStatement) error SEMICOLON:l {: parser.report_error("Greska pri konstrukciji iskaza dodele u liniji " + lleft, null); :} {: RESULT=new ERROR_DesignatorStatement(); :}
 					;
 					
-IncOrDec ::= (Inc) INC {: RESULT=new Inc(); :} | (Dec) DEC {: RESULT=new Dec(); :};  
+// IncOrDec ::= (Inc) INC | (Dec) DEC;  
 			
 OptionalDesignatorList ::= OptionalDesignator:O1 DesignatorList:D2 {: RESULT=new OptionalDesignatorListDerived1(O1, D2); RESULT.setLine(O1left); :};
 
@@ -467,9 +468,9 @@ Term ::= (Term_Factor) Factor:F1 {: RESULT=new Term_Factor(F1); RESULT.setLine(F
 
 Factor ::= 	(F_DesignatorFuncCall)  CalledFunctionOrMethodDesignator:C1 LPAREN OptionalActPars:O2 RPAREN {: RESULT=new F_DesignatorFuncCall(C1, O2); RESULT.setLine(C1left); :}
 		|	(F_Designator)			Designator:D1 {: RESULT=new F_Designator(D1); RESULT.setLine(D1left); :} 
-		|   (F_NumConst) 			NUM_CONST:N1 {: RESULT=new F_NumConst(N1); RESULT.setLine(N1left); :} 
-		|   (F_CharConst) 			CHAR_CONST:C1 {: RESULT=new F_CharConst(C1); RESULT.setLine(C1left); :} 
-		|   (F_BoolConst) 			BOOL_CONST:B1 {: RESULT=new F_BoolConst(B1); RESULT.setLine(B1left); :} 
+		|   (F_NumConst) 			NUM_CONST:constValue {: RESULT=new F_NumConst(constValue); RESULT.setLine(constValueleft); :} 
+		|   (F_CharConst) 			CHAR_CONST:constValue {: RESULT=new F_CharConst(constValue); RESULT.setLine(constValueleft); :} 
+		|   (F_BoolConst) 			BOOL_CONST:constValue {: RESULT=new F_BoolConst(constValue); RESULT.setLine(constValueleft); :}
 		|   (F_NewObjConstruction) 	NEW CalledConstructorName:C1 LPAREN OptionalActPars:O2 RPAREN {: RESULT=new F_NewObjConstruction(C1, O2); RESULT.setLine(C1left); :}
 		|	(F_NewArray)			NEW Type:T1 LSQUARE Expr:E2 RSQUARE {: RESULT=new F_NewArray(T1, E2); RESULT.setLine(T1left); :} 
 		|   (F_Expr) 				LPAREN Expr:E1 RPAREN {: RESULT=new F_Expr(E1); RESULT.setLine(E1left); :}
@@ -483,8 +484,10 @@ CalledFunctionOrMethodDesignator ::= (CalledFunctionOrMethodDesignator) Designat
 
 Designator ::= (Designator_Ident) 		IDENT:designatorIdentName {: RESULT=new Designator_Ident(designatorIdentName); RESULT.setLine(designatorIdentNameleft); :}
 			|  (Designator_FieldAccess) Designator:D1 DOT IDENT:fieldName {: RESULT=new Designator_FieldAccess(D1, fieldName); RESULT.setLine(D1left); :}
-			|  (Designator_Indexing) 	Designator:D1 LSQUARE Expr:indexExpr RSQUARE {: RESULT=new Designator_Indexing(D1, indexExpr); RESULT.setLine(D1left); :}
+			|  (Designator_Indexing) 	ArrayTypeDesignator:A1 LSQUARE Expr:indexExpr RSQUARE {: RESULT=new Designator_Indexing(A1, indexExpr); RESULT.setLine(A1left); :}
 			;
+			
+ArrayTypeDesignator ::= (ArrayTypeDesignator) Designator:D1 {: RESULT=new ArrayTypeDesignator(D1); RESULT.setLine(D1left); :};
 				  
 /************* Label ************/
 

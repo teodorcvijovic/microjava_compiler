@@ -824,7 +824,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
     }
     
     public void visit(Designator_Indexing designator) {
-    	Obj designatorObjNode = designator.getDesignator().obj;
+    	Obj designatorObjNode = designator.getArrayTypeDesignator().getDesignator().obj;
     	Struct designatorTypeStruct = designatorObjNode.getType();
     	String designatorName =  designatorObjNode.getName();
     	int designatorStructKind = designatorTypeStruct.getKind();
@@ -1163,19 +1163,36 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		}
 	}
 	
-	public void visit(DesignatorIncDec designatorStatement) {
+	public void visit(DesignatorInc designatorStatement) {
 		operator = null;
 		Obj leftDesignatorObjNode = designatorStatement.getDesignator().obj;
 		Struct leftDesignatorTypeStruct = leftDesignatorObjNode.getType();
 		
 		int leftDesignatorKind = leftDesignatorObjNode.getKind();
 		if (leftDesignatorKind != Obj.Var && leftDesignatorKind != Obj.Elem && leftDesignatorKind != Obj.Fld) {
-			report_error("Izraz koji se inkrementira/dekrementira mora oznacavati promenljivu, element niza, ili polje unutar objekta", designatorStatement);
+			report_error("Izraz koji se inkrementira mora oznacavati promenljivu, element niza, ili polje unutar objekta", designatorStatement);
 			return;
 		}
 		
 		if (leftDesignatorTypeStruct != Tab.intType) {
-			report_error("Izraz koji se inkrementira/dekrementira mora biti tipa int", designatorStatement);
+			report_error("Izraz koji se inkrementira mora biti tipa int", designatorStatement);
+			return;
+		}
+	}
+	
+	public void visit(DesignatorDec designatorStatement) {
+		operator = null;
+		Obj leftDesignatorObjNode = designatorStatement.getDesignator().obj;
+		Struct leftDesignatorTypeStruct = leftDesignatorObjNode.getType();
+		
+		int leftDesignatorKind = leftDesignatorObjNode.getKind();
+		if (leftDesignatorKind != Obj.Var && leftDesignatorKind != Obj.Elem && leftDesignatorKind != Obj.Fld) {
+			report_error("Izraz koji se dekrementira mora oznacavati promenljivu, element niza, ili polje unutar objekta", designatorStatement);
+			return;
+		}
+		
+		if (leftDesignatorTypeStruct != Tab.intType) {
+			report_error("Izraz koji se dekrementira mora biti tipa int", designatorStatement);
 			return;
 		}
 	}
@@ -1333,6 +1350,14 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 			report_error("Prvi argument funkcije print mora biti int, char ili bool", node);
 			return;
 		}
+	}
+	
+	public void visit(PrintNumConst_ node) {
+		node.struct = Tab.intType;
+	}
+	
+	public void visit(NoPrintNumConst node) {
+		node.struct = Tab.noType;
 	}
 	
 	/******************** ActPars *******************/

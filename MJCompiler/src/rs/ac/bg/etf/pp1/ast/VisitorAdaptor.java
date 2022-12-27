@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 25/11/2022 18:36:1
+// 27/11/2022 2:4:33
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -67,6 +67,7 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(R_Deq R_Deq) { visit(); }
     public void visit(Assignop Assignop) { visit(); }
     public void visit(Label Label) { visit(); }
+    public void visit(ArrayTypeDesignator ArrayTypeDesignator) { visit(); }
     public void visit(Designator_Indexing Designator_Indexing) { visit(); }
     public void visit(Designator_FieldAccess Designator_FieldAccess) { visit(); }
     public void visit(Designator_Ident Designator_Ident) { visit(); }
@@ -107,11 +108,10 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(NoOptionalActPars NoOptionalActPars) { visit(); }
     public void visit(OptionalActPars_ OptionalActPars_) { visit(); }
     public void visit(OptionalDesignatorListDerived1 OptionalDesignatorListDerived1) { visit(); }
-    public void visit(Dec Dec) { visit(); }
-    public void visit(Inc Inc) { visit(); }
     public void visit(ERROR_DesignatorStatement ERROR_DesignatorStatement) { visit(); }
     public void visit(ReverseArrayAssignment ReverseArrayAssignment) { visit(); }
-    public void visit(DesignatorIncDec DesignatorIncDec) { visit(); }
+    public void visit(DesignatorDec DesignatorDec) { visit(); }
+    public void visit(DesignatorInc DesignatorInc) { visit(); }
     public void visit(DesignatorFunctionCall DesignatorFunctionCall) { visit(); }
     public void visit(DesignatorAssignment DesignatorAssignment) { visit(); }
     public void visit(NoPrintNumConst NoPrintNumConst) { visit(); }
