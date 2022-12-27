@@ -66,7 +66,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	private static String currentClassName = "";
 	private static Struct currentClassStruct = null;
 	
-	private static Map<Struct, String> map_ClassStructToName = new HashMap<>();
+	public static Map<Struct, String> map_ClassStructToName = new HashMap<>();
 	
 	private static Obj currentMethodObjNode;
 	private static Struct currentMethodReturnTypeStruct;
@@ -95,6 +95,8 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	private static Stack<Pair> stackOfCallsWithActPars = new Stack<>();
 	
 	private static Obj invokedConstructorObjNode = null;
+	
+	private static boolean printIsInvoked = false;
 	
 	
 	/********************** Program ************************/
@@ -1345,6 +1347,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	
 	public void visit(M_Print node) {
 		Struct exprTypeStruct = node.getExpr().struct;
+		printIsInvoked = false;
 		
 		if (exprTypeStruct != Tab.intType && exprTypeStruct != Tab.charType && exprTypeStruct != TabExtension.boolType) {
 			report_error("Prvi argument funkcije print mora biti int, char ili bool", node);
@@ -1473,17 +1476,26 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		int i = 0;
 		for (Obj formPar: formParsAndLocalVarsObjNodes) {
 			if (i == numOfFormPars) break;
-			if (i == 0 && !listOfGlobalFunctionObjNodes.contains(funcObjNode) && "this".equals(formPar.getName())) continue;
+			if (i == 0 && !listOfGlobalFunctionObjNodes.contains(funcObjNode) && "this".equals(formPar.getName())) {
+				++i; // PAY EXTRA ATTENTION
+				continue;
+			}
+			int index = i;
+			if (!listOfGlobalFunctionObjNodes.contains(funcObjNode)) --index; // PAY EXTRA ATTENTION
 			
 			// src, dst
-			if (!StructExtension.assignableTo(actParsTypeStructs.get(i), formPar.getType())) {
-				return "Tip stvarnog argumenta nije kompatibilan pri dodeli sa tipom formalnog parametra na poziciji (" + (i+1) + ")";
+			if (!StructExtension.assignableTo(actParsTypeStructs.get(index), formPar.getType())) {
+				return "Tip stvarnog argumenta nije kompatibilan pri dodeli sa tipom formalnog parametra na poziciji (" + (index+1) + ")";
 			}
 			
 			++i;
 		}
 		
 		return "";
+	}
+	
+	public void visit(PrintStart node) {
+		printIsInvoked = true;
 	}
 	
 	/**************************************************************/

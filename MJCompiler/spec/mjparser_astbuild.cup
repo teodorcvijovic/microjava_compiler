@@ -135,8 +135,7 @@ nonterminal OptionalDesignatorList OptionalDesignatorList;
 nonterminal OptionalActPars OptionalActPars;
 nonterminal OptionalDesignator OptionalDesignator;
 nonterminal DesignatorList DesignatorList;
-nonterminal StartReverseArrayAssignment StartReverseArrayAssignment;
-nonterminal DontCollectDesignatorsAnymore DontCollectDesignatorsAnymore;
+nonterminal PrintStart PrintStart;
 		 
 /* ActPars */
 nonterminal ActPars ActPars;
@@ -368,10 +367,12 @@ Matched ::= (M_Designator) 	DesignatorStatement:D1 {: RESULT=new M_Designator(D1
 		|	(M_Continue) 	CONTINUE SEMICOLON {: RESULT=new M_Continue(); :} 
 		|	(M_Return) 		RETURN ReturnOptionalExpr:R1 SEMICOLON {: RESULT=new M_Return(R1); RESULT.setLine(R1left); :} 
 		|	(M_Read) 		READ LPAREN Designator:D1 RPAREN SEMICOLON {: RESULT=new M_Read(D1); RESULT.setLine(D1left); :} 
-		|	(M_Print) 		PRINT LPAREN Expr:E1 PrintNumConst:P2 RPAREN SEMICOLON {: RESULT=new M_Print(E1, P2); RESULT.setLine(E1left); :} 
+		|	(M_Print) 		PrintStart:P1 PRINT LPAREN Expr:E2 PrintNumConst:P3 RPAREN SEMICOLON {: RESULT=new M_Print(P1, E2, P3); RESULT.setLine(P1left); :} 
 		|	(M_Foreach) 	DesignatorForeach:D1 CurrVarDesignator:C2 LAMBDA Statement:S3 RPAREN SEMICOLON {: RESULT=new M_Foreach(D1, C2, S3); RESULT.setLine(D1left); :} 
 		|	(M_Block) 		LBRACE StatementList:S1 RBRACE {: RESULT=new M_Block(S1); RESULT.setLine(S1left); :}
 		;
+		
+PrintStart ::= (PrintStart) {: RESULT=new PrintStart(); :} /* empty */ ;
 		
 WhileLoopStart ::= (WhileLoopStart) WHILE LPAREN {: RESULT=new WhileLoopStart(); :};	
 
@@ -396,9 +397,6 @@ DesignatorStatement ::= (DesignatorAssignment)		Designator:D1 Assignop:A2 Expr:E
 					|	(ReverseArrayAssignment)    LSQUARE OptionalDesignatorList:O1 RSQUARE EQ Designator:D2 SEMICOLON {: RESULT=new ReverseArrayAssignment(O1, D2); RESULT.setLine(O1left); :} 
 					|	(ERROR_DesignatorStatement) error SEMICOLON:l {: parser.report_error("Greska pri konstrukciji iskaza dodele u liniji " + lleft, null); :} {: RESULT=new ERROR_DesignatorStatement(); :}
 					;
-					
-// StartReverseArrayAssignment ::= (StartReverseArrayAssignment) /* empty */ ;
-// DontCollectDesignatorsAnymore ::= (DontCollectDesignatorsAnymore) /* empty */ ;
 			
 OptionalDesignatorList ::= OptionalDesignator:O1 DesignatorList:D2 {: RESULT=new OptionalDesignatorListDerived1(O1, D2); RESULT.setLine(O1left); :};
 

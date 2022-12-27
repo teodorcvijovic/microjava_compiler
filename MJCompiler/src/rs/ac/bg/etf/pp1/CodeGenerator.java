@@ -16,6 +16,8 @@ import java.util.Stack;
 import rs.ac.bg.etf.pp1.SemanticAnalyzer;
 
 public class CodeGenerator extends VisitorAdaptor {
+	
+	// CONSTRUCTORS ARE INVOKED AS GLOBAL FUNCTIONS !!!
 
 	private static int mainPC = -1;
 	
@@ -32,6 +34,19 @@ public class CodeGenerator extends VisitorAdaptor {
 	
 	public static boolean collectDesignatorsFromReverseArrayAssignment = false;
 	public static List<Obj> listOfDesignatorsInReverseArrayAssignment = new ArrayList<>();
+	
+	public static Stack<Obj> stackOfInvokedFunctionObjNodes = new Stack<>();
+	
+	public static Obj invokedConstructorObjNode = null;
+	
+	/***** helper ******/
+	
+	public Obj getClassByName(String className) {
+		for (Obj classObjNode: mapClassObjNodeToVFTadr.keySet()) {
+			if (classObjNode.getName().equals(className)) return classObjNode;
+		}
+		return null;
+	}
 	
 	/****** function, method and constructor start ******/
 	
@@ -355,6 +370,42 @@ public class CodeGenerator extends VisitorAdaptor {
     	else Code.put(1);
     }
     
+    public void visit(CalledConstructorName node) {
+    	invokedConstructorObjNode = node.obj;
+    	F_NewObjConstruction parentNode = (F_NewObjConstruction) node.getParent();
+    	
+    	int numOfFields = parentNode.struct.getNumberOfFields();
+    	int bytesToAllocate = numOfFields * 4;
+    	
+    	Code.put(Code.new_);
+    	Code.put2(bytesToAllocate);
+    	
+    	// object is now allocated on the heap, and obj_adr is now on top of expr stack
+    	
+    	// duplicate obj_adr for this param of the constructor
+    	Code.put(Code.dup);
+    	
+    	// duplicate obj_adr to store VFT_adr
+    	Code.put(Code.dup);
+    	
+    	String className = invokedConstructorObjNode.getName();
+    	String[] tmp = className.split("#", -1);
+    	if (tmp.length == 2) className = tmp[0];
+    	Obj classObjNode = getClassByName(className);
+    	
+    	int VFT_adr = mapClassObjNodeToVFTadr.getOrDefault(classObjNode, -1);
+    	
+    	Code.loadConst(VFT_adr);
+    	Code.put(Code.putfield);
+    	Code.put2(0); // VFT_adr is the first field
+    }
+    
+    public void visit(F_NewObjConstruction node) {
+    	// all act pars are placed on stack (including implicit this)
+    	invokeGlobalFunc(invokedConstructorObjNode);
+    	invokedConstructorObjNode = null;
+    }
+    
     /*************************** Designator **********************************/
     
     public void visit(Designator_Ident node) {
@@ -366,13 +417,13 @@ public class CodeGenerator extends VisitorAdaptor {
     		// put this
     		if (parentSyntaxNode instanceof DesignatorStatement &&
     			parentSyntaxNode instanceof F_Designator) {
-    			Code.put(Code.const_ + 0); // this is used for field access
+    			Code.put(Code.load_n + 0); // this is used for field access
     		}
     	}
     	else if (identKind == Obj.Meth) {
     		if (parentSyntaxNode instanceof CalledFunctionOrMethodDesignator && 
     			listOfClassMethodObjNodes.contains(identObjNode)) {
-    			Code.put(Code.const_ + 0); // this is first param
+    			Code.put(Code.load_n + 0); // this is first param
     		}
     	}
     	
@@ -470,10 +521,88 @@ public class CodeGenerator extends VisitorAdaptor {
     	listOfDesignatorsInReverseArrayAssignment.clear();
     }
     
-    /*************************************/
+    /**************** function calls *****************/
+    
+    public void visit(CalledFunctionOrMethodDesignator node) {
+    	Obj funcObjNode = node.getDesignator().obj;
+    	stackOfInvokedFunctionObjNodes.push(funcObjNode);
+    	
+    	if (listOfClassMethodObjNodes.contains(funcObjNode)) {
+    		// class method is invoked
+    		Code.put(Code.dup);		// obj_adr for getfield
+    	}
+    }
+    
+    public void visit(ActPar node) {
+    	Obj currentlyInvokedFunc = stackOfInvokedFunctionObjNodes.peek();
+    	
+    	if (listOfClassMethodObjNodes.contains(currentlyInvokedFunc)) {
+    		// this for geting VFT_adr should come after act pars 
+    		Code.put(Code.dup_x1); 	// copy of act param is places bellow this
+    		Code.put(Code.pop);		// delete original act param, so this could be at the top of the stack 
+    	}
+    }
+    
+    public void invokeClassMethod(Obj methodObjNode) {
+    	// this should already be on the expr stack
+    	Code.put(Code.getfield);
+    	Code.put2(0);				// VFT_adr field
+    	
+    	// call invokevirtual
+    	Code.put(Code.invokevirtual);
+    	
+    	String methodName = methodObjNode.getName();
+    	for (int i = 0; i < methodName.length(); i++) {
+    		Code.put4(methodName.charAt(i));
+    	}
+    	Code.put4(-1);
+    }
+    
+    public void invokeGlobalFunc(Obj globalFuncObjNode) {
+    	String funcName = globalFuncObjNode.getName();
+    	
+    	if ("len".equals(funcName)) {
+    		Code.put(Code.arraylength);
+    		return;
+    	}
+    	else if ("ord".equals(funcName)) {
+    		// value is already on stack
+    		return;
+    	}
+    	else if ("chr".equals(funcName)) {
+    		// value is already on stack
+    		return;
+    	}
+    	
+    	int func_adr = globalFuncObjNode.getAdr();
+    	int pc_func_offset = func_adr - Code.pc;
+    	
+    	Code.put(Code.call);
+    	Code.put2(pc_func_offset);
+    }
     
     public void visit(DesignatorFunctionCall node) {
+    	Obj funcObjNode = node.getCalledFunctionOrMethodDesignator().getDesignator().obj;
     	
+    	if (listOfClassMethodObjNodes.contains(funcObjNode)) invokeClassMethod(funcObjNode);
+    	else invokeGlobalFunc(funcObjNode);
+    	
+    	Struct returnTypeStruct = funcObjNode.getType();
+    	if (returnTypeStruct != Tab.noType) {
+    		// return val is not used
+    		Code.put(Code.pop);
+    	}
+    	
+    	stackOfInvokedFunctionObjNodes.pop();
+    }
+    
+    public void visit(F_DesignatorFuncCall node) {
+    	Obj funcObjNode = node.getCalledFunctionOrMethodDesignator().getDesignator().obj;
+    	
+    	if (listOfClassMethodObjNodes.contains(funcObjNode)) invokeClassMethod(funcObjNode);
+    	else invokeGlobalFunc(funcObjNode);
+    	
+    	stackOfInvokedFunctionObjNodes.pop();
     }
     
 }

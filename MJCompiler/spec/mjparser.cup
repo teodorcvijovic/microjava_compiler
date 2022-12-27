@@ -110,7 +110,7 @@ nonterminal rs.etf.pp1.symboltable.concepts.Obj CurrVarDesignator;
 
 /* DesignatorStatement */
 nonterminal DesignatorStatement, OptionalDesignatorList, OptionalActPars, OptionalDesignator, DesignatorList;
-nonterminal StartReverseArrayAssignment, DontCollectDesignatorsAnymore;
+nonterminal PrintStart;
 		 
 /* ActPars */
 nonterminal ActPars, ExprList;
@@ -338,10 +338,12 @@ Matched ::= (M_Designator) 	DesignatorStatement
 		|	(M_Continue) 	CONTINUE SEMICOLON 
 		|	(M_Return) 		RETURN ReturnOptionalExpr SEMICOLON 
 		|	(M_Read) 		READ LPAREN Designator RPAREN SEMICOLON 
-		|	(M_Print) 		PRINT LPAREN Expr PrintNumConst RPAREN SEMICOLON 
+		|	(M_Print) 		PrintStart PRINT LPAREN Expr PrintNumConst RPAREN SEMICOLON 
 		|	(M_Foreach) 	DesignatorForeach CurrVarDesignator LAMBDA Statement RPAREN SEMICOLON 
 		|	(M_Block) 		LBRACE StatementList RBRACE
 		;
+		
+PrintStart ::= (PrintStart) /* empty */ ;
 		
 WhileLoopStart ::= (WhileLoopStart) WHILE LPAREN;	
 

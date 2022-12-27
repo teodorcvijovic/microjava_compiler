@@ -5,9 +5,27 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class EmptyAndCondFactList extends And_CondFactList {
+public class PrintStart implements SyntaxNode {
 
-    public EmptyAndCondFactList () {
+    private SyntaxNode parent;
+    private int line;
+    public PrintStart () {
+    }
+
+    public SyntaxNode getParent() {
+        return parent;
+    }
+
+    public void setParent(SyntaxNode parent) {
+        this.parent=parent;
+    }
+
+    public int getLine() {
+        return line;
+    }
+
+    public void setLine(int line) {
+        this.line=line;
     }
 
     public void accept(Visitor visitor) {
@@ -28,10 +46,10 @@ public class EmptyAndCondFactList extends And_CondFactList {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("EmptyAndCondFactList(\n");
+        buffer.append("PrintStart(\n");
 
         buffer.append(tab);
-        buffer.append(") [EmptyAndCondFactList]");
+        buffer.append(") [PrintStart]");
         return buffer.toString();
     }
 }
