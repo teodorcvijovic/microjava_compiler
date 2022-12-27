@@ -109,7 +109,8 @@ nonterminal rs.etf.pp1.symboltable.concepts.Struct ReturnOptionalExpr, Designato
 nonterminal rs.etf.pp1.symboltable.concepts.Obj CurrVarDesignator; 
 
 /* DesignatorStatement */
-nonterminal IncOrDec, DesignatorStatement, OptionalDesignatorList, OptionalActPars, OptionalDesignator, DesignatorList;
+nonterminal DesignatorStatement, OptionalDesignatorList, OptionalActPars, OptionalDesignator, DesignatorList;
+nonterminal StartReverseArrayAssignment, DontCollectDesignatorsAnymore;
 		 
 /* ActPars */
 nonterminal ActPars, ExprList;
@@ -362,11 +363,9 @@ DesignatorStatement ::= (DesignatorAssignment)		Designator Assignop Expr SEMICOL
 					|	(DesignatorFunctionCall)	CalledFunctionOrMethodDesignator LPAREN OptionalActPars RPAREN SEMICOLON
 					|	(DesignatorInc)				Designator INC SEMICOLON
 					|	(DesignatorDec)				Designator DEC SEMICOLON
-					|	(ReverseArrayAssignment) 	LSQUARE OptionalDesignatorList RSQUARE EQ Designator SEMICOLON 
+					|	(ReverseArrayAssignment)    LSQUARE OptionalDesignatorList RSQUARE EQ Designator SEMICOLON 
 					|	(ERROR_DesignatorStatement) error SEMICOLON:l {: parser.report_error("Greska pri konstrukciji iskaza dodele u liniji " + lleft, null); :}
 					;
-					
-// IncOrDec ::= (Inc) INC | (Dec) DEC;  
 			
 OptionalDesignatorList ::= OptionalDesignator DesignatorList;
 

@@ -1,11 +1,11 @@
 // generated with ast extension for cup
 // version 0.8
-// 27/11/2022 2:4:33
+// 27/11/2022 13:38:2
 
 
 package rs.ac.bg.etf.pp1.ast;
 
-public abstract class IncOrDec implements SyntaxNode {
+public abstract class StartReverseArrayAssignment implements SyntaxNode {
 
     private SyntaxNode parent;
 

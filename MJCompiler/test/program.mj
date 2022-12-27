@@ -1,17 +1,12 @@
 program MJ 
 
-class B {
 
-	{
-		B(int a) {}
-		
-		B(char b) {}
-	
-	}
-}
 {
-	void main() B arr[]; {
-		arr = new B[2];
+	void main() int arr[], a; {
+		arr = new int[3];
+		arr[1] = -77;
+		[,a] = arr;
+		print(a);
 	}
 	
 

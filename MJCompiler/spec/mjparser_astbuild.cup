@@ -130,12 +130,13 @@ nonterminal rs.etf.pp1.symboltable.concepts.Struct ReturnOptionalExpr, Designato
 nonterminal rs.etf.pp1.symboltable.concepts.Obj CurrVarDesignator; 
 
 /* DesignatorStatement */
-nonterminal IncOrDec IncOrDec;
 nonterminal DesignatorStatement DesignatorStatement;
 nonterminal OptionalDesignatorList OptionalDesignatorList;
 nonterminal OptionalActPars OptionalActPars;
 nonterminal OptionalDesignator OptionalDesignator;
 nonterminal DesignatorList DesignatorList;
+nonterminal StartReverseArrayAssignment StartReverseArrayAssignment;
+nonterminal DontCollectDesignatorsAnymore DontCollectDesignatorsAnymore;
 		 
 /* ActPars */
 nonterminal ActPars ActPars;
@@ -392,11 +393,12 @@ DesignatorStatement ::= (DesignatorAssignment)		Designator:D1 Assignop:A2 Expr:E
 					|	(DesignatorFunctionCall)	CalledFunctionOrMethodDesignator:C1 LPAREN OptionalActPars:O2 RPAREN SEMICOLON {: RESULT=new DesignatorFunctionCall(C1, O2); RESULT.setLine(C1left); :}
 					|	(DesignatorInc)				Designator:D1 INC SEMICOLON {: RESULT=new DesignatorInc(D1); RESULT.setLine(D1left); :}
 					|	(DesignatorDec)				Designator:D1 DEC SEMICOLON {: RESULT=new DesignatorDec(D1); RESULT.setLine(D1left); :}
-					|	(ReverseArrayAssignment) 	LSQUARE OptionalDesignatorList:O1 RSQUARE EQ Designator:D2 SEMICOLON {: RESULT=new ReverseArrayAssignment(O1, D2); RESULT.setLine(O1left); :} 
+					|	(ReverseArrayAssignment)    LSQUARE OptionalDesignatorList:O1 RSQUARE EQ Designator:D2 SEMICOLON {: RESULT=new ReverseArrayAssignment(O1, D2); RESULT.setLine(O1left); :} 
 					|	(ERROR_DesignatorStatement) error SEMICOLON:l {: parser.report_error("Greska pri konstrukciji iskaza dodele u liniji " + lleft, null); :} {: RESULT=new ERROR_DesignatorStatement(); :}
 					;
 					
-// IncOrDec ::= (Inc) INC | (Dec) DEC;  
+// StartReverseArrayAssignment ::= (StartReverseArrayAssignment) /* empty */ ;
+// DontCollectDesignatorsAnymore ::= (DontCollectDesignatorsAnymore) /* empty */ ;
 			
 OptionalDesignatorList ::= OptionalDesignator:O1 DesignatorList:D2 {: RESULT=new OptionalDesignatorListDerived1(O1, D2); RESULT.setLine(O1left); :};
 

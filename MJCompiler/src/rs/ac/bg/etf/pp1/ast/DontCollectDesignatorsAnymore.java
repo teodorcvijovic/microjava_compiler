@@ -5,7 +5,7 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public abstract class ClassMethodConstructorLists implements SyntaxNode {
+public abstract class DontCollectDesignatorsAnymore implements SyntaxNode {
 
     private SyntaxNode parent;
 

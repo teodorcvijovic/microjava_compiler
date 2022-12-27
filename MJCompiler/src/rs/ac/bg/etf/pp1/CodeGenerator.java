@@ -30,6 +30,9 @@ public class CodeGenerator extends VisitorAdaptor {
 	public static Map<Obj, Integer> mapClassObjNodeToVFTadr = new HashMap<>();
 	public static List<Obj> listOfClassMethodObjNodes = new ArrayList<>();
 	
+	public static boolean collectDesignatorsFromReverseArrayAssignment = false;
+	public static List<Obj> listOfDesignatorsInReverseArrayAssignment = new ArrayList<>();
+	
 	/****** function, method and constructor start ******/
 	
 	public void initVFT() {
@@ -142,7 +145,7 @@ public class CodeGenerator extends VisitorAdaptor {
 		if (currentMethodReturnTypeStruct != Tab.noType && !returnStatementFound) {
 			// runtime error: return not found
 			Code.put(Code.trap);
-			Code.put(-1);
+			Code.put(1);
 		}
 		else if (currentMethodReturnTypeStruct == Tab.noType && !returnStatementFound) {
 			// method is void, return is not found
@@ -256,8 +259,6 @@ public class CodeGenerator extends VisitorAdaptor {
     }
     
     /**********************************/
-    
-	/*************************** operators ***************************/
     
     /********************* print and read ****************************/
     
@@ -421,9 +422,55 @@ public class CodeGenerator extends VisitorAdaptor {
 		Code.store(designatorObjNode);
     }
     
-    public void visit(ReverseArrayAssignment node) {
-    	
+    /***** reverse array assignment ******/
+    
+    public void visit(OptionalDesignator_ node) {
+    	Obj designatorObjNode = node.getDesignator().obj;
+    	listOfDesignatorsInReverseArrayAssignment.add(designatorObjNode);
     }
+    
+    public void visit(NoOptionalDesignator node) {
+    	listOfDesignatorsInReverseArrayAssignment.add(null);
+    }
+    
+    public void visit(ReverseArrayAssignment node) {
+    	Obj arrayObjNode = node.getDesignator().obj;
+    	
+    	/* check len in mj assembly and generate trap */
+    	int cntOfCollectedDesignators = listOfDesignatorsInReverseArrayAssignment.size();
+    	Code.loadConst(cntOfCollectedDesignators);
+    	
+    	// get array lenght
+    	Code.load(arrayObjNode);
+    	Code.put(Code.arraylength);
+    	
+    	// we have two lenghts on expr stack
+    	Code.put(Code.jcc + Code.le); 	// 3 bytes
+    	Code.put2(5); 					// skip trap (3 + 2)
+    	
+    	// cntOfCollectedDesignators > array length (runtime error)
+    	Code.put(Code.trap); 			// 2 bytes
+    	Code.put(2);
+    	
+    	/* everything is ok */
+    	
+    	for(Obj designatorObjNode: listOfDesignatorsInReverseArrayAssignment) {
+    		if (designatorObjNode == null) continue;
+    		
+    		int i = listOfDesignatorsInReverseArrayAssignment.indexOf(designatorObjNode);
+    		
+    		// load i-th elem of array
+    		Code.load(arrayObjNode);
+    		Code.loadConst(i);
+    		Code.put(Code.aload);
+    		
+    		Code.store(designatorObjNode);
+    	}
+    	
+    	listOfDesignatorsInReverseArrayAssignment.clear();
+    }
+    
+    /*************************************/
     
     public void visit(DesignatorFunctionCall node) {
     	
