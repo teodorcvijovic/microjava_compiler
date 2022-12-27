@@ -37,7 +37,7 @@ public class CodeGenerator extends VisitorAdaptor {
 	
 	public static Stack<Obj> stackOfInvokedFunctionObjNodes = new Stack<>();
 	
-	public static Obj invokedConstructorObjNode = null;
+	//public static Obj invokedConstructorObjNode = null;
 	
 	/***** helper ******/
 	
@@ -371,7 +371,9 @@ public class CodeGenerator extends VisitorAdaptor {
     }
     
     public void visit(CalledConstructorName node) {
-    	invokedConstructorObjNode = node.obj;
+    	// invokedConstructorObjNode = node.obj;
+    	Obj invokedConstructorObjNode = node.obj;
+    	stackOfInvokedFunctionObjNodes.push(invokedConstructorObjNode);
     	F_NewObjConstruction parentNode = (F_NewObjConstruction) node.getParent();
     	
     	int numOfFields = parentNode.struct.getNumberOfFields();
@@ -402,8 +404,10 @@ public class CodeGenerator extends VisitorAdaptor {
     
     public void visit(F_NewObjConstruction node) {
     	// all act pars are placed on stack (including implicit this)
-    	invokeGlobalFunc(invokedConstructorObjNode);
-    	invokedConstructorObjNode = null;
+//    	invokeGlobalFunc(invokedConstructorObjNode);
+//    	invokedConstructorObjNode = null;
+    	Obj constructorObjNode = stackOfInvokedFunctionObjNodes.pop();
+    	invokeGlobalFunc(constructorObjNode);
     }
     
     /*************************** Designator **********************************/
@@ -415,7 +419,7 @@ public class CodeGenerator extends VisitorAdaptor {
     	
     	if (identKind == Obj.Fld) {
     		// put this
-    		if (parentSyntaxNode instanceof DesignatorStatement &&
+    		if (parentSyntaxNode instanceof DesignatorStatement ||
     			parentSyntaxNode instanceof F_Designator) {
     			Code.put(Code.load_n + 0); // this is used for field access
     		}
@@ -541,6 +545,20 @@ public class CodeGenerator extends VisitorAdaptor {
     		Code.put(Code.dup_x1); 	// copy of act param is places bellow this
     		Code.put(Code.pop);		// delete original act param, so this could be at the top of the stack 
     	}
+    }
+    
+    public boolean checkIfObjNodeIsConstructor(Obj objNode) {
+    	String className = objNode.getName();
+    	String[] tmp = className.split("#", -1);
+    	if (tmp.length == 2) className = tmp[0];
+    	
+    	Collection<Obj> classObjNodes = mapClassObjNodeToVFTadr.keySet();
+    	for (Obj classObjNode: classObjNodes) {
+    		String currClassName = classObjNode.getName();
+    		if (className.equals(currClassName)) return true;
+    	}
+    	
+    	return false;
     }
     
     public void invokeClassMethod(Obj methodObjNode) {
