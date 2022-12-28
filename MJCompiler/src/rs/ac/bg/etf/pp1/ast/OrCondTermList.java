@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 27/11/2022 16:35:24
+// 28/11/2022 15:59:56
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -8,11 +8,14 @@ package rs.ac.bg.etf.pp1.ast;
 public class OrCondTermList extends Or_CondTermList {
 
     private Or_CondTermList Or_CondTermList;
+    private PatchAndConditionJumps PatchAndConditionJumps;
     private CondTerm CondTerm;
 
-    public OrCondTermList (Or_CondTermList Or_CondTermList, CondTerm CondTerm) {
+    public OrCondTermList (Or_CondTermList Or_CondTermList, PatchAndConditionJumps PatchAndConditionJumps, CondTerm CondTerm) {
         this.Or_CondTermList=Or_CondTermList;
         if(Or_CondTermList!=null) Or_CondTermList.setParent(this);
+        this.PatchAndConditionJumps=PatchAndConditionJumps;
+        if(PatchAndConditionJumps!=null) PatchAndConditionJumps.setParent(this);
         this.CondTerm=CondTerm;
         if(CondTerm!=null) CondTerm.setParent(this);
     }
@@ -23,6 +26,14 @@ public class OrCondTermList extends Or_CondTermList {
 
     public void setOr_CondTermList(Or_CondTermList Or_CondTermList) {
         this.Or_CondTermList=Or_CondTermList;
+    }
+
+    public PatchAndConditionJumps getPatchAndConditionJumps() {
+        return PatchAndConditionJumps;
+    }
+
+    public void setPatchAndConditionJumps(PatchAndConditionJumps PatchAndConditionJumps) {
+        this.PatchAndConditionJumps=PatchAndConditionJumps;
     }
 
     public CondTerm getCondTerm() {
@@ -39,17 +50,20 @@ public class OrCondTermList extends Or_CondTermList {
 
     public void childrenAccept(Visitor visitor) {
         if(Or_CondTermList!=null) Or_CondTermList.accept(visitor);
+        if(PatchAndConditionJumps!=null) PatchAndConditionJumps.accept(visitor);
         if(CondTerm!=null) CondTerm.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
         if(Or_CondTermList!=null) Or_CondTermList.traverseTopDown(visitor);
+        if(PatchAndConditionJumps!=null) PatchAndConditionJumps.traverseTopDown(visitor);
         if(CondTerm!=null) CondTerm.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
         if(Or_CondTermList!=null) Or_CondTermList.traverseBottomUp(visitor);
+        if(PatchAndConditionJumps!=null) PatchAndConditionJumps.traverseBottomUp(visitor);
         if(CondTerm!=null) CondTerm.traverseBottomUp(visitor);
         accept(visitor);
     }
@@ -61,6 +75,12 @@ public class OrCondTermList extends Or_CondTermList {
 
         if(Or_CondTermList!=null)
             buffer.append(Or_CondTermList.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
+
+        if(PatchAndConditionJumps!=null)
+            buffer.append(PatchAndConditionJumps.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");

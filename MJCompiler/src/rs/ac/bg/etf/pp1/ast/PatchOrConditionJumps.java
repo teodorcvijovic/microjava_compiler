@@ -5,24 +5,11 @@
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class ProgramName implements SyntaxNode {
+public class PatchOrConditionJumps implements SyntaxNode {
 
     private SyntaxNode parent;
     private int line;
-    public rs.etf.pp1.symboltable.concepts.Obj obj = null;
-
-    private String programName;
-
-    public ProgramName (String programName) {
-        this.programName=programName;
-    }
-
-    public String getProgramName() {
-        return programName;
-    }
-
-    public void setProgramName(String programName) {
-        this.programName=programName;
+    public PatchOrConditionJumps () {
     }
 
     public SyntaxNode getParent() {
@@ -59,13 +46,10 @@ public class ProgramName implements SyntaxNode {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("ProgramName(\n");
-
-        buffer.append(" "+tab+programName);
-        buffer.append("\n");
+        buffer.append("PatchOrConditionJumps(\n");
 
         buffer.append(tab);
-        buffer.append(") [ProgramName]");
+        buffer.append(") [PatchOrConditionJumps]");
         return buffer.toString();
     }
 }

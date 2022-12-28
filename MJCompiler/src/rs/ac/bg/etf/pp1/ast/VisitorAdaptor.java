@@ -1,14 +1,14 @@
 // generated with ast extension for cup
 // version 0.8
-// 27/11/2022 16:35:24
+// 28/11/2022 15:59:56
 
 
 package rs.ac.bg.etf.pp1.ast;
 
 public abstract class VisitorAdaptor implements Visitor { 
 
-    public void visit(OptionalDesignatorList OptionalDesignatorList) { }
     public void visit(Factor Factor) { }
+    public void visit(OptionalDesignatorList OptionalDesignatorList) { }
     public void visit(Statement Statement) { }
     public void visit(OtherConstDeclarations OtherConstDeclarations) { }
     public void visit(Or_CondTermList Or_CondTermList) { }
@@ -90,6 +90,7 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(EmptyAndCondFactList EmptyAndCondFactList) { visit(); }
     public void visit(AndCondFactList AndCondFactList) { visit(); }
     public void visit(CondTerm CondTerm) { visit(); }
+    public void visit(PatchAndConditionJumps PatchAndConditionJumps) { visit(); }
     public void visit(EmptyOrCondTermList EmptyOrCondTermList) { visit(); }
     public void visit(OrCondTermList OrCondTermList) { visit(); }
     public void visit(ConditionWhile ConditionWhile) { visit(); }
@@ -121,6 +122,9 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(DesignatorForeach DesignatorForeach) { visit(); }
     public void visit(WhileLoopStart WhileLoopStart) { visit(); }
     public void visit(PrintStart PrintStart) { visit(); }
+    public void visit(ExitIfBlock_PatchJumpsToElse ExitIfBlock_PatchJumpsToElse) { visit(); }
+    public void visit(PatchOrConditionJumps PatchOrConditionJumps) { visit(); }
+    public void visit(OpenIfElseScope OpenIfElseScope) { visit(); }
     public void visit(M_Block M_Block) { visit(); }
     public void visit(M_Foreach M_Foreach) { visit(); }
     public void visit(M_Print M_Print) { visit(); }

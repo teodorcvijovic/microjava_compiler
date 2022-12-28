@@ -1,14 +1,14 @@
 // generated with ast extension for cup
 // version 0.8
-// 27/11/2022 16:35:24
+// 28/11/2022 15:59:56
 
 
 package rs.ac.bg.etf.pp1.ast;
 
 public interface Visitor { 
 
-    public void visit(OptionalDesignatorList OptionalDesignatorList);
     public void visit(Factor Factor);
+    public void visit(OptionalDesignatorList OptionalDesignatorList);
     public void visit(Statement Statement);
     public void visit(OtherConstDeclarations OtherConstDeclarations);
     public void visit(Or_CondTermList Or_CondTermList);
@@ -90,6 +90,7 @@ public interface Visitor {
     public void visit(EmptyAndCondFactList EmptyAndCondFactList);
     public void visit(AndCondFactList AndCondFactList);
     public void visit(CondTerm CondTerm);
+    public void visit(PatchAndConditionJumps PatchAndConditionJumps);
     public void visit(EmptyOrCondTermList EmptyOrCondTermList);
     public void visit(OrCondTermList OrCondTermList);
     public void visit(ConditionWhile ConditionWhile);
@@ -121,6 +122,9 @@ public interface Visitor {
     public void visit(DesignatorForeach DesignatorForeach);
     public void visit(WhileLoopStart WhileLoopStart);
     public void visit(PrintStart PrintStart);
+    public void visit(ExitIfBlock_PatchJumpsToElse ExitIfBlock_PatchJumpsToElse);
+    public void visit(PatchOrConditionJumps PatchOrConditionJumps);
+    public void visit(OpenIfElseScope OpenIfElseScope);
     public void visit(M_Block M_Block);
     public void visit(M_Foreach M_Foreach);
     public void visit(M_Print M_Print);

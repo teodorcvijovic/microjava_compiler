@@ -107,6 +107,7 @@ nonterminal Statement, Unmatched, Matched;
 nonterminal WhileLoopStart;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct ReturnOptionalExpr, DesignatorForeach, PrintNumConst;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj CurrVarDesignator; 
+nonterminal OpenIfElseScope, PatchOrConditionJumps, ExitIfBlock_PatchJumpsToElse;
 
 /* DesignatorStatement */
 nonterminal DesignatorStatement, OptionalDesignatorList, OptionalActPars, OptionalDesignator, DesignatorList;
@@ -118,6 +119,7 @@ nonterminal rs.etf.pp1.symboltable.concepts.Struct ActPar;
 
 /* Condition */
 nonterminal Condition, ConditionIf, ConditionWhile, Or_CondTermList;
+nonterminal PatchAndConditionJumps;
 
 /* CondTerm */
 nonterminal And_CondFactList;
@@ -327,12 +329,12 @@ Statement ::= (Matched_) Matched
 			| (Unmatched_) Unmatched
 			;
 			  
-Unmatched ::= (U_If) 		IF LPAREN ConditionIf RPAREN Statement
-			| (U_IfElse) 	IF LPAREN ConditionIf RPAREN Matched ELSE Unmatched
+Unmatched ::= (U_If) 		IF OpenIfElseScope LPAREN ConditionIf PatchOrConditionJumps RPAREN Statement
+			| (U_IfElse) 	IF OpenIfElseScope LPAREN ConditionIf PatchOrConditionJumps RPAREN Matched ExitIfBlock_PatchJumpsToElse Unmatched
 			;
 
 Matched ::= (M_Designator) 	DesignatorStatement
-		|	(M_IfElse) 		IF LPAREN ConditionIf RPAREN Matched ELSE Matched 
+		|	(M_IfElse) 		IF OpenIfElseScope LPAREN ConditionIf PatchOrConditionJumps RPAREN Matched ExitIfBlock_PatchJumpsToElse Matched 
 		|	(M_While) 		WhileLoopStart ConditionWhile RPAREN Statement 
 		|	(M_Break) 		BREAK SEMICOLON 
 		|	(M_Continue) 	CONTINUE SEMICOLON 
@@ -342,6 +344,11 @@ Matched ::= (M_Designator) 	DesignatorStatement
 		|	(M_Foreach) 	DesignatorForeach CurrVarDesignator LAMBDA Statement RPAREN SEMICOLON 
 		|	(M_Block) 		LBRACE StatementList RBRACE
 		;
+		
+		
+OpenIfElseScope ::= (OpenIfElseScope) /* empty */ ;
+PatchOrConditionJumps ::= (PatchOrConditionJumps) /* empty */ ;
+ExitIfBlock_PatchJumpsToElse ::= (ExitIfBlock_PatchJumpsToElse) ELSE ;
 		
 PrintStart ::= (PrintStart) /* empty */ ;
 		
@@ -403,9 +410,11 @@ ConditionIf ::= (ConditionIf_) 		CondTerm Or_CondTermList
 			
 ConditionWhile ::= (ConditionWhile) CondTerm Or_CondTermList;
 
-Or_CondTermList ::= (OrCondTermList) 		Or_CondTermList OR CondTerm 
+Or_CondTermList ::= (OrCondTermList) 		Or_CondTermList PatchAndConditionJumps OR CondTerm 
 				 |  (EmptyOrCondTermList) 	/* empty */
 				 ;
+				 
+PatchAndConditionJumps ::= (PatchAndConditionJumps) /* empty */ ;
 
 /******** CondTerm *********/
 

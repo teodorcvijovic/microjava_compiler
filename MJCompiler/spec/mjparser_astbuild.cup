@@ -128,6 +128,9 @@ nonterminal Matched Matched;
 nonterminal WhileLoopStart WhileLoopStart;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct ReturnOptionalExpr, DesignatorForeach, PrintNumConst;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj CurrVarDesignator; 
+nonterminal OpenIfElseScope OpenIfElseScope;
+nonterminal PatchOrConditionJumps PatchOrConditionJumps;
+nonterminal ExitIfBlock_PatchJumpsToElse ExitIfBlock_PatchJumpsToElse;
 
 /* DesignatorStatement */
 nonterminal DesignatorStatement DesignatorStatement;
@@ -147,6 +150,7 @@ nonterminal Condition Condition;
 nonterminal ConditionIf ConditionIf;
 nonterminal ConditionWhile ConditionWhile;
 nonterminal Or_CondTermList Or_CondTermList;
+nonterminal PatchAndConditionJumps PatchAndConditionJumps;
 
 /* CondTerm */
 nonterminal And_CondFactList And_CondFactList;
@@ -356,12 +360,12 @@ Statement ::= (Matched_) Matched:M1 {: RESULT=new Matched_(M1); RESULT.setLine(M
 			| (Unmatched_) Unmatched:U1 {: RESULT=new Unmatched_(U1); RESULT.setLine(U1left); :}
 			;
 			  
-Unmatched ::= (U_If) 		IF LPAREN ConditionIf:C1 RPAREN Statement:S2 {: RESULT=new U_If(C1, S2); RESULT.setLine(C1left); :}
-			| (U_IfElse) 	IF LPAREN ConditionIf:C1 RPAREN Matched:M2 ELSE Unmatched:U3 {: RESULT=new U_IfElse(C1, M2, U3); RESULT.setLine(C1left); :}
+Unmatched ::= (U_If) 		IF OpenIfElseScope:O1 LPAREN ConditionIf:C2 PatchOrConditionJumps:P3 RPAREN Statement:S4 {: RESULT=new U_If(O1, C2, P3, S4); RESULT.setLine(O1left); :}
+			| (U_IfElse) 	IF OpenIfElseScope:O1 LPAREN ConditionIf:C2 PatchOrConditionJumps:P3 RPAREN Matched:M4 ExitIfBlock_PatchJumpsToElse:E5 Unmatched:U6 {: RESULT=new U_IfElse(O1, C2, P3, M4, E5, U6); RESULT.setLine(O1left); :}
 			;
 
 Matched ::= (M_Designator) 	DesignatorStatement:D1 {: RESULT=new M_Designator(D1); RESULT.setLine(D1left); :}
-		|	(M_IfElse) 		IF LPAREN ConditionIf:C1 RPAREN Matched:M2 ELSE Matched:M3 {: RESULT=new M_IfElse(C1, M2, M3); RESULT.setLine(C1left); :} 
+		|	(M_IfElse) 		IF OpenIfElseScope:O1 LPAREN ConditionIf:C2 PatchOrConditionJumps:P3 RPAREN Matched:M4 ExitIfBlock_PatchJumpsToElse:E5 Matched:M6 {: RESULT=new M_IfElse(O1, C2, P3, M4, E5, M6); RESULT.setLine(O1left); :} 
 		|	(M_While) 		WhileLoopStart:W1 ConditionWhile:C2 RPAREN Statement:S3 {: RESULT=new M_While(W1, C2, S3); RESULT.setLine(W1left); :} 
 		|	(M_Break) 		BREAK SEMICOLON {: RESULT=new M_Break(); :} 
 		|	(M_Continue) 	CONTINUE SEMICOLON {: RESULT=new M_Continue(); :} 
@@ -371,6 +375,11 @@ Matched ::= (M_Designator) 	DesignatorStatement:D1 {: RESULT=new M_Designator(D1
 		|	(M_Foreach) 	DesignatorForeach:D1 CurrVarDesignator:C2 LAMBDA Statement:S3 RPAREN SEMICOLON {: RESULT=new M_Foreach(D1, C2, S3); RESULT.setLine(D1left); :} 
 		|	(M_Block) 		LBRACE StatementList:S1 RBRACE {: RESULT=new M_Block(S1); RESULT.setLine(S1left); :}
 		;
+		
+		
+OpenIfElseScope ::= (OpenIfElseScope) {: RESULT=new OpenIfElseScope(); :} /* empty */ ;
+PatchOrConditionJumps ::= (PatchOrConditionJumps) {: RESULT=new PatchOrConditionJumps(); :} /* empty */ ;
+ExitIfBlock_PatchJumpsToElse ::= (ExitIfBlock_PatchJumpsToElse) ELSE {: RESULT=new ExitIfBlock_PatchJumpsToElse(); :} ;
 		
 PrintStart ::= (PrintStart) {: RESULT=new PrintStart(); :} /* empty */ ;
 		
@@ -432,9 +441,11 @@ ConditionIf ::= (ConditionIf_) 		CondTerm:C1 Or_CondTermList:O2 {: RESULT=new Co
 			
 ConditionWhile ::= (ConditionWhile) CondTerm:C1 Or_CondTermList:O2 {: RESULT=new ConditionWhile(C1, O2); RESULT.setLine(C1left); :};
 
-Or_CondTermList ::= (OrCondTermList) 		Or_CondTermList:O1 OR CondTerm:C2 {: RESULT=new OrCondTermList(O1, C2); RESULT.setLine(O1left); :} 
+Or_CondTermList ::= (OrCondTermList) 		Or_CondTermList:O1 PatchAndConditionJumps:P2 OR CondTerm:C3 {: RESULT=new OrCondTermList(O1, P2, C3); RESULT.setLine(O1left); :} 
 				 |  (EmptyOrCondTermList) {: RESULT=new EmptyOrCondTermList(); :} 	/* empty */
 				 ;
+				 
+PatchAndConditionJumps ::= (PatchAndConditionJumps) {: RESULT=new PatchAndConditionJumps(); :} /* empty */ ;
 
 /******** CondTerm *********/
 

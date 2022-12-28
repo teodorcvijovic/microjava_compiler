@@ -39,7 +39,11 @@ public class CodeGenerator extends VisitorAdaptor {
 	
 	//public static Obj invokedConstructorObjNode = null;
 	
-	/***** helper ******/
+	private static Stack<List<Integer>> or_jumpsToBePatched = new Stack<>();
+    private static Stack<List<Integer>> and_jumpsToBePatched = new Stack<>();
+    private static Stack<List<Integer>> skipElse_jumpsToBePached = new Stack<>();
+	
+	/***** helpers ******/
 	
 	public Obj getClassByName(String className) {
 		for (Obj classObjNode: mapClassObjNodeToVFTadr.keySet()) {
@@ -47,6 +51,18 @@ public class CodeGenerator extends VisitorAdaptor {
 		}
 		return null;
 	}
+	
+	public void pushNewEmptyListsOnPatchingStacks() {
+    	or_jumpsToBePatched.push(new ArrayList<>());
+    	and_jumpsToBePatched.push(new ArrayList<>());
+    	skipElse_jumpsToBePached.push(new ArrayList<>());
+    }
+    
+    public void popFromPatchingStacks() {
+    	or_jumpsToBePatched.pop();
+    	and_jumpsToBePatched.pop();
+    	skipElse_jumpsToBePached.pop();
+    }
 	
 	/****** function, method and constructor start ******/
 	
@@ -622,5 +638,116 @@ public class CodeGenerator extends VisitorAdaptor {
     	
     	stackOfInvokedFunctionObjNodes.pop();
     }
+    
+    /*************************** if-else statement ****************************/
+    
+    // open and close if-else scope
+    
+    public void visit(OpenIfElseScope node) {
+    	pushNewEmptyListsOnPatchingStacks();
+    }
+    
+    public void visit(U_If node) {
+    	// end of THEN block
+    	while(!and_jumpsToBePatched.peek().isEmpty()) {
+    		int adrToBePatched = and_jumpsToBePatched.peek().remove(0);
+    		Code.fixup(adrToBePatched);
+    	}
+    	
+    	popFromPatchingStacks();
+    }
+    
+    public void visit(U_IfElse node) {
+    	while(!skipElse_jumpsToBePached.peek().isEmpty()) {
+    		int adrToBePatched = skipElse_jumpsToBePached.peek().remove(0);
+    		Code.fixup(adrToBePatched);
+    	}
+    	
+    	popFromPatchingStacks();
+    }
+    
+    public void visit(M_IfElse node) {
+    	while(!skipElse_jumpsToBePached.peek().isEmpty()) {
+    		int adrToBePatched = skipElse_jumpsToBePached.peek().remove(0);
+    		Code.fixup(adrToBePatched);
+    	}
+    	
+    	popFromPatchingStacks();
+    }
+    
+    /************** CondFact ***********/
+    
+    public void visit(CondFact_Expr node) {
+    	// only one value is on expr stack (1 = true, 0 = false)
+    	// if value is false, we skip further CondFact in this CondTerm
+    	
+    	Code.loadConst(1);
+    	and_jumpsToBePatched.peek().add(Code.pc + 1); // jeq = 1 byte
+    	Code.putFalseJump(Code.eq, 0); 	
+    }
+    
+    public void visit(CondFact_RelopExpr node) {
+    	// two values are on expr stack
+    	
+    	and_jumpsToBePatched.peek().add(Code.pc + 1); // jcc = 1 byte
+    	
+    	Relop relopSyntaxNode = node.getRelop();
+    	int relopCode = -1;
+    	
+    	if (relopSyntaxNode instanceof R_Deq) 		relopCode = Code.eq;
+    	else if (relopSyntaxNode instanceof R_Ne) 	relopCode = Code.ne;
+    	else if (relopSyntaxNode instanceof R_Gt) 	relopCode = Code.gt;
+    	else if (relopSyntaxNode instanceof R_Ge) 	relopCode = Code.ge;
+    	else if (relopSyntaxNode instanceof R_Lt) 	relopCode = Code.lt;
+    	else if (relopSyntaxNode instanceof R_Le) 	relopCode = Code.le;
+    	
+    	Code.putFalseJump(relopCode, 0);
+    }
+    
+    /************** CondTerm ***********/
+    
+    public void visit(PatchAndConditionJumps node) {
+    	// next symbol is OR
+    	// EXTRA PAY ATTENTION: if we made it to here, CondTerm is true, so we can proceed to THEN block !!!
+    	
+    	or_jumpsToBePatched.peek().add(Code.pc + 1); // jmp = 1 byte
+    	Code.putJump(0); // jump to THEN (will be patched later)
+    	
+    	// all false CondFact will jump to here (note that unconditional jump to THEN is before this)
+    	
+    	while(!and_jumpsToBePatched.peek().isEmpty()) {
+    		int adrToBePatched = and_jumpsToBePatched.peek().remove(0);
+    		Code.fixup(adrToBePatched);
+    	}
+    }
+    
+    public void visit(PatchOrConditionJumps node) {
+    	// if any CondTerm is true, we will jump to THEN
+    	
+    	while(!or_jumpsToBePatched.peek().isEmpty()) {
+    		int adrToBePatched = or_jumpsToBePatched.peek().remove(0);
+    		Code.fixup(adrToBePatched);
+    	}
+    }
+    
+    // what about last CondFact and last CondTerm ?
+    // nothing, because CondTerm is consisting of CondFact
+    // last CondFact will remain to be patched, and we will patch it after THEN block
+    
+    public void visit(ExitIfBlock_PatchJumpsToElse node) {
+    	// PAY ATTENTION: exit THEN block
+    	skipElse_jumpsToBePached.peek().add(Code.pc + 1); // jmp = 1 byte
+    	Code.putJump(0);
+    	
+    	// patch jumps to else
+    	while(!and_jumpsToBePatched.peek().isEmpty()) {
+    		int adrToBePatched = and_jumpsToBePatched.peek().remove(0);
+    		Code.fixup(adrToBePatched);
+    	}
+    }
+    
+    /************************************* loops *************************************/
+    
+    
     
 }
