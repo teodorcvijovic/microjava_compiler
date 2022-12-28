@@ -43,10 +43,10 @@ public class CodeGenerator extends VisitorAdaptor {
     private static Stack<List<Integer>> and_jumpsToBePatched = new Stack<>();
     private static Stack<List<Integer>> skipElse_jumpsToBePached = new Stack<>();
     
-    private static Stack<Integer> stackOfWhileStartAdr = new Stack<>();
+    private static Stack<Integer> stackOfLoopStartAdr = new Stack<>();
     private static Stack<List<Integer>> break_jumpsToBePached = new Stack<>();
-    private static Stack<List<Integer>> continue_jumpsToBePached = new Stack<>();
-	
+    private static Stack<Integer> skipForeach_jumpsToBePatched = new Stack<>();
+    
 	/***** helpers ******/
 	
 	public Obj getClassByName(String className) {
@@ -754,14 +754,14 @@ public class CodeGenerator extends VisitorAdaptor {
     
     public void visit(WhileLoopStart node) {
     	int whileStartAdr = Code.pc;
-    	stackOfWhileStartAdr.push(whileStartAdr);
+    	stackOfLoopStartAdr.push(whileStartAdr);
     	
     	pushNewEmptyListsOnPatchingStacks();
     	break_jumpsToBePached.push(new ArrayList<>());
     }
     
     public void visit(M_While node) {
-    	int lastNestedWhileStartAdr = stackOfWhileStartAdr.pop();
+    	int lastNestedWhileStartAdr = stackOfLoopStartAdr.pop();
     	Code.putJump(lastNestedWhileStartAdr);
     	
     	while(!and_jumpsToBePatched.peek().isEmpty()) {
@@ -784,7 +784,73 @@ public class CodeGenerator extends VisitorAdaptor {
     }
     
     public void visit(M_Continue node) {
-    	int lastNestedWhileStartAdr = stackOfWhileStartAdr.peek();
+    	int lastNestedWhileStartAdr = stackOfLoopStartAdr.peek();
     	Code.putJump(lastNestedWhileStartAdr);
+    }
+    
+    /******* foreach *******/
+    
+    // start of foreach scope
+    public void visit(DesignatorForeach node) {
+    	Obj arrayDesignatorObjNode = node.getDesignator().obj;
+    	Code.load(arrayDesignatorObjNode);
+    	
+    	// expr stack: array_adr
+    	
+    	// calculate array len
+    	Code.put(Code.dup);
+    	Code.put(Code.arraylength);
+    	
+    	// expr stack: array_adr array_len
+    	// remember condition address
+    	int foreachConditionAdr = Code.pc;
+    	stackOfLoopStartAdr.push(foreachConditionAdr);
+    	break_jumpsToBePached.push(new ArrayList<>());
+    	Code.loadConst(-1);
+    	Code.put(Code.add);
+    	
+    	// expr stack: array_adr i
+    	Code.put(Code.dup);
+    	// expr stack: array_adr i i, check if i < 0
+    	Code.loadConst(0);    	
+    	// remember address for patching at the end of foreach loop
+    	skipForeach_jumpsToBePatched.push(Code.pc + 1); // jlt = 1 byte
+    	Code.putFalseJump(Code.ge, 0);
+    	
+    	// expr stack: array_adr i
+    	// load current iteration array elem and store it to CurrVarDesignator ident
+    	M_Foreach parent = (M_Foreach) node.getParent();
+    	CurrVarDesignator brother = parent.getCurrVarDesignator();
+    	Obj currVarDesignatorObjNode = brother.obj;
+    	
+    	Code.put(Code.dup2);    	
+    	Code.put(Code.aload);
+    	// expr stack: array_adr i array_adr i
+    	Code.store(currVarDesignatorObjNode);
+    	// expr stack: array_adr i, this is for next iteration, don't forget to pop it when you exit foreach
+    }
+    
+    //end of foreach scope
+    public void visit(M_Foreach node) {
+    	// jump to the foreach condition
+    	int conditionAdr = stackOfLoopStartAdr.pop();
+    	Code.putJump(conditionAdr);
+    	
+    	// end of foreach
+    	// do the patching for skipping foreach body
+    	int adrToBePatched = skipForeach_jumpsToBePatched.pop();
+    	Code.fixup(adrToBePatched);
+    	
+    	while(!break_jumpsToBePached.peek().isEmpty()) {
+    		adrToBePatched = break_jumpsToBePached.peek().remove(0);
+    		Code.fixup(adrToBePatched);
+    	}
+    	break_jumpsToBePached.pop();
+    	
+    	// expr stack: array_adr i
+    	Code.put(Code.pop);
+    	Code.put(Code.pop);
+    	
+    	// expr stack is now empty
     }
 }

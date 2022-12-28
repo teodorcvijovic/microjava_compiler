@@ -1,29 +1,21 @@
 program p
 
 
-const int N = 5;
-
 {
 	
 
-	void main() int i, j; {
+	void main() int arr[]; int x; int i; {
+		arr = new int[3];
+		arr[0] = 0;
+		arr[1] = 1;
+		arr[2] = 2;
 		i = 0;
-		while(i < N) {
-			j = i;
-			while (j < N) {
-				if (j % 2 == i % 2) {
-					j++;
-					continue;
-				}
-				j++;
-				print(j);
-			}
-			print(i);
-			print(' ');
-			print(eol);
+		arr.foreach(x => {
 			i++;
-		}
-		print(-1);
+			if (i == 1) continue;
+			print(x);
+			if (i == 2) break;
+		});
 	
 	}
 
