@@ -6,13 +6,24 @@ const int N = 5;
 {
 	
 
-	void main() int i; {
+	void main() int i, j; {
 		i = 0;
 		while(i < N) {
-			if (i % 2 == 0 || i != 0) print(i * 10);
-			
-			if (i == 3) break;
+			j = i;
+			while (j < N) {
+				if (j % 2 == i % 2) {
+					j++;
+					continue;
+				}
+				j++;
+				print(j);
+			}
+			print(i);
+			print(' ');
+			print(eol);
+			i++;
 		}
+		print(-1);
 	
 	}
 

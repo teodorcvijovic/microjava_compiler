@@ -42,6 +42,10 @@ public class CodeGenerator extends VisitorAdaptor {
 	private static Stack<List<Integer>> or_jumpsToBePatched = new Stack<>();
     private static Stack<List<Integer>> and_jumpsToBePatched = new Stack<>();
     private static Stack<List<Integer>> skipElse_jumpsToBePached = new Stack<>();
+    
+    private static Stack<Integer> stackOfWhileStartAdr = new Stack<>();
+    private static Stack<List<Integer>> break_jumpsToBePached = new Stack<>();
+    private static Stack<List<Integer>> continue_jumpsToBePached = new Stack<>();
 	
 	/***** helpers ******/
 	
@@ -748,6 +752,39 @@ public class CodeGenerator extends VisitorAdaptor {
     
     /************************************* loops *************************************/
     
+    public void visit(WhileLoopStart node) {
+    	int whileStartAdr = Code.pc;
+    	stackOfWhileStartAdr.push(whileStartAdr);
+    	
+    	pushNewEmptyListsOnPatchingStacks();
+    	break_jumpsToBePached.push(new ArrayList<>());
+    }
     
+    public void visit(M_While node) {
+    	int lastNestedWhileStartAdr = stackOfWhileStartAdr.pop();
+    	Code.putJump(lastNestedWhileStartAdr);
+    	
+    	while(!and_jumpsToBePatched.peek().isEmpty()) {
+    		int adrToBePatched = and_jumpsToBePatched.peek().remove(0);
+    		Code.fixup(adrToBePatched);
+    	}
+    	
+    	while(!break_jumpsToBePached.peek().isEmpty()) {
+    		int adrToBePatched = break_jumpsToBePached.peek().remove(0);
+    		Code.fixup(adrToBePatched);
+    	}
+    	
+    	popFromPatchingStacks();
+    	break_jumpsToBePached.pop();
+    }
     
+    public void visit(M_Break node) {
+    	break_jumpsToBePached.peek().add(Code.pc + 1);
+    	Code.putJump(0);
+    }
+    
+    public void visit(M_Continue node) {
+    	int lastNestedWhileStartAdr = stackOfWhileStartAdr.peek();
+    	Code.putJump(lastNestedWhileStartAdr);
+    }
 }
