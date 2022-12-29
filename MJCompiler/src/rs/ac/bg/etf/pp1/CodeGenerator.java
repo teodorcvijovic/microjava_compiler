@@ -790,41 +790,95 @@ public class CodeGenerator extends VisitorAdaptor {
     
     /******* foreach *******/
     
+//    public void visit(DesignatorForeach node) {
+//    	Obj arrayDesignatorObjNode = node.getDesignator().obj;
+//    	Code.load(arrayDesignatorObjNode);
+//    	
+//    	// expr stack: array_adr
+//    	
+//    	// calculate array len
+//    	Code.put(Code.dup);
+//    	Code.put(Code.arraylength);
+//    	
+//    	// expr stack: array_adr array_len
+//    	// remember condition address
+//    	int foreachConditionAdr = Code.pc;
+//    	stackOfLoopStartAdr.push(foreachConditionAdr);
+//    	break_jumpsToBePached.push(new ArrayList<>());
+//    	Code.loadConst(-1);
+//    	Code.put(Code.add);
+//    	
+//    	// expr stack: array_adr i
+//    	Code.put(Code.dup);
+//    	// expr stack: array_adr i i, check if i < 0
+//    	Code.loadConst(0);    	
+//    	// remember address for patching at the end of foreach loop
+//    	skipForeach_jumpsToBePatched.push(Code.pc + 1); // jlt = 1 byte
+//    	Code.putFalseJump(Code.ge, 0);
+//    	
+//    	// expr stack: array_adr i
+//    	// load current iteration array elem and store it to CurrVarDesignator ident
+//    	M_Foreach parent = (M_Foreach) node.getParent();
+//    	CurrVarDesignator brother = parent.getCurrVarDesignator();
+//    	Obj currVarDesignatorObjNode = brother.obj;
+//    	Struct currVarTypeStruct = currVarDesignatorObjNode.getType();
+//    	
+//    	Code.put(Code.dup2);    	
+//    	if (currVarTypeStruct == Tab.charType) Code.put(Code.baload);
+//    	else Code.put(Code.aload);
+//    	// expr stack: array_adr i array_adr i
+//    	Code.store(currVarDesignatorObjNode);
+//    	// expr stack: array_adr i, this is for next iteration, don't forget to pop it when you exit foreach
+//    }
+    
     // start of foreach scope
     public void visit(DesignatorForeach node) {
     	Obj arrayDesignatorObjNode = node.getDesignator().obj;
     	Code.load(arrayDesignatorObjNode);
-    	
+    	    	
     	// expr stack: array_adr
-    	
-    	// calculate array len
-    	Code.put(Code.dup);
-    	Code.put(Code.arraylength);
-    	
-    	// expr stack: array_adr array_len
-    	// remember condition address
+
+    	Code.loadConst(-1);
+
+    	// expr stack: array_adr 0
     	int foreachConditionAdr = Code.pc;
     	stackOfLoopStartAdr.push(foreachConditionAdr);
     	break_jumpsToBePached.push(new ArrayList<>());
-    	Code.loadConst(-1);
+
+    	Code.loadConst(1);
     	Code.put(Code.add);
-    	
-    	// expr stack: array_adr i
-    	Code.put(Code.dup);
-    	// expr stack: array_adr i i, check if i < 0
-    	Code.loadConst(0);    	
-    	// remember address for patching at the end of foreach loop
+    	Code.put(Code.dup2);
+    	Code.put(Code.pop);
+
+    	// expr stack: array_adr (i+1) array_adr
+
+    	Code.put(Code.arraylength);
+
+    	// expr stack: array_adr i array_len
+
+    	Code.put(Code.dup2);
+    	Code.put(Code.pop);
+
+    	// expr stack: array_adr i array_len i
+
+    	Code.put(Code.dup_x1);
+    	Code.put(Code.pop);
+
+    	// expr stack: array_adr i i array_len
+
     	skipForeach_jumpsToBePatched.push(Code.pc + 1); // jlt = 1 byte
-    	Code.putFalseJump(Code.ge, 0);
-    	
+    	Code.putFalseJump(Code.lt, 0);
+
     	// expr stack: array_adr i
     	// load current iteration array elem and store it to CurrVarDesignator ident
     	M_Foreach parent = (M_Foreach) node.getParent();
     	CurrVarDesignator brother = parent.getCurrVarDesignator();
     	Obj currVarDesignatorObjNode = brother.obj;
-    	
-    	Code.put(Code.dup2);    	
-    	Code.put(Code.aload);
+    	Struct currVarTypeStruct = currVarDesignatorObjNode.getType();
+
+    	Code.put(Code.dup2);   
+    	if (currVarTypeStruct == Tab.charType) Code.put(Code.baload);
+    	else Code.put(Code.aload);
     	// expr stack: array_adr i array_adr i
     	Code.store(currVarDesignatorObjNode);
     	// expr stack: array_adr i, this is for next iteration, don't forget to pop it when you exit foreach

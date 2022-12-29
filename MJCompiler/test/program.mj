@@ -11,10 +11,7 @@ program p
 		arr[2] = 2;
 		i = 0;
 		arr.foreach(x => {
-			i++;
-			if (i == 1) continue;
-			print(x);
-			if (i == 2) break;
+			print(arr[x]);
 		});
 	
 	}
