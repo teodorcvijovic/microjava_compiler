@@ -88,6 +88,12 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	
 	private static List<Obj> listOfGlobalFunctionObjNodes = new ArrayList<>();
 	
+	{
+		listOfGlobalFunctionObjNodes.add(Tab.find("ord"));
+		listOfGlobalFunctionObjNodes.add(Tab.find("chr"));
+		listOfGlobalFunctionObjNodes.add(Tab.find("len"));
+	}
+	
 	private static Obj currVarForeach = null;
 	
 	private static List<Obj> listOfObjNodesToBeAssigned = new ArrayList<>();
