@@ -34,6 +34,7 @@ public class CodeGenerator extends VisitorAdaptor {
 	
 	public static boolean collectDesignatorsFromReverseArrayAssignment = false;
 	public static List<Obj> listOfDesignatorsInReverseArrayAssignment = new ArrayList<>();
+	public static Stack<Obj> stackReverseArray = new Stack<>();
 	
 	public static Stack<Obj> stackOfInvokedFunctionObjNodes = new Stack<>();
 	
@@ -456,11 +457,13 @@ public class CodeGenerator extends VisitorAdaptor {
     
     public void visit(Designator_FieldAccess node) {
     	Obj leftDesignatorObjNode = node.getDesignator().obj;
+    	// if (node.getParent() instanceof OptionalDesignator_) return;
     	Code.load(leftDesignatorObjNode);
     }
     
     public void visit(ArrayTypeDesignator node) {
     	Obj arrayDesignatorObjNode = node.getDesignator().obj;
+    	// if (node.getParent() instanceof OptionalDesignator_) return;
     	Code.load(arrayDesignatorObjNode);
     }
     
@@ -501,11 +504,16 @@ public class CodeGenerator extends VisitorAdaptor {
     
     public void visit(OptionalDesignator_ node) {
     	Obj designatorObjNode = node.getDesignator().obj;
+//    	if (node.getDesignator().getClass() == Designator_Ident.class) {
+//    		Code.load(designatorObjNode);
+//    	}
     	listOfDesignatorsInReverseArrayAssignment.add(designatorObjNode);
+    	stackReverseArray.push(designatorObjNode);
     }
     
     public void visit(NoOptionalDesignator node) {
     	listOfDesignatorsInReverseArrayAssignment.add(null);
+    	stackReverseArray.push(null);
     }
     
     public void visit(ReverseArrayAssignment node) {
@@ -528,18 +536,27 @@ public class CodeGenerator extends VisitorAdaptor {
     	Code.put(2);
     	
     	/* everything is ok */
+    	int n = listOfDesignatorsInReverseArrayAssignment.size();
+    	int i = 0;
     	
-    	for(Obj designatorObjNode: listOfDesignatorsInReverseArrayAssignment) {
-    		if (designatorObjNode == null) continue;
+    	//for(Obj designatorObjNode: listOfDesignatorsInReverseArrayAssignment) {
+    	for(i = 0; i < n; i++) {	
+    		Obj designatorObjNode = stackReverseArray.pop();
     		
-    		int i = listOfDesignatorsInReverseArrayAssignment.indexOf(designatorObjNode);
+    		if (designatorObjNode == null) {
+    			++i;
+    			continue;
+    		}
+    		
+    		// int i = listOfDesignatorsInReverseArrayAssignment.indexOf(designatorObjNode);
     		
     		// load i-th elem of array
     		Code.load(arrayObjNode);
-    		Code.loadConst(i);
+    		Code.loadConst(n - 1 - i);
     		Code.put(Code.aload);
     		
     		Code.store(designatorObjNode);
+    		//++i;
     	}
     	
     	listOfDesignatorsInReverseArrayAssignment.clear();
