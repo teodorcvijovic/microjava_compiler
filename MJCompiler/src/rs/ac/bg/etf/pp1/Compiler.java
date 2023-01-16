@@ -31,6 +31,11 @@ public class Compiler {
 			MJParser p = new MJParser(lexer);
 	        Symbol s = p.parse();  //pocetak parsiranja
 	        
+	        if (p.errorDetected) {
+	        	log.error("Parsiranje NIJE uspesno zavrseno!");
+	        	return;
+	        }
+	        
 	        Program prog = (Program)(s.value); 
 	        TabExtension.init();
 	        

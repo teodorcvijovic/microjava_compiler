@@ -13,6 +13,7 @@
 				<exclude name="StructExtension.java"/>
 				<exclude name="CodeGenerator.java"/>
 				<exclude name="CounterVisitor.java"/>
+				<exclude name="Compiler.java"/>
 			</fileset>
 		</delete>
 		<delete>
@@ -75,7 +76,7 @@
 		
 		<java classname="rs.etf.pp1.mj.runtime.Run">
 			<arg value="test/program.obj"/>
-			<redirector input="input.txt" output="output.txt"></redirector>
+			<redirector input="input.txt"></redirector>
 			<classpath>
 				<pathelement location="lib/mj-runtime-1.1.jar"/>
 			</classpath>
