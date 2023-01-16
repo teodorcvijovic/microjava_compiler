@@ -1,0 +1,47 @@
+program testSemantickaSimboli
+
+const int a = true;
+
+class A extends int {
+
+	{
+		A(int a) {}
+		A(int x) {}
+	
+		A(int a, int b) {}
+	}
+}
+
+A a;
+
+{
+
+	int f() { return bool; }
+	int fs() { return; }
+
+
+	void main()  char c; int arr[]; {
+		f = 3;
+		f++;
+		c--;
+		
+		c();
+		
+		break;
+		
+		if (a) read(a);
+		print(a);
+		
+		a.foreach(c => {});
+		arr.foreach(c => {
+			c = 'a';
+		});
+		
+		a = new A(3,4,5);
+		
+		print(c.e);
+		c[3] = 4;
+	}
+
+
+}
