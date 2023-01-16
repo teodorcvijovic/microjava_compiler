@@ -73,5 +73,8 @@ public class MJParserTest {
 
 	}
 	
+	public void tsdump() {
+		Tab.dump();
+	}
 	
 }
