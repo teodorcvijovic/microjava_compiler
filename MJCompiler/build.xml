@@ -75,7 +75,7 @@
 		
 		<java classname="rs.etf.pp1.mj.runtime.Run">
 			<arg value="test/program.obj"/>
-			<redirector input="input.txt"></redirector>
+			<redirector input="input.txt" output="output.txt"></redirector>
 			<classpath>
 				<pathelement location="lib/mj-runtime-1.1.jar"/>
 			</classpath>
