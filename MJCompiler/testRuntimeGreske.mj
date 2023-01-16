@@ -1,0 +1,17 @@
+program p 
+
+
+
+{
+
+	int a() int arr[]; int a, b; { 
+		arr = new int[2];
+		[a,,b] = arr;
+	}
+
+	void main()  { 
+		a();
+	}
+
+
+}
