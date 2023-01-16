@@ -1,0 +1,32 @@
+program testSemantickaSimboli
+
+
+const int N = 5;
+int n;
+
+class A {
+	bool x;
+	{
+	bool c() {return true; }
+	}	
+}
+
+A obj;
+
+{
+
+	void f(int x) {
+		print(x);
+	}
+	
+	void main() int a, arr[]; {
+		n = N;
+		a = 5;
+		f(4);
+		print(arr[3]);
+		obj = new A();
+		obj.x = obj.c();
+	}
+
+
+}

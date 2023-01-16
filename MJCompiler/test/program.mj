@@ -1,28 +1,13 @@
-program sintaksnaAnalizaGreske
+program testSemantickaSimboli
 
-int a, b b, c, ;
 
-class A {
-	int a, b b, c, ;
-	
-	{
-	
-	}
-}
-
-class B extendz A {
-
-}
 
 {
-	int f(int c, x, char b,y) {
+
+
+	void main()  {
 	
 	}
 
-	void main() {
-		a = +;
-	
-		if (a >) {}
-	}
 
 }
